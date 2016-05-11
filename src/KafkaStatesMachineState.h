@@ -1,8 +1,8 @@
 //
 //  KafkaStatesMachineState.h
-//  theMusiciam
+//  KafkaMachine
 //
-//  Created by Julio Lucio on 9/27/15.
+//  Created by Julio Lucio on 10/April/2016.
 //
 //
 
@@ -31,6 +31,7 @@ public:
     
     
     bool load( std::ifstream* fileIn );
+    bool loadFromTSV( std::ifstream* fileIn );
     bool save( std::ofstream* fileIn );
     
 };

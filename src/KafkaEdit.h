@@ -1,6 +1,6 @@
 //
 //  MusicianComposition.h
-//  theMusiciam
+//  KafkaMachine
 //
 //  Created by Julio Lucio on 10/24/15.
 //
@@ -17,7 +17,7 @@ public:
     KafkaEdit();
     ~KafkaEdit();
     
-    void setup( ofEasyCam* theCamera );
+    void setup( string machineName , string machineFileName , int theNumVideos );
  //   void update( float theEnergy , float theVolume  );
     void draw();
     
@@ -32,17 +32,15 @@ public:
     void gotMessage(ofMessage msg);
     
     float getPosition();
-    bool isMachineActive( int machineIndex );
+    bool isMachineActive();
     
     
     //machines
-    std::vector<KafkaStatesMachine*> machines;
-    std::vector<KafkaStatesMachineController*> machinesControllers;
+    KafkaStatesMachine* machine;
+    KafkaStatesMachineController* machineController;
     float energy;
     
     void createMachines();
     void createMachinesTest();
-    
-    ofEasyCam* camera;
 };
 

@@ -1,8 +1,8 @@
 //
 //  KafkaStatesMachine.cpp
-//  theMusiciam
+//  KafkaMachine
 //
-//  Created by Julio Lucio on 9/27/15.
+//  Created by Julio Lucio on 10/April/2016.
 //
 //
 
@@ -167,6 +167,8 @@ bool KafkaStatesMachine::load( string fileName ){
         return false;
     }
     
+    clear();
+    
     std::string junk;
     int numStates;
     int numTransitions;
@@ -186,8 +188,6 @@ bool KafkaStatesMachine::load( string fileName ){
         return false;
     }
     (*fileIn) >> numTransitions;
-    
-    clear();
     
     for( int s = 0 ; s < numStates ; s ++ ){
         KafkaStatesMachineState* newState = new KafkaStatesMachineState();
@@ -238,6 +238,137 @@ bool KafkaStatesMachine::load( string fileName ){
     fileIn->close();
     return true;
 }
+//-----------------------------------------------------------
+bool KafkaStatesMachine::loadFromTSV( string fileName ){
+    if( !fileIn )
+        fileIn = new ifstream();
+    
+    fileIn->open( ofToDataPath( fileName ).c_str() , std::ios_base::binary | std::ios_base::in );
+    if ( !fileIn->is_open() ){
+        cout << "Machine File not found: ";
+        cout << fileName << "\n";
+        fileIn->close();
+        return false;
+    }
+    
+    clear();
+    std::string junk;
+    int numStates;
+    
+    (*fileIn) >> junk;
+    if( junk != "States" ){
+        cout << "* KafkaStatesMachine  load: Bad tag States\n";
+        fileIn->close();
+        return false;
+    }
+    (*fileIn) >> numStates;
+    
+    //crap tags
+    (*fileIn) >> junk;
+    if( junk != "Name" ){
+        cout << "* KafkaStatesMachine  load: Bad tag Name\n";
+        fileIn->close();
+        return false;
+    }
+
+    
+    (*fileIn) >> junk;
+    if( junk != "Video" ){
+        cout << "* KafkaStatesMachine  load: Bad tag Video\n";
+        fileIn->close();
+        return false;
+    }
+
+    
+    (*fileIn) >> junk;
+    if( junk != "Start" ){
+        cout << "* KafkaStatesMachine  load: Bad tag Statr\n";
+        fileIn->close();
+        return false;
+    }
+
+    
+    (*fileIn) >> junk;
+    if( junk != "End" ){
+        cout << "* KafkaStatesMachine  load: Bad tag End\n";
+        fileIn->close();
+        return false;
+    }
+
+    
+    (*fileIn) >> junk;
+    if( junk != "Energy" ){
+        cout << "* KafkaStatesMachine  load: Bad tag Energy\n";
+        fileIn->close();
+        return false;
+    }
+
+    
+    for( int s = 0 ; s < numStates ; s ++ ){
+        KafkaStatesMachineState* newState = new KafkaStatesMachineState();
+        if( !newState->loadFromTSV( fileIn ) ){
+            cout << "* KafkaStatesMachine  load: Bad tag numTransitions\n";
+            fileIn->close();
+            return false;
+        }
+        states.push_back(newState);
+        if( !currentState )
+            currentState = states[0];
+    }
+    
+    int numTransitions;
+    (*fileIn) >> junk;
+    if( junk != "Transitions" ){
+        cout << "* KafkaStatesMachine  load: Bad tag numTransitions\n";
+        fileIn->close();
+        return false;
+    }
+    (*fileIn) >> numTransitions;
+    
+    //crap tags
+    (*fileIn) >> junk;
+    if( junk != "StateName01" ){
+        cout << "* KafkaStatesMachine  load: Bad tag StateName01\n";
+        fileIn->close();
+        return false;
+    }
+    
+    
+    (*fileIn) >> junk;
+    if( junk != "StateName02" ){
+        cout << "* KafkaStatesMachine  load: Bad tag StateName02\n";
+        fileIn->close();
+        return false;
+    }
+    
+    
+    (*fileIn) >> junk;
+    if( junk != "Probability" ){
+        cout << "* KafkaStatesMachine  load: Bad tag Probability\n";
+        fileIn->close();
+        return false;
+    }
+
+
+    for( int t = 0 ; t < numTransitions ; t ++ ){
+        float probability;
+        std::string stateNameInitial;
+        std::string stateNameFinal;
+        
+        (*fileIn) >> stateNameInitial;
+        (*fileIn) >> stateNameFinal;
+        (*fileIn) >> probability;
+        
+        if( !addTransition( stateNameInitial , stateNameFinal, probability ) ){
+            cout << "* KafkaStatesMachine  load: couldnt add transition at load\n";
+            fileIn->close();
+            return false;
+        }
+    }
+    fileIn->close();
+    return true;
+}
+
 //-----------------------------------------------------------
 bool KafkaStatesMachine::save( string fileName ){
     if( !fileOut )

@@ -1,8 +1,8 @@
 //
 //  KafkaStatesMachineController.cpp
-//  theMusiciam
+//  KafkaMachine
 //
-//  Created by Julio Lucio on 9/27/15.
+//  Created by Julio Lucio on 10/April/2016.
 //
 //
 #include "KafkaStatesMachineController.h"
@@ -10,10 +10,10 @@
 #include "KafkaStatesMachineView.h"
 
 //-------------------------------------------------------------
-KafkaStatesMachineController::KafkaStatesMachineController( KafkaStatesMachine* theMachineReference , string fileName ){
+KafkaStatesMachineController::KafkaStatesMachineController( KafkaStatesMachine* theMachineReference , string fileName , int theNumVideos ){
     machineReference = theMachineReference;
-    machineView = new KafkaStatesMachineView( theMachineReference->getName() );
-    machineView->load(fileName);
+    machineView = new KafkaStatesMachineView( theMachineReference->getName() , theNumVideos );
+    machineView->loadFromTSV(fileName);
 }
 //-------------------------------------------------------------
 KafkaStatesMachineController::~KafkaStatesMachineController(){

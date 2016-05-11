@@ -1,8 +1,8 @@
 //
 //  KafkaStatesMachineTransition.h
-//  theMusiciam
+//  KafkaMachine
 //
-//  Created by Julio Lucio on 9/27/15.
+//  Created by Julio Lucio on 10/April/2016.
 //
 //
 #ifndef KafkaStatesMachineTransition_h

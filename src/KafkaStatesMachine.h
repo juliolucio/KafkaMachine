@@ -1,8 +1,8 @@
 //
 //  KafkaStatesMachine.h
-//  theMusiciam
+//  KafkaMachine
 //
-//  Created by Julio Lucio on 9/27/15.
+//  Created by Julio Lucio on 10/April/2016.
 //
 //
 #ifndef KafkaStatesMachine_h
@@ -35,6 +35,7 @@ public:
     bool addTransition( string nameState01 , string nameState02 , float theProbability );
 
     bool load( string fileName );
+    bool loadFromTSV( string fileName );
     bool save( string fileName );
     void updateStates( float theEnergy);
     void setVolume(float theVolume );

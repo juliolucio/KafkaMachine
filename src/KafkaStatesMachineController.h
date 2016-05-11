@@ -1,8 +1,8 @@
 //
 //  KafkaStatesMachineController.h
-//  theMusiciam
+//  KafkaMachine
 //
-//  Created by Julio Lucio on 9/27/15.
+//  Created by Julio Lucio on 10/April/2016.
 //
 //
 
@@ -23,7 +23,7 @@ private:
     void clear();
     
 public:
-    KafkaStatesMachineController( KafkaStatesMachine* theMachineReference , string fileName);
+    KafkaStatesMachineController( KafkaStatesMachine* theMachineReference , string fileName , int numVideo );
     ~KafkaStatesMachineController();
     void update();
     void drawView();

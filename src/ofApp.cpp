@@ -3,14 +3,14 @@
 void ofApp::setup(){
     setupGUI();
     
-    ofBackground(255,255,255);
+    ofBackground(125,125,125);
     ofSetVerticalSync(true);
     
     ofSetSphereResolution(24);
     
     //Textures
-    texture.mirror(1,0);
-    texture.getTextureReference().setTextureWrap( GL_REPEAT, GL_REPEAT );
+    //texture.mirror(1,0);
+    //texture.getTexture().setTextureWrap( GL_REPEAT, GL_REPEAT );
     
     //lights
     ofSetSmoothLighting(true);
@@ -29,10 +29,6 @@ void ofApp::setup(){
     //material
     material.setShininess( 120 );
     material.setSpecularColor(ofColor(255, 255, 255, 255));
-    
-    //Camera
-    camera = new ofEasyCam();
-    camera->setDistance(1200);
     
     font.load( "Contl___.ttf" , 12 );
     
@@ -60,7 +56,7 @@ void ofApp::setup(){
     currentVideoSpeed = 1;
     currentVideo.setSpeed( currentVideoSpeed );
     
-    delataEnd = 0.999;
+    delataEnd = 0.9;
     
     ofSeedRandom();
     
@@ -97,13 +93,17 @@ void ofApp::setup(){
     if( boat.load("movies/Scene14_Boat_Edit-2.mov") )
         videos.push_back( boat );
     
-    for( int v = 0 ; v < videos.size() ; v ++ )
+    for( int v = 0 ; v < videos.size() ; v ++ ){
         videos[ v ].stop();
-    
+        videos[ v] .setVolume(0);
+    }
     isFirstTime = true;
+
+    edit.setup( "MACHINE_A" , "machines/machinesTest/MachineA.tsv" , videos.size() );
     
-    
-    edit.setup( camera );
+    //Camera
+    camera = new ofEasyCam();
+    camera->setDistance(1500);
 }
 //--------------------------------------------------------------
 void ofApp::setupGUI(){
@@ -112,8 +112,8 @@ void ofApp::setupGUI(){
     sliderCutMinimumLenghtMilli.addListener(this, &ofApp::sliderCutMinimumLenghtMilliChanged);
     sliderCutMaximusLenghtMilli.addListener(this, &::ofApp::sliderCutMaximumLenghtMillihanged);
     
-    gui.add( sliderCutMinimumLenghtMilli.setup("Min cut llenght", 2000, 1000, 500000));
-    gui.add( sliderCutMaximusLenghtMilli.setup("Max cut llenght", 8000, 1000, 500000));
+    gui.add( sliderCutMinimumLenghtMilli.setup("Min cut llenght", 2000, 1000, 50000));
+    gui.add( sliderCutMaximusLenghtMilli.setup("Max cut llenght", 8000, 1000, 50000));
 }
 //--------------------------------------------------------------
 void ofApp::sliderCutMinimumLenghtMilliChanged(int &sliderCutMinimumLenghtMilli){
@@ -182,13 +182,12 @@ void ofApp::updateALeatorio01(){
 }
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofSetHexColor(0xFFFFFF);
+    //ofSetHexColor(0xFFFFFF);
     currentVideo.draw( 0 , 0 , ofGetWidth() , ofGetHeight() );
     
     camera->begin();
     
     ofEnableDepthTest();
-    
     ofEnableLighting();
     
     //material.begin();
@@ -198,8 +197,11 @@ void ofApp::draw(){
     pointLight3.enable();
     pointLightTime.enable();
     
-    
+    //drawing the views
+//    ofPushMatrix();
+//    ofTranslate( - 820 , -500 );
     edit.draw();
+    //ofPopMatrix();
     
     //    drawEnergy( ofVec3f( -700 , 300 , 0 ) , 400 , 20 );
     //    drawVolumen( ofVec3f( -800 , 300 , 0 ) , 400 , 10 );
@@ -207,14 +209,13 @@ void ofApp::draw(){
     //material.end();
     
     ofDisableLighting();
-    
     ofDisableDepthTest();
     
     ofFill();
     
     camera->end();
     
-    drawDebugTimeline( 10 , 100 , ofGetWidth() - 20 , ofGetHeight() / 25 );
+    drawDebugTimeline( 10 , ofGetHeight() - ofGetHeight() / 20  , ofGetWidth() - 20 , ofGetHeight() / 25 );
     drawDebugTimes( 20 , 180 );
     
     gui.draw();

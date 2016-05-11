@@ -1,8 +1,8 @@
 //
 //  KafkaStatesMachineState.cpp
-//  theMusiciam
+//  KafkaMachine
 //
-//  Created by Julio Lucio on 9/27/15.
+//  Created by Julio Lucio on 10/April/2016.
 //
 //
 #include "ofMain.h"
@@ -80,6 +80,15 @@ bool KafkaStatesMachineState::load(std::ifstream* fileIn ){
     }
     (*fileIn) >> percentEnd;
 
+    return true;
+}
+//----------------------------------------------------------------------------------
+bool KafkaStatesMachineState::loadFromTSV(std::ifstream* fileIn ){
+    (*fileIn) >> name;
+    (*fileIn) >> videoIndex;
+    (*fileIn) >> percentStart;
+    (*fileIn) >> percentEnd;
+    (*fileIn) >> energy;
     return true;
 }
 //-----------------------------------------------------------
