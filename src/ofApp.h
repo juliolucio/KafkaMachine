@@ -43,6 +43,7 @@ public:
     void setupGUI();
     void sliderCutMinimumLenghtMilliChanged(int &sliderCutMinimumLenghtMilli);
     void sliderCutMaximumLenghtMillihanged(int &sliderCutMaximumLenghtMilli );
+    void sliderBrightnessChanged(int &sliderBright );
 
     ofVideoPlayer   bed_fight;
     ofVideoPlayer   karl_suitcase;
@@ -76,6 +77,7 @@ public:
     long            cutMinimumLenghtMilli;
     long            cutMaximusLenghtMilli;
     
+    
     long            currentVideoDurationMilli;
     
     float           currentVideoPositionNormalized;
@@ -83,7 +85,11 @@ public:
 
     float           currentVideoSpeed;
     
+    long            currentVideoBrightness;
+    
     float           delataEnd;
+    
+    ofPixels        pixelsVideo;
     
     ofTrueTypeFont  font;
     
@@ -97,7 +103,9 @@ public:
     ofxPanel gui;
     ofxIntSlider sliderCutMinimumLenghtMilli;
     ofxIntSlider sliderCutMaximusLenghtMilli;
+    ofxIntSlider sliderBrightness;
     
+    ofTexture textureVideo;
     
 
 

@@ -280,6 +280,7 @@ bool KafkaStatesMachine::loadFromTSV( string fileName ){
     clear();
     std::string junk;
     int numStates;
+    long numFrames;
     
     (*fileIn) >> junk;
     if( junk != "States" ){
@@ -288,6 +289,14 @@ bool KafkaStatesMachine::loadFromTSV( string fileName ){
         return false;
     }
     (*fileIn) >> numStates;
+    
+    (*fileIn) >> junk;
+    if( junk != "Frames" ){
+        cout << "* KafkaStatesMachine  load: Bad tag States\n";
+        fileIn->close();
+        return false;
+    }
+    (*fileIn) >> numFrames;
     
     //crap tags
     (*fileIn) >> junk;
@@ -332,7 +341,7 @@ bool KafkaStatesMachine::loadFromTSV( string fileName ){
     
     for( int s = 0 ; s < numStates ; s ++ ){
         KafkaStatesMachineState* newState = new KafkaStatesMachineState();
-        if( !newState->loadFromTSV( fileIn ) ){
+        if( !newState->loadFromTSV( fileIn , numFrames ) ){
             cout << "* KafkaStatesMachine  load: Bad tag numTransitions\n";
             fileIn->close();
             return false;

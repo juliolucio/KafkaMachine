@@ -19,6 +19,8 @@ private:
     float energy;
     float percentStart;
     float percentEnd;
+    long frameStart;
+    long frameEnd;
 
 public:
     KafkaStatesMachineState( );
@@ -31,7 +33,7 @@ public:
     
     
     bool load( std::ifstream* fileIn );
-    bool loadFromTSV( std::ifstream* fileIn );
+    bool loadFromTSV( std::ifstream* fileIn , long frames );
     bool save( std::ofstream* fileIn );
     
 };

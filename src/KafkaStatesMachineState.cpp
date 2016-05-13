@@ -79,15 +79,20 @@ bool KafkaStatesMachineState::load(std::ifstream* fileIn ){
         return false;
     }
     (*fileIn) >> percentEnd;
+    
 
     return true;
 }
 //----------------------------------------------------------------------------------
-bool KafkaStatesMachineState::loadFromTSV(std::ifstream* fileIn ){
+bool KafkaStatesMachineState::loadFromTSV(std::ifstream* fileIn , long frames ){
     (*fileIn) >> name;
     (*fileIn) >> videoIndex;
-    (*fileIn) >> percentStart;
-    (*fileIn) >> percentEnd;
+    (*fileIn) >> frameStart;
+    (*fileIn) >> frameEnd;
+    
+    percentStart = float(frameStart + 1) / float(frames);
+    percentEnd = float(frameEnd) / float(frames);
+    
     (*fileIn) >> energy;
     return true;
 }

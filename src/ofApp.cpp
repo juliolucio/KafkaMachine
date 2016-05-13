@@ -29,6 +29,7 @@ void ofApp::setup(){
     
     cutMinimumLenghtMilli = sliderCutMinimumLenghtMilli;
     cutMaximusLenghtMilli = sliderCutMaximusLenghtMilli;
+    currentVideoBrightness = sliderBrightness;
     
     currentVideoSpeed = 1;
     currentVideo.setSpeed( currentVideoSpeed );
@@ -76,7 +77,7 @@ void ofApp::setup(){
     }
     isFirstTime = true;
 
-    edit.setup( "MACHINE_B" , "machines/machinesTest/MachineB.tsv" , videos.size() );
+    edit.setup( "MACHINE_BOAT" , "machines/machinesTest/Machine_Scene_14_Boat_01.tsv" , videos.size() );
     
     videoSelected = edit.machine->getCurrentStateVideoIndex();
     currentVideo = videos[ videoSelected ];
@@ -92,6 +93,8 @@ void ofApp::setup(){
     currentVideo.setPosition( cutStartPositionPercent );
     currentVideo.play();
     
+    textureVideo.allocate( currentVideo.getWidth() , currentVideo.getHeight() ,GL_RGB );
+    
     edit.machineController->updateViewDataVideo( videoSelected , &currentVideo );
     
     //Camera
@@ -103,10 +106,12 @@ void ofApp::setupGUI(){
     // we add this listener before setting up so the initial circle resolution is correct
     gui.setup();
     sliderCutMinimumLenghtMilli.addListener(this, &ofApp::sliderCutMinimumLenghtMilliChanged);
-    sliderCutMaximusLenghtMilli.addListener(this, &::ofApp::sliderCutMaximumLenghtMillihanged);
+    sliderCutMaximusLenghtMilli.addListener(this, &ofApp::sliderCutMaximumLenghtMillihanged);
+    sliderBrightness.addListener(this, &ofApp::sliderBrightnessChanged );
     
-    gui.add( sliderCutMinimumLenghtMilli.setup("Min cut llenght", 2000, 1000, 50000));
-    gui.add( sliderCutMaximusLenghtMilli.setup("Max cut llenght", 8000, 1000, 50000));
+    gui.add( sliderCutMinimumLenghtMilli.setup("Min cut llenght", 2000, 1000, 50000 ));
+    gui.add( sliderCutMaximusLenghtMilli.setup("Max cut llenght", 8000, 1000, 50000  ));
+    gui.add( sliderBrightness.setup("Brightness", 2, 0, 10 ) );
 }
 //--------------------------------------------------------------
 void ofApp::sliderCutMinimumLenghtMilliChanged(int &sliderCutMinimumLenghtMilli){
@@ -115,6 +120,10 @@ void ofApp::sliderCutMinimumLenghtMilliChanged(int &sliderCutMinimumLenghtMilli)
 //--------------------------------------------------------------
 void ofApp::sliderCutMaximumLenghtMillihanged(int &sliderCutMaximumLenghtMilli ){
     cutMaximusLenghtMilli = sliderCutMaximumLenghtMilli;
+}
+//--------------------------------------------------------------
+void ofApp::sliderBrightnessChanged(int &sliderBright ){
+    currentVideoBrightness = sliderBright;
 }
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -126,9 +135,16 @@ void ofApp::update(){
         if( currentVideoPositionMilli >= cutEndPositionMilli )
             hasFinishedPlaying = true;
     currentVideo.update();
+    
+    pixelsVideo = currentVideo.getPixels();
+    int numPixels = currentVideo.getWidth() * currentVideo.getHeight() * 3;
+    for( int p = 0 ; p < numPixels ; p ++ )
+        pixelsVideo[p] *= currentVideoBrightness ;
+    
+    textureVideo.loadData( pixelsVideo );
+    
     currentVideoPositionNormalized = currentVideo.getPosition();
     currentVideoPositionMilli = currentVideoPositionNormalized * currentVideoDurationMilli;
-    
 }
 //--------------------------------------------------------------
 void ofApp::updateClosedMachine(){
@@ -192,7 +208,8 @@ void ofApp::updateALeatorio(){
 }
 //--------------------------------------------------------------
 void ofApp::draw(){
-    currentVideo.draw( 0 , 0 , ofGetWidth() , ofGetHeight() );
+    //currentVideo.draw( 0 , 0 , ofGetWidth() , ofGetHeight() );
+    textureVideo.draw( 0 , 0 , ofGetWidth() , ofGetHeight() );
     
     camera->begin();
     edit.draw();

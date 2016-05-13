@@ -51,7 +51,7 @@ KafkaStatesMachineView::KafkaStatesMachineView( string theName , int theNumVideo
     
     //lights
     ofSetSmoothLighting(true);
-    pointLight.setDiffuseColor( ofFloatColor(.85, .85, .55) );
+    pointLight.setDiffuseColor( ofFloatColor(.6, .6, .7) );
     pointLight.setSpecularColor( ofFloatColor(1.f, 1.f, 1.f));
     
     pointLight2.setDiffuseColor( ofFloatColor( 238.f/255.f, 57.f/255.f, 135.f/255.f ));
@@ -158,48 +158,56 @@ bool KafkaStatesMachineView::addTransition( string nameState01 , string nameStat
 }
 //-------------------------------------------------------------
 void KafkaStatesMachineView::draw(){
-    pointLight.setPosition((ofGetWidth()*.5)+ cos(ofGetElapsedTimef()*.5)*(ofGetWidth()*.3), ofGetHeight()/2, 500);
-    pointLight2.setPosition((ofGetWidth()*.5)+ cos(ofGetElapsedTimef()*.15)*(ofGetWidth()*.3),
-                            ofGetHeight()*.5 + sin(ofGetElapsedTimef()*.7)*(ofGetHeight()), -300);
-    
-    pointLight3.setPosition(cos(ofGetElapsedTimef()*1.5) * ofGetWidth()*.5,
-                            sin(ofGetElapsedTimef()*1.5f) * ofGetWidth()*.5,
-                            cos(ofGetElapsedTimef()*.2) * ofGetWidth()
-                            );
-
-    
-    ofEnableDepthTest();
-    ofEnableLighting();
-    
-    pointLight.enable();
-    pointLight2.enable();
-    pointLight3.enable();
-    pointLightTime.enable();
-
     if( !isItActive )
         return;
     
     ofVec3f positionOrigin = ofVec3f( - ofGetWidth() / 1.7 , - ofGetHeight() / 1.6 , 0 );
-    
-    map< int,of3dPrimitive* >::iterator it = states.begin();
-    int stateIndex = 0;
-    
-    ofPushMatrix();
-    ofTranslate( positionOrigin );
-    
     ofVec3f videoPlanePosition = machineVideosPositions[ activeVideoIndex ] + ofVec3f( 0 , currentVideo->getPosition() *  machineVideoSize.y ,  0  );
+    ofVec3f positionPointLight01 = positionOrigin;
+    positionPointLight01.x +=  videoPlanePosition.x + cosf( 2 * ofGetElapsedTimef()  ) * machineVideoSize.x;
+    positionPointLight01.y += videoPlanePosition.y;
+    positionPointLight01.z += videoPlanePosition.z + sinf( 3 * ofGetElapsedTimef()  ) * machineVideoSize.x;
     
+    ofVec3f positionPointLight02 = positionOrigin;
+    positionPointLight02.x +=  videoPlanePosition.x ;
+    positionPointLight02.y += videoPlanePosition.y + cosf( 5 * ofGetElapsedTimef()  ) * machineVideoSize.x;
+    positionPointLight02.z += videoPlanePosition.z + sinf( 2 * ofGetElapsedTimef()  ) * machineVideoSize.x;
+    
+    ofVec3f positionPointLight03 = positionOrigin;
+    positionPointLight03.x +=  videoPlanePosition.x + cosf( 4 * ofGetElapsedTimef()  ) * machineVideoSize.x;
+    positionPointLight03.y += videoPlanePosition.y + sinf( 1 * ofGetElapsedTimef()  ) * machineVideoSize.x;
+    positionPointLight03.z += videoPlanePosition.z;
+    
+    pointLight.setPosition( positionPointLight01 );
+    pointLight2.setPosition( positionPointLight02 );
+    pointLight3.setPosition( positionPointLight03 );
+    
+//    pointLight.draw();
+//    pointLight2.draw();
+//    pointLight3.draw();
+//    
     videoPlaneHorizontal.setWidth( machineVideoSize.x + 10 );
     videoPlaneHorizontal.setHeight( machineVideoSize.x + 10 );
     videoPlaneHorizontal.setPosition( videoPlanePosition );
     
+    ofPushMatrix();
+    ofTranslate( positionOrigin );
+    
+    ofEnableDepthTest();
+    
     currentVideo->draw( videoPlanePosition.x +  ( ( machineVideoSize.x + 10 ) * 1.33 ) / 2 , videoPlanePosition.y - ( machineVideoSize.x + 10  ) / 2 , ( machineVideoSize.x + 10 ) * 1.33 , machineVideoSize.x + 10 );
+    
+    ofEnableLighting();
+    pointLight.enable();
+    pointLight2.enable();
+    pointLight3.enable();
     
     material.begin();
     videoPlaneHorizontal.draw();
     material.end();
     
-    
+    map< int,of3dPrimitive* >::iterator it = states.begin();
+    int stateIndex = 0;
     while( it != states.end() ){
         of3dPrimitive* tempPrimitive = (*it).second;
         ofSetColor( 255 );
@@ -402,6 +410,8 @@ bool KafkaStatesMachineView::loadFromTSV( string fileName ){
     std::string junk;
     int numStates;
     int numTransitions;
+    long numFramesTotal;
+
     
     (*fileIn) >> junk;
     if( junk != "States" ){
@@ -410,6 +420,14 @@ bool KafkaStatesMachineView::loadFromTSV( string fileName ){
         return false;
     }
     (*fileIn) >> numStates;
+    
+    (*fileIn) >> junk;
+    if( junk != "Frames" ){
+        cout << "* KafkaStatesMachineView  load: Bad tag States\n";
+        fileIn->close();
+        return false;
+    }
+    (*fileIn) >> numFramesTotal;
     
     //crap tags
     (*fileIn) >> junk;
@@ -457,12 +475,18 @@ bool KafkaStatesMachineView::loadFromTSV( string fileName ){
         float energyCurrent;
         float percentageStartCurrent;
         float percentageEndCurrent;
+        long frameStartCurrent;
+        long frameEndCurrent;
         
         (*fileIn) >> name;
         (*fileIn) >> videoIndexCurrent;
-        (*fileIn) >> percentageStartCurrent;
-        (*fileIn) >> percentageEndCurrent;
+        (*fileIn) >> frameStartCurrent;
+        (*fileIn) >> frameEndCurrent;
         (*fileIn) >> energyCurrent;
+        
+        percentageStartCurrent = float(frameStartCurrent) / float(numFramesTotal);
+        percentageEndCurrent = float(frameEndCurrent) / float(numFramesTotal);
+
         addState( name , videoIndexCurrent , energyCurrent , percentageStartCurrent , percentageEndCurrent );
     }
     
