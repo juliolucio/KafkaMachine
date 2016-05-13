@@ -27,10 +27,7 @@ public:
     ~KafkaStatesMachineController();
     void update();
     void drawView();
-
-
-    
-
+    void updateViewDataVideo( int activeVideoIndex , ofVideoPlayer* currentVideo );
 };
 
 #endif 

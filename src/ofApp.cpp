@@ -6,34 +6,11 @@ void ofApp::setup(){
     ofBackground(125,125,125);
     ofSetVerticalSync(true);
     
-    ofSetSphereResolution(24);
-    
-    //Textures
-    //texture.mirror(1,0);
-    //texture.getTexture().setTextureWrap( GL_REPEAT, GL_REPEAT );
-    
-    //lights
-    ofSetSmoothLighting(true);
-    pointLight.setDiffuseColor( ofFloatColor(.85, .85, .55) );
-    pointLight.setSpecularColor( ofFloatColor(1.f, 1.f, 1.f));
-    
-    pointLight2.setDiffuseColor( ofFloatColor( 238.f/255.f, 57.f/255.f, 135.f/255.f ));
-    pointLight2.setSpecularColor(ofFloatColor(.8f, .8f, .9f));
-    
-    pointLight3.setDiffuseColor( ofFloatColor(19.f/255.f,94.f/255.f,77.f/255.f) );
-    pointLight3.setSpecularColor( ofFloatColor(18.f/255.f,150.f/255.f,135.f/255.f) );
-    
-    pointLightTime.setDiffuseColor(ofFloatColor(.85, .85, .55) );
-    pointLightTime.setSpecularColor( ofFloatColor(1.f, 1.f, 1.f));
-    
-    //material
-    material.setShininess( 120 );
-    material.setSpecularColor(ofColor(255, 255, 255, 255));
-    
+     
     font.load( "Contl___.ttf" , 12 );
     
     hasFinishedPlaying = true;
-    videoRandomChoiceIndex;
+    videoSelected;
     
     cutLenghtMilli = 0;
     
@@ -95,11 +72,27 @@ void ofApp::setup(){
     
     for( int v = 0 ; v < videos.size() ; v ++ ){
         videos[ v ].stop();
-        videos[ v] .setVolume(0);
+        //videos[ v] .setVolume(0);
     }
     isFirstTime = true;
 
-    edit.setup( "MACHINE_A" , "machines/machinesTest/MachineA.tsv" , videos.size() );
+    edit.setup( "MACHINE_B" , "machines/machinesTest/MachineB.tsv" , videos.size() );
+    
+    videoSelected = edit.machine->getCurrentStateVideoIndex();
+    currentVideo = videos[ videoSelected ];
+    currentVideo.setSpeed( currentVideoSpeed );
+    currentVideoDurationMilli = currentVideo.getDuration() * 1000;
+    
+    cutStartPositionPercent = edit.machine->getCurrentStateStart();
+    cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
+    
+    cutEndPositionMilli = edit.machine->getCurrentStateEnd() * currentVideoDurationMilli;
+    cutLenghtMilli = cutEndPositionMilli - cutStartPositionMilli;
+    
+    currentVideo.setPosition( cutStartPositionPercent );
+    currentVideo.play();
+    
+    edit.machineController->updateViewDataVideo( videoSelected , &currentVideo );
     
     //Camera
     camera = new ofEasyCam();
@@ -125,20 +118,10 @@ void ofApp::sliderCutMaximumLenghtMillihanged(int &sliderCutMaximumLenghtMilli )
 }
 //--------------------------------------------------------------
 void ofApp::update(){
-    pointLight.setPosition((ofGetWidth()*.5)+ cos(ofGetElapsedTimef()*.5)*(ofGetWidth()*.3), ofGetHeight()/2, 500);
-    pointLight2.setPosition((ofGetWidth()*.5)+ cos(ofGetElapsedTimef()*.15)*(ofGetWidth()*.3),
-                            ofGetHeight()*.5 + sin(ofGetElapsedTimef()*.7)*(ofGetHeight()), -300);
-    
-    pointLight3.setPosition(
-                            cos(ofGetElapsedTimef()*1.5) * ofGetWidth()*.5,
-                            sin(ofGetElapsedTimef()*1.5f) * ofGetWidth()*.5,
-                            cos(ofGetElapsedTimef()*.2) * ofGetWidth()
-                            );
-    
-    //edit.update( directorEnergy , volume );
-    
-    if( hasFinishedPlaying )
-        updateALeatorio01();
+    if( hasFinishedPlaying ){
+        updateALeatorio();
+        updateClosedMachine();
+    }
     else
         if( currentVideoPositionMilli >= cutEndPositionMilli )
             hasFinishedPlaying = true;
@@ -148,13 +131,40 @@ void ofApp::update(){
     
 }
 //--------------------------------------------------------------
-void ofApp::updateALeatorio01(){
+void ofApp::updateClosedMachine(){
+    //stop previous video
+    currentVideo.stop();
+    
+    if( ! edit.machine->step() )
+        cout << "Machine is closed fuckerssss!!!!!!";
+    
+    //chose a random next video
+    videoSelected = edit.machine->getCurrentStateVideoIndex();
+    currentVideo = videos[ videoSelected ];
+    currentVideo.setSpeed( currentVideoSpeed );
+    currentVideoDurationMilli = currentVideo.getDuration() * 1000;
+    
+    cutStartPositionPercent = edit.machine->getCurrentStateStart();
+    cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
+
+    cutEndPositionMilli = edit.machine->getCurrentStateEnd() * currentVideoDurationMilli;
+    cutLenghtMilli = cutEndPositionMilli - cutStartPositionMilli;
+    
+    currentVideo.setPosition( cutStartPositionPercent );
+    currentVideo.play();
+    
+    edit.machineController->updateViewDataVideo( videoSelected , &currentVideo );
+    
+    hasFinishedPlaying = false;
+}
+//--------------------------------------------------------------
+void ofApp::updateALeatorio(){
     //stop previous video
     currentVideo.stop();
     
     //chose a random next video
-    videoRandomChoiceIndex = ofRandom( 0 , videos.size() );
-    currentVideo = videos[ videoRandomChoiceIndex ];
+    videoSelected = ofRandom( 0 , videos.size() );
+    currentVideo = videos[ videoSelected ];
     currentVideo.setSpeed( currentVideoSpeed );
     currentVideoDurationMilli = currentVideo.getDuration() * 1000;
     
@@ -182,37 +192,10 @@ void ofApp::updateALeatorio01(){
 }
 //--------------------------------------------------------------
 void ofApp::draw(){
-    //ofSetHexColor(0xFFFFFF);
     currentVideo.draw( 0 , 0 , ofGetWidth() , ofGetHeight() );
     
     camera->begin();
-    
-    ofEnableDepthTest();
-    ofEnableLighting();
-    
-    //material.begin();
-    
-    //pointLight.enable();
-    pointLight2.enable();
-    pointLight3.enable();
-    pointLightTime.enable();
-    
-    //drawing the views
-//    ofPushMatrix();
-//    ofTranslate( - 820 , -500 );
     edit.draw();
-    //ofPopMatrix();
-    
-    //    drawEnergy( ofVec3f( -700 , 300 , 0 ) , 400 , 20 );
-    //    drawVolumen( ofVec3f( -800 , 300 , 0 ) , 400 , 10 );
-    
-    //material.end();
-    
-    ofDisableLighting();
-    ofDisableDepthTest();
-    
-    ofFill();
-    
     camera->end();
     
     drawDebugTimeline( 10 , ofGetHeight() - ofGetHeight() / 20  , ofGetWidth() - 20 , ofGetHeight() / 25 );
@@ -249,7 +232,7 @@ void ofApp::drawDebugTimes( int x , int y ){
     ofSetColor( 255,255,255  );
     
     debugString += "Current  video ";
-    debugString += ofToString( videoRandomChoiceIndex );
+    debugString += ofToString( videoSelected );
     debugString += "\nTime: ";
     debugString += getTimeStringFromMilli( currentVideo.getPosition() * currentVideoDurationMilli );
     debugString += "\n-------------------------------------\n";

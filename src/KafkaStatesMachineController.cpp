@@ -33,3 +33,7 @@ void KafkaStatesMachineController::drawView(){
 void KafkaStatesMachineController::clear(){
     delete machineView;
 }
+//-------------------------------------------------------------
+void KafkaStatesMachineController::updateViewDataVideo( int activeVideoIndex , ofVideoPlayer* currentVideo ){
+    machineView->updateViewDataVideo( activeVideoIndex , currentVideo );
+}

@@ -25,7 +25,8 @@ public:
     void gotMessage(ofMessage msg);
     
     //updating modes
-    void updateALeatorio01();
+    void updateALeatorio();
+    void updateClosedMachine();
     long getcurrentVideoDurationMilli();
     
     //drawing
@@ -43,7 +44,6 @@ public:
     void sliderCutMinimumLenghtMilliChanged(int &sliderCutMinimumLenghtMilli);
     void sliderCutMaximumLenghtMillihanged(int &sliderCutMaximumLenghtMilli );
 
-    
     ofVideoPlayer   bed_fight;
     ofVideoPlayer   karl_suitcase;
     ofVideoPlayer   access;
@@ -58,14 +58,13 @@ public:
     
     ofVideoPlayer   currentVideo;
     
-    
     std::vector< ofVideoPlayer> videos;
     
     bool            hasFinishedPlaying;
     bool            isFirstTime;
     bool            isFirstTimeUpdateAleatorio;
     
-    int             videoRandomChoiceIndex;
+    int             videoSelected;
     
     long            cutLenghtMilli;
     
@@ -88,19 +87,9 @@ public:
     
     ofTrueTypeFont  font;
     
-    
-    
     //camera
     ofEasyCam* camera;
     
-    //texturing and lighting
-    //ofImage texture;
-    ofMaterial material;
-    ofLight pointLight;
-    ofLight pointLight2;
-    ofLight pointLight3;
-    ofLight pointLightTime;
-
     //composition
     KafkaEdit edit;
     

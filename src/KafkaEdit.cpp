@@ -17,7 +17,6 @@ void KafkaEdit::setup( string machineName , string machineFileName  , int theNum
     machine  = new KafkaStatesMachine( machineName );
     machine->loadFromTSV( machineFileName );
     machineController = new KafkaStatesMachineController( machine , machineFileName  , theNumVideos );
-    machine->start();
 }
 //--------------------------------------------------------------
 //void KafkaEdit::update( float theEnergy , float theVolume ){
@@ -61,14 +60,4 @@ void KafkaEdit::gotMessage(ofMessage msg){
 }
 //--------------------------------------------------------------
 void KafkaEdit::dragEvent(ofDragInfo dragInfo){
-}
-//--------------------------------------------------------------
-float KafkaEdit::getPosition(){
-    if( machine->isAtcive() )
-        return machine->getCurrentStatePercentaje();
-    return 0;
-}
-//--------------------------------------------------------------
-bool KafkaEdit::isMachineActive( ){
-    machine->isAtcive();
 }

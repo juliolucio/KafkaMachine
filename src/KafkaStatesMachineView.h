@@ -21,6 +21,8 @@ private:
     string name;
     KafkeMachineViewType type;
     ofBoxPrimitive videoBox;
+    ofPlanePrimitive videoPlaneHorizontal;
+    ofPlanePrimitive videoPlaneVertical;
     
     float machineGap;
     
@@ -75,9 +77,20 @@ private:
     void clear();
     int getStateIndex( string name );
     vector<ofMeshFace> triangles;
-    //ofImage texture;
-    ofMaterial material;
+    
     ofTrueTypeFont font;
+    
+    ofVideoPlayer* currentVideo;
+    int activeVideoIndex;
+    
+    //texturing and lighting
+    ofMaterial material;
+    ofTexture textureFromVideo;
+    ofLight pointLight;
+    ofLight pointLight2;
+    ofLight pointLight3;
+    ofLight pointLightTime;
+
     
     
 public:
@@ -90,6 +103,7 @@ public:
     bool loadFromTSV( string fileName );
     void setActive( bool ifIsItActive );
     bool setCurrentState( string stateName );
+    void updateViewDataVideo( int activeVideoIndex , ofVideoPlayer* currentVideo );
 };
 
 #endif 

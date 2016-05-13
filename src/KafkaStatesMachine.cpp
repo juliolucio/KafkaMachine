@@ -5,12 +5,9 @@
 //  Created by Julio Lucio on 10/April/2016.
 //
 //
-
-
 #include "KafkaStatesMachine.h"
 #include "KafkaStatesMachineState.h"
 #include "KafkaStatesMachineTransition.h"
-
 //-------------------------------------------------------------
 KafkaStatesMachine::KafkaStatesMachine( string theName ){
     name = theName;
@@ -19,7 +16,6 @@ KafkaStatesMachine::KafkaStatesMachine( string theName ){
     fileOut = 0;
     isItActive = true;
     hasJustChangedState = false;
-    volume = 1;
 }
 //-------------------------------------------------------------
 KafkaStatesMachine::~KafkaStatesMachine(){
@@ -62,8 +58,51 @@ bool KafkaStatesMachine::addTransition( string nameState01 , string nameState02 
     transitions.push_back( newTransition );
     return true;
 }
+
+//-------------------------------------------------------------
+bool KafkaStatesMachine::step(){
+    float dice = ofRandom( 0 , 1 );
+    vector<KafkaStatesMachineTransition*> posibleTransitions;
+    vector<float> posibleTransitionsProbabilities;
+    int t;
+    for( t = 0 ; t < transitions.size() ; t ++ ){
+        if( transitions[t]->getNameStateInitial() == currentState->getName() ){
+            posibleTransitions.push_back( transitions[ t ] );
+            posibleTransitionsProbabilities.push_back( transitions[ t]->getProbability() );
+        }
+    }
+    
+    if( !posibleTransitions.size() ){
+        cout << "Machine stuck for steps";
+        return false;
+    }
+    
+    else{
+        float total = 0;
+        for( t = 0 ; t < posibleTransitionsProbabilities.size() ;t ++ )
+            total += posibleTransitionsProbabilities[ t ];
+        
+        for( t = 0 ; t < posibleTransitionsProbabilities.size() ;t ++ )
+           posibleTransitionsProbabilities[ t ] /= total;
+        
+        float valuerReached = 0;
+        for( t = 0 ; t < posibleTransitionsProbabilities.size() ;t ++ ){
+            valuerReached += posibleTransitionsProbabilities[ t ];
+            if( valuerReached >= dice ){
+                setCurrentState( posibleTransitions[ t ]->getStateFinal() );
+                return true;
+            }
+        }
+        if( posibleTransitions.size() ){
+            t--;
+            setCurrentState( posibleTransitions[ t ]->getStateFinal());
+            return true;
+        }
+    }
+}
 //-------------------------------------------------------------
 void KafkaStatesMachine::updateStates( float theEnergy ){
+    cout << "ERROROROROR:::NOT TO BE HERE JET\n";
     float dice = ofRandom( 0 , 1 );
     map<float,KafkaStatesMachineTransition*> posibleTransitions;
     map<float,KafkaStatesMachineTransition*>::iterator posibleTransitionsIterator;
@@ -128,19 +167,6 @@ void KafkaStatesMachine::updateStates( float theEnergy ){
         }
     }
 }
-
-//-------------------------------------------------------------
-void KafkaStatesMachine::setVolume( float theVolume ){
-    //todocurrentState->sound.setVolume( theVolume );
-}
-//-------------------------------------------------------------
-void KafkaStatesMachine::start(){
-    //todocurrentState->sound.play();
-}
-//-------------------------------------------------------------
-void KafkaStatesMachine::stop(){
-}
-
 //-------------------------------------------------------------
 void KafkaStatesMachine::draw(){
 }
@@ -415,9 +441,22 @@ string KafkaStatesMachine::getCurrentStateName(){
     return currentState->getName();
 }
 //-----------------------------------------------------------
-float KafkaStatesMachine::getCurrentStatePercentaje(){
-    return 1;//todocurrentState->sound.getPosition();
+int KafkaStatesMachine::getCurrentStateVideoIndex(){
+    return currentState->getVideoIndex();
 }
+//-----------------------------------------------------------
+float KafkaStatesMachine::getCurrentStateStart(){
+    return currentState->getStart();
+}
+//-----------------------------------------------------------
+float KafkaStatesMachine::getCurrentStateEnd(){
+    return currentState->getEnd();
+}
+//-----------------------------------------------------------
+float KafkaStatesMachine::getCurrentStateEnergy(){
+    return currentState->getEnergy();
+}
+//-----------------------------------------------------------
 //-----------------------------------------------------------
 void KafkaStatesMachine::setActive( bool ifIsItActive ){
     isItActive = ifIsItActive;
@@ -434,10 +473,7 @@ bool KafkaStatesMachine::justChangedState(){
     }
     return false;
 }
-//-----------------------------------------------------------
-bool KafkaStatesMachine::justFinishidState(){
-    return 1;//todo!currentState->sound.getIsPlaying();
-}
+
 //-----------------------------------------------------------
 void KafkaStatesMachine::setCurrentState( KafkaStatesMachineState* newState ){
     cout << "Machine : " << name << "  form " << currentState->getName();

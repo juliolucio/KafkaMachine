@@ -38,7 +38,7 @@ KafkaStatesMachineView::KafkaStatesMachineView( string theName , int theNumVideo
         tempBox->setHeight( machineVideoSize.y );
         tempBox->setDepth( machineVideoSize.z );
         tempBox->setPosition( thisVideoPosition + ofVec3f( 0 , machineVideoSize.y / 2.0f , 0 ) );
-        tempBox->setResolution( 1, 10, 1);
+        tempBox->setResolution( 1, 1, 1);
         videosBoxesPrimitives[ videoIndex ] = tempBox;
         machineVideosPositions.push_back( thisVideoPosition );
         videosColors.push_back( ofColor( ofRandom( 10 , 70 ) , 10, ofRandom( 100 , 200 ) ) );
@@ -47,10 +47,28 @@ KafkaStatesMachineView::KafkaStatesMachineView( string theName , int theNumVideo
     type = MACHINE_VIEW_TYPE_BOXES;
     //font.load( "Contl___.ttf" , 16 );
     
-    //ofDisableArbTex();
-    //texture.loadImage("GUI/earth.png");
-    //texture.rotate90(2);
-    //texture.getTextureReference().setTextureWrap( GL_REPEAT, GL_REPEAT );
+    ofSetSphereResolution(24);
+    
+    //lights
+    ofSetSmoothLighting(true);
+    pointLight.setDiffuseColor( ofFloatColor(.85, .85, .55) );
+    pointLight.setSpecularColor( ofFloatColor(1.f, 1.f, 1.f));
+    
+    pointLight2.setDiffuseColor( ofFloatColor( 238.f/255.f, 57.f/255.f, 135.f/255.f ));
+    pointLight2.setSpecularColor(ofFloatColor(.8f, .8f, .9f));
+    
+    pointLight3.setDiffuseColor( ofFloatColor(19.f/255.f,94.f/255.f,77.f/255.f) );
+    pointLight3.setSpecularColor( ofFloatColor(18.f/255.f,150.f/255.f,135.f/255.f) );
+    
+    pointLightTime.setDiffuseColor(ofFloatColor(.85, .85, .55) );
+    pointLightTime.setSpecularColor( ofFloatColor(1.f, 1.f, 1.f));
+    
+    //material
+    material.setShininess( 120 );
+    material.setSpecularColor(ofColor(255, 255, 255, 255));
+    
+    videoPlaneHorizontal.rotate( 90 , 1 , 0 , 0 );
+
 }
 //-------------------------------------------------------------
 KafkaStatesMachineView::~KafkaStatesMachineView(){
@@ -104,8 +122,8 @@ bool KafkaStatesMachineView::addState( string theName , int theVideoIndex , floa
             
         case MACHINE_VIEW_TYPE_PLANES:{
             ofPlanePrimitive* plane = new ofPlanePrimitive();
-            plane->setWidth( machineVideoSize.x * percentLength );
-            plane->setHeight( machineVideoSize.y );
+            plane->setWidth( machineVideoSize.x - 5 );
+            plane->setHeight( statePrimitiveHeight );
             plane->setPosition( positionPrimitive );
             primitive = plane;
         }
@@ -123,8 +141,8 @@ bool KafkaStatesMachineView::addState( string theName , int theVideoIndex , floa
 }
 //-------------------------------------------------------------
 bool KafkaStatesMachineView::addTransition( string nameState01 , string nameState02 , float theProbability ){
-    ofVec3f initTransitionPosition = statesPositionsInits[ getStateIndex( nameState01 ) ];
-    ofVec3f endTransitionPosition = statesPositionsEnds[ getStateIndex( nameState02 ) ];
+    ofVec3f initTransitionPosition = statesPositionsEnds[ getStateIndex( nameState01 ) ];
+    ofVec3f endTransitionPosition = statesPositionsInits[ getStateIndex( nameState02 ) ];
     ofVec3f distVector = endTransitionPosition - initTransitionPosition;
     ofVec3f centerTransitionPosition =  initTransitionPosition + distVector * .5;
     //centerTransitionPosition -= ofVec3f( ( 1 + transitionStateNameInitial.size() ) * deltaBezierX , 0 , 0 );
@@ -140,36 +158,72 @@ bool KafkaStatesMachineView::addTransition( string nameState01 , string nameStat
 }
 //-------------------------------------------------------------
 void KafkaStatesMachineView::draw(){
+    pointLight.setPosition((ofGetWidth()*.5)+ cos(ofGetElapsedTimef()*.5)*(ofGetWidth()*.3), ofGetHeight()/2, 500);
+    pointLight2.setPosition((ofGetWidth()*.5)+ cos(ofGetElapsedTimef()*.15)*(ofGetWidth()*.3),
+                            ofGetHeight()*.5 + sin(ofGetElapsedTimef()*.7)*(ofGetHeight()), -300);
+    
+    pointLight3.setPosition(cos(ofGetElapsedTimef()*1.5) * ofGetWidth()*.5,
+                            sin(ofGetElapsedTimef()*1.5f) * ofGetWidth()*.5,
+                            cos(ofGetElapsedTimef()*.2) * ofGetWidth()
+                            );
+
+    
+    ofEnableDepthTest();
+    ofEnableLighting();
+    
+    pointLight.enable();
+    pointLight2.enable();
+    pointLight3.enable();
+    pointLightTime.enable();
+
     if( !isItActive )
         return;
     
     ofVec3f positionOrigin = ofVec3f( - ofGetWidth() / 1.7 , - ofGetHeight() / 1.6 , 0 );
     
-    map<int,of3dPrimitive*>::iterator it = states.begin();
+    map< int,of3dPrimitive* >::iterator it = states.begin();
     int stateIndex = 0;
     
     ofPushMatrix();
     ofTranslate( positionOrigin );
     
+    ofVec3f videoPlanePosition = machineVideosPositions[ activeVideoIndex ] + ofVec3f( 0 , currentVideo->getPosition() *  machineVideoSize.y ,  0  );
+    
+    videoPlaneHorizontal.setWidth( machineVideoSize.x + 10 );
+    videoPlaneHorizontal.setHeight( machineVideoSize.x + 10 );
+    videoPlaneHorizontal.setPosition( videoPlanePosition );
+    
+    currentVideo->draw( videoPlanePosition.x +  ( ( machineVideoSize.x + 10 ) * 1.33 ) / 2 , videoPlanePosition.y - ( machineVideoSize.x + 10  ) / 2 , ( machineVideoSize.x + 10 ) * 1.33 , machineVideoSize.x + 10 );
+    
+    material.begin();
+    videoPlaneHorizontal.draw();
+    material.end();
+    
+    
     while( it != states.end() ){
         of3dPrimitive* tempPrimitive = (*it).second;
         ofSetColor( 255 );
+        material.begin();
         tempPrimitive->draw();
+        material.end();
         
+        ofDisableLighting();
         ofSetColor( 111,11,111);
         ofPoint textPosition = statesPositionsCenters[ stateIndex ];
         string textState = statesNames[ (*it).first ] ;
         ofDrawBitmapString( textState , textPosition );
         
-        ofSetColor( 200 , 20 , 20  );
+        ofSetColor( 40 , 40 , 200  );
         textPosition = statesPositionsInits[ stateIndex ];
         textState = "ini = " + ofToString( statesPercentageStarts[ (*it).first ] );
         ofDrawBitmapString( textState , textPosition );
         
-        ofSetColor( 20 , 20 , 200  );
+        ofSetColor( 200 , 40 , 40  );
         textPosition = statesPositionsEnds[ stateIndex ];
         textState =  + "end = " + ofToString( statesPercentageEnds[ (*it).first ] );
         ofDrawBitmapString( textState , textPosition );
+        
+        ofEnableLighting();
         
         it++;
         stateIndex++;
@@ -179,9 +233,7 @@ void KafkaStatesMachineView::draw(){
     int numTransitions = transitionStateNameInitial.size();
     
     for( int t = 0 ; t < numTransitions ; t ++ ){
-        int indexStateInitial   = getStateIndex( transitionStateNameInitial[transitionIndex] );
-        int indexStateFinal     = getStateIndex( transitionStateNameFinal[transitionIndex] );
-        
+        ofDisableLighting();
         ofSetColor( transitionsColors[transitionIndex ]  );
         ofDrawBezier( transitionsPositionsInits[ t ].x , transitionsPositionsInits[ t ].y , transitionsPositionsInits[ t ].z ,
                      transitionsPositionsCenters[ t ].x - deltaBezierX , transitionsPositionsCenters[ t ].y - deltaBezierY , transitionsPositionsCenters[ t ].z ,
@@ -191,11 +243,12 @@ void KafkaStatesMachineView::draw(){
         ofSetColor( 40 , 40 , 200  );
         ofDrawSphere(transitionsPositionsInits[ t ].x , transitionsPositionsInits[ t ].y , transitionsPositionsInits[ t ].z , machineVideoSize.x / 12);
         ofSetColor( transitionsColors[ t ] );
-        ofDrawSphere(transitionsPositionsCenters[ t ].x , transitionsPositionsCenters[ t ].y , transitionsPositionsCenters[ t ].z , machineVideoSize.x / 8);
+        ofDrawSphere(transitionsPositionsCenters[ t ].x , transitionsPositionsCenters[ t ].y , transitionsPositionsCenters[ t ].z , machineVideoSize.x / 6);
         ofSetColor( 200 , 40 , 40  );
         ofDrawSphere(transitionsPositionsEnds[ t ].x , transitionsPositionsEnds[ t ].y , transitionsPositionsEnds[ t ].z  , machineVideoSize.x / 12);
-        
+        ofSetColor( 10 , 50 , 10  );
         ofDrawBitmapString( ofToString( transitionStateProbabilities[ transitionIndex ]), transitionsPositionsCenters[ t ] );
+        ofEnableLighting();
         transitionIndex++;
     }
     
@@ -209,6 +262,8 @@ void KafkaStatesMachineView::draw(){
         ofDrawBitmapString( textState , textPosition );
     }
     ofPopMatrix();
+    ofDisableLighting();
+    ofDisableDepthTest();
     ofSetColor( 255 );
 }
 //----------------------------------------------------------------------------------
@@ -476,6 +531,12 @@ bool KafkaStatesMachineView::setCurrentState( string stateName ){
     }
     return false;
 }
+//-----------------------------------------------------------
+void KafkaStatesMachineView::updateViewDataVideo( int theActiveVideoIndex , ofVideoPlayer* theCurrentVideo ){
+    activeVideoIndex = theActiveVideoIndex;
+    currentVideo = theCurrentVideo;
+    textureFromVideo = theCurrentVideo->getTexture();
+}
 //-------------------------------------------------------------
 //-------------------------------------------------------------
 //private
@@ -493,3 +554,4 @@ int KafkaStatesMachineView::getStateIndex( string name){
             return s;
     return -1;
 }
+

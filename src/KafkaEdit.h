@@ -31,9 +31,7 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
-    float getPosition();
     bool isMachineActive();
-    
     
     //machines
     KafkaStatesMachine* machine;
