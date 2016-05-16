@@ -19,17 +19,9 @@ void KafkaEdit::setup( string machineName , string machineFileName  , int theNum
     machineController = new KafkaStatesMachineController( machine , machineFileName  , theNumVideos );
 }
 //--------------------------------------------------------------
-//void KafkaEdit::update( float theEnergy , float theVolume ){
-//    energy = theEnergy;
-//    if( machines[0]->justFinishidState() )
-//        for( int m = 0 ; m < machines.size() ; m++)
-//            if(machines[m] && machines[m]->isAtcive() )
-//                machines[m]->updateStates(theEnergy);
-//    
-//    for( int mc = 0 ; mc < machinesControllers.size() ; mc++)
-//        if(machinesControllers[mc])
-//            machinesControllers[mc]->update();
-//}
+void KafkaEdit::update(){
+    machineController->update();
+}
 //--------------------------------------------------------------
 void KafkaEdit::draw(){
     machineController->drawView();

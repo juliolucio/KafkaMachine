@@ -11,8 +11,9 @@
 
 #include <stdio.h>
 #include "ofMain.h"
-typedef enum { MACHINE_VIEW_TYPE_SPHERES ,
+typedef enum {
     MACHINE_VIEW_TYPE_BOXES,
+    MACHINE_VIEW_TYPE_SPHERES,
     MACHINE_VIEW_TYPE_PLANES} KafkeMachineViewType;
 
 class KafkaStatesMachineView{
@@ -30,13 +31,17 @@ private:
     ofVec3f machineOrigen;
     ofVec3f machineSize;
     ofVec3f machineVideoSize;
+    ofVec3f machineCenter;
     
     vector<ofVec3f> machineVideosPositions;
     map<int,ofBoxPrimitive*> videosBoxesPrimitives;
     vector<ofColor> videosColors;
+    int primitivesSpacign;
     
     //states
-    map<int,of3dPrimitive*> states;
+    map<int,of3dPrimitive*> statePrimitive01;
+    map<int,of3dPrimitive*> statePrimitive02;
+    map<int,vector<ofMeshFace>> statePrimitiveTriangles;
     vector<string> statesNames;
     
     vector<int> statesVideoIndexes;
@@ -63,6 +68,10 @@ private:
     vector<ofVec3f> transitionsPositionsCenters;
     vector<ofVec3f> transitionsPositionsInits;
     vector<ofVec3f> transitionsPositionsEnds;
+    vector<ofVec3f> transitionsPositionsInitsCenters01;
+    vector<ofVec3f> transitionsPositionsInitsCenters02;
+    vector<ofVec3f> transitionsPositionsCentersEnds01;
+    vector<ofVec3f> transitionsPositionsCentersEnds02;
     
     int stateCurrent;
     int statePrevious;
@@ -74,30 +83,34 @@ private:
     ifstream* fileIn;
     
     bool isItActive;
+    
     void clear();
     int getStateIndex( string name );
-    vector<ofMeshFace> triangles;
     
     ofTrueTypeFont font;
     
     ofVideoPlayer* currentVideo;
     int activeVideoIndex;
     
-    //texturing and lighting
+    ofVec3f positionOrigin;
+    ofVec3f videoPlanePosition;
+    ofVec3f positionPointLight01;
+    ofVec3f positionPointLight02;
+    ofVec3f positionPointLight03;
+
     ofMaterial material;
     ofTexture textureFromVideo;
-    ofLight pointLight;
-    ofLight pointLight2;
-    ofLight pointLight3;
-    ofLight pointLightTime;
+    ofLight pointLight01;
+    ofLight pointLight02;
+    ofLight pointLight03;
 
-    
     
 public:
     KafkaStatesMachineView( string theName , int numVideos );
     ~KafkaStatesMachineView();
     bool addState( string theName , int videoIndex , float theEnergy , float thePercentageStart , float thePercentageEnd  );
     bool addTransition( string nameState01 , string nameState02 , float theProbability );
+    void update();
     void draw();
     bool load( string fileName );
     bool loadFromTSV( string fileName );

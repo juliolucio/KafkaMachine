@@ -24,6 +24,7 @@ void KafkaStatesMachineController::update(){
     machineView->setActive(machineReference->isAtcive());
     if( machineReference->justChangedState())
         machineView->setCurrentState(machineReference->getCurrentStateName());
+    machineView->update();
 }
 //-------------------------------------------------------------
 void KafkaStatesMachineController::drawView(){

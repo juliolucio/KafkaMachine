@@ -18,7 +18,7 @@ public:
     ~KafkaEdit();
     
     void setup( string machineName , string machineFileName , int theNumVideos );
- //   void update( float theEnergy , float theVolume  );
+    void update( );
     void draw();
     
     void keyPressed  (int key);

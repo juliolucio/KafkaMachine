@@ -3,7 +3,7 @@
 void ofApp::setup(){
     setupGUI();
     
-    ofBackground(125,125,125);
+    ofBackground(140,140,160);
     ofSetVerticalSync(true);
     
      
@@ -77,7 +77,8 @@ void ofApp::setup(){
     }
     isFirstTime = true;
 
-    edit.setup( "MACHINE_BOAT" , "machines/machinesTest/Machine_Scene_14_Boat_01.tsv" , videos.size() );
+    //edit.setup( "MACHINE_BOAT" , "machines/machinesTest/Machine_Scene_14_Boat_01.tsv" , videos.size() );
+    edit.setup( "MACHINE_BOAT" , "machines/machinesTest/MachineB.tsv" , videos.size() );
     
     videoSelected = edit.machine->getCurrentStateVideoIndex();
     currentVideo = videos[ videoSelected ];
@@ -111,7 +112,7 @@ void ofApp::setupGUI(){
     
     gui.add( sliderCutMinimumLenghtMilli.setup("Min cut llenght", 2000, 1000, 50000 ));
     gui.add( sliderCutMaximusLenghtMilli.setup("Max cut llenght", 8000, 1000, 50000  ));
-    gui.add( sliderBrightness.setup("Brightness", 2, 0, 10 ) );
+    gui.add( sliderBrightness.setup("Brightness", 1, 1, 20 ) );
 }
 //--------------------------------------------------------------
 void ofApp::sliderCutMinimumLenghtMilliChanged(int &sliderCutMinimumLenghtMilli){
@@ -134,6 +135,8 @@ void ofApp::update(){
     else
         if( currentVideoPositionMilli >= cutEndPositionMilli )
             hasFinishedPlaying = true;
+    
+    edit.update();
     currentVideo.update();
     
     pixelsVideo = currentVideo.getPixels();
@@ -169,6 +172,7 @@ void ofApp::updateClosedMachine(){
     currentVideo.setPosition( cutStartPositionPercent );
     currentVideo.play();
     
+    edit.machineController->update();
     edit.machineController->updateViewDataVideo( videoSelected , &currentVideo );
     
     hasFinishedPlaying = false;

@@ -21,15 +21,16 @@ KafkaStatesMachineView::KafkaStatesMachineView( string theName , int theNumVideo
     fileIn = 0;
     fileOut = 0;
     isItActive = true;
-    
-    deltaBezierX = 100;
-    deltaBezierY = 100;
-    
-    machineGap = 100;
+    primitivesSpacign = 3;
+    machineGap = 80;
     
     machineSize         = ofVec3f( ofGetWidth() - 2 * machineGap , ofGetHeight() - 2 * machineGap ,  ofGetHeight() - 2 * machineGap );
     machineOrigen       = ofVec3f( machineGap , machineGap , 0 );
     machineVideoSize    = ofVec3f( ( machineSize.x - (( numVideos - 1 ) * machineGap )) / numVideos , machineSize.y , ( machineSize.x - (( numVideos - 1 ) * machineGap )) / numVideos );
+    machineCenter = ofVec3f( ofGetWidth() / 2 , ofGetHeight()/2, 0 );
+    
+    deltaBezierX = machineVideoSize.x;
+    deltaBezierY = machineVideoSize.x;
     
     for( int videoIndex = 0 ; videoIndex < numVideos ; videoIndex ++ ){
         ofVec3f thisVideoPosition = machineOrigen  + ofVec3f( videoIndex * ( machineVideoSize.x + machineGap ) , 0 , 0 );;
@@ -51,24 +52,24 @@ KafkaStatesMachineView::KafkaStatesMachineView( string theName , int theNumVideo
     
     //lights
     ofSetSmoothLighting(true);
-    pointLight.setDiffuseColor( ofFloatColor(.6, .6, .7) );
-    pointLight.setSpecularColor( ofFloatColor(1.f, 1.f, 1.f));
+    pointLight01.setDiffuseColor( ofFloatColor( .8 , .5 , .7 ) );
+    pointLight01.setSpecularColor( ofFloatColor( .7 , .4 , .6 ) );
+
+    pointLight02.setDiffuseColor( ofFloatColor( .6, .5, .8 ) );
+    pointLight02.setSpecularColor(ofFloatColor(.5 , .4 , .7 ) );
     
-    pointLight2.setDiffuseColor( ofFloatColor( 238.f/255.f, 57.f/255.f, 135.f/255.f ));
-    pointLight2.setSpecularColor(ofFloatColor(.8f, .8f, .9f));
+    pointLight03.setDiffuseColor( ofFloatColor( .8 , .8, .9 ) );
+    pointLight03.setSpecularColor( ofFloatColor( 1 , 1 , 1 ) );
     
-    pointLight3.setDiffuseColor( ofFloatColor(19.f/255.f,94.f/255.f,77.f/255.f) );
-    pointLight3.setSpecularColor( ofFloatColor(18.f/255.f,150.f/255.f,135.f/255.f) );
-    
-    pointLightTime.setDiffuseColor(ofFloatColor(.85, .85, .55) );
-    pointLightTime.setSpecularColor( ofFloatColor(1.f, 1.f, 1.f));
-    
+    pointLight01.enable();
+    pointLight02.enable();
+    pointLight03.enable();
+
     //material
     material.setShininess( 120 );
     material.setSpecularColor(ofColor(255, 255, 255, 255));
     
     videoPlaneHorizontal.rotate( 90 , 1 , 0 , 0 );
-
 }
 //-------------------------------------------------------------
 KafkaStatesMachineView::~KafkaStatesMachineView(){
@@ -95,37 +96,62 @@ bool KafkaStatesMachineView::addState( string theName , int theVideoIndex , floa
     statesPositionsInits    .push_back( positionObjectInit );
     statesPositionsEnds     .push_back( positionObjectEnd );
     
-    of3dPrimitive* primitive;
+    of3dPrimitive* primitive01;
+    of3dPrimitive* primitive02;
+    vector<ofMeshFace> triangles;
     
     switch ( type ) {
         case MACHINE_VIEW_TYPE_BOXES:{
             ofBoxPrimitive* box = new ofBoxPrimitive();
-            box->setWidth( machineVideoSize.x - 5 );
-            box->setHeight( statePrimitiveHeight );
-            box->setDepth( machineVideoSize.z - 5 );
+            box->setWidth( machineVideoSize.x - primitivesSpacign );
+            box->setHeight( statePrimitiveHeight - primitivesSpacign );
+            box->setDepth( machineVideoSize.z - primitivesSpacign );
             box->setPosition( positionPrimitive );
-            box->setResolution( 3 );
-            primitive = box;
+            box->setResolution( 1,1,1 );
+            box->setMode( OF_PRIMITIVE_TRIANGLES );
+            ofBoxPrimitive* box2 = new ofBoxPrimitive();
+            box2->setWidth( machineVideoSize.x  );
+            box2->setHeight( statePrimitiveHeight - primitivesSpacign );
+            box2->setDepth( machineVideoSize.z );
+            box2->setPosition( positionPrimitive );
+            box2->setResolution( 1,1,1 );
+            
+            primitive01 = box;
+            primitive02 = box;
         }
             break;
             
             
         case MACHINE_VIEW_TYPE_SPHERES:{
             ofIcoSpherePrimitive* sphere = new ofIcoSpherePrimitive();
-            sphere->setRadius( statePrimitiveHeight  );
-            sphere->setPosition( positionPrimitive );
+            sphere->setRadius( machineVideoSize.x / 2 - primitivesSpacign );
+            sphere->setPosition( positionPrimitive - primitivesSpacign );
             sphere->setResolution( 3 );
-            primitive = sphere;
+            sphere->setMode( OF_PRIMITIVE_TRIANGLES );
+            ofIcoSpherePrimitive* sphere2 = new ofIcoSpherePrimitive();
+            sphere2->setRadius( machineVideoSize.x / 2 - primitivesSpacign  );
+            sphere2->setPosition( positionPrimitive - primitivesSpacign );
+            sphere2->setResolution( 3 );
+            primitive01 = sphere;
+            primitive02 = sphere2;
         }
             break;
+            
+
             
             
         case MACHINE_VIEW_TYPE_PLANES:{
             ofPlanePrimitive* plane = new ofPlanePrimitive();
-            plane->setWidth( machineVideoSize.x - 5 );
-            plane->setHeight( statePrimitiveHeight );
+            plane->setWidth( machineVideoSize.x - primitivesSpacign );
+            plane->setHeight( statePrimitiveHeight - primitivesSpacign );
             plane->setPosition( positionPrimitive );
-            primitive = plane;
+            plane->setMode( OF_PRIMITIVE_TRIANGLES );
+            ofPlanePrimitive* plane2 = new ofPlanePrimitive();
+            plane2->setWidth( machineVideoSize.x );
+            plane2->setHeight( statePrimitiveHeight );
+            plane2->setPosition( positionPrimitive );
+            primitive01 = plane;
+            primitive02 = plane2;
         }
             break;
             
@@ -133,7 +159,10 @@ bool KafkaStatesMachineView::addState( string theName , int theVideoIndex , floa
             cout << " ERROR @@@ :bad machine view type\n";
             return;
     }
-    states.insert(pair<int,of3dPrimitive*>(states.size(),primitive));
+    triangles = primitive01->getMesh().getUniqueFaces();
+    statePrimitiveTriangles.insert(pair<int,vector<ofMeshFace>>(statePrimitive01.size(),triangles));
+    statePrimitive01.insert(pair<int,of3dPrimitive*>(statePrimitive01.size(),primitive01));
+    statePrimitive02.insert(pair<int,of3dPrimitive*>(statePrimitive02.size(),primitive02));
     
     if( stateCurrent == -1 )
         stateCurrent = 0;
@@ -144,8 +173,44 @@ bool KafkaStatesMachineView::addTransition( string nameState01 , string nameStat
     ofVec3f initTransitionPosition = statesPositionsEnds[ getStateIndex( nameState01 ) ];
     ofVec3f endTransitionPosition = statesPositionsInits[ getStateIndex( nameState02 ) ];
     ofVec3f distVector = endTransitionPosition - initTransitionPosition;
-    ofVec3f centerTransitionPosition =  initTransitionPosition + distVector * .5;
-    //centerTransitionPosition -= ofVec3f( ( 1 + transitionStateNameInitial.size() ) * deltaBezierX , 0 , 0 );
+    
+    int initVideoIndex = statesVideoIndexes[ getStateIndex( nameState01 )];
+    int endVideoIndex = statesVideoIndexes[ getStateIndex( nameState02 )];
+    
+    ofVec3f centerTransitionPosition;
+    ofVec3f transitionPositionInitsCenter01;
+    ofVec3f transitionPositionInitsCenter02;
+    ofVec3f transitionPositionCentersEnd01;
+    ofVec3f transitionPositionCentersEnd02;
+    
+    
+    if( initVideoIndex < endVideoIndex ){
+        centerTransitionPosition =  initTransitionPosition + distVector * .5;
+        
+        transitionPositionInitsCenter01 = initTransitionPosition + ofVec3f( 0 , deltaBezierY , 0 );
+        transitionPositionInitsCenter02 = transitionPositionInitsCenter01 + ofVec3f( deltaBezierX , 0 , 0 );
+        
+        transitionPositionCentersEnd02 = endTransitionPosition + ofVec3f( 0 , -deltaBezierY  , 0 );
+        transitionPositionCentersEnd01 = transitionPositionCentersEnd02 + ofVec3f( -deltaBezierX , 0 , 0 );
+    }
+    else if( initVideoIndex > endVideoIndex ){
+        centerTransitionPosition =  initTransitionPosition + distVector * .5;
+        
+        transitionPositionInitsCenter01 = initTransitionPosition + ofVec3f( 0 , deltaBezierY , 0 );
+        transitionPositionInitsCenter02 = transitionPositionInitsCenter01 + ofVec3f( -deltaBezierX , 0 , 0 );
+        
+        transitionPositionCentersEnd02 = endTransitionPosition + ofVec3f( 0 , -deltaBezierY  , 0 );
+        transitionPositionCentersEnd01 = transitionPositionCentersEnd02 + ofVec3f( deltaBezierX , 0 , 0 );
+    }
+    else {
+        centerTransitionPosition =  initTransitionPosition + distVector * .5 + ofVec3f( -deltaBezierX , 0 ,0 );
+        
+        transitionPositionInitsCenter01 = initTransitionPosition + ofVec3f( 0 , deltaBezierY , 0 );
+        transitionPositionInitsCenter02 = transitionPositionInitsCenter01 + ofVec3f( -deltaBezierX , 0 , 0 );
+        
+        transitionPositionCentersEnd02 = endTransitionPosition + ofVec3f( 0 , -deltaBezierY  , 0 );
+        transitionPositionCentersEnd01 = transitionPositionCentersEnd02 + ofVec3f(-deltaBezierX , 0 , 0 );
+    }
     
     transitionStateNameInitial  .push_back( nameState01 );
     transitionStateNameFinal    .push_back( nameState02 );
@@ -154,86 +219,107 @@ bool KafkaStatesMachineView::addTransition( string nameState01 , string nameStat
     transitionsPositionsCenters .push_back( centerTransitionPosition );
     transitionsPositionsInits   .push_back( initTransitionPosition );
     transitionsPositionsEnds    .push_back( endTransitionPosition );
+    transitionsPositionsInitsCenters01.push_back( transitionPositionInitsCenter01 );
+    transitionsPositionsInitsCenters02.push_back( transitionPositionInitsCenter02 );
+    transitionsPositionsCentersEnds01.push_back( transitionPositionCentersEnd01 );
+    transitionsPositionsCentersEnds02.push_back( transitionPositionCentersEnd02 );
+    
     return true;
+}
+
+//-------------------------------------------------------------
+void KafkaStatesMachineView::update(){
+    positionOrigin = ofVec3f( - ofGetWidth() / 1.7 , - ofGetHeight() / 1.6 , 0 );
+
+    videoPlanePosition = machineVideosPositions[ activeVideoIndex ] + ofVec3f( 0 , currentVideo->getPosition() *  machineVideoSize.y ,  0  );
+    
+    positionPointLight01.x = machineCenter.x + cos( .5 * ofGetElapsedTimef() ) * machineSize.x;
+    positionPointLight01.y = machineCenter.y;
+    positionPointLight01.z = machineCenter.z + sin( .5 * ofGetElapsedTimef() ) * machineSize.x;
+    
+    positionPointLight02.x = machineCenter.x;
+    positionPointLight02.y = machineCenter.y + cos( .6 * ofGetElapsedTimef() ) * machineSize.x;
+    positionPointLight02.z = machineCenter.z + sin( .6 * ofGetElapsedTimef() ) * 2 * machineSize.x;
+    
+    positionPointLight03.x = machineCenter.x;
+    positionPointLight03.y = machineCenter.y + cos( .2 * ofGetElapsedTimef() ) * machineSize.x;
+    positionPointLight03.z = machineCenter.z + sin( .2 * ofGetElapsedTimef() ) * 2 * machineSize.x;
+    
+    pointLight01.setPosition( positionPointLight01 );
+    pointLight02.setPosition( positionPointLight02 );
+    pointLight03.setPosition( positionPointLight03 );
+    
+    videoPlaneHorizontal.setWidth( machineVideoSize.x + 20 );
+    videoPlaneHorizontal.setHeight( machineVideoSize.x + 30 );
+    videoPlaneHorizontal.setPosition( videoPlanePosition );
+
 }
 //-------------------------------------------------------------
 void KafkaStatesMachineView::draw(){
     if( !isItActive )
         return;
     
-    ofVec3f positionOrigin = ofVec3f( - ofGetWidth() / 1.7 , - ofGetHeight() / 1.6 , 0 );
-    ofVec3f videoPlanePosition = machineVideosPositions[ activeVideoIndex ] + ofVec3f( 0 , currentVideo->getPosition() *  machineVideoSize.y ,  0  );
-    ofVec3f positionPointLight01 = positionOrigin;
-    positionPointLight01.x +=  videoPlanePosition.x + cosf( 2 * ofGetElapsedTimef()  ) * machineVideoSize.x;
-    positionPointLight01.y += videoPlanePosition.y;
-    positionPointLight01.z += videoPlanePosition.z + sinf( 3 * ofGetElapsedTimef()  ) * machineVideoSize.x;
-    
-    ofVec3f positionPointLight02 = positionOrigin;
-    positionPointLight02.x +=  videoPlanePosition.x ;
-    positionPointLight02.y += videoPlanePosition.y + cosf( 5 * ofGetElapsedTimef()  ) * machineVideoSize.x;
-    positionPointLight02.z += videoPlanePosition.z + sinf( 2 * ofGetElapsedTimef()  ) * machineVideoSize.x;
-    
-    ofVec3f positionPointLight03 = positionOrigin;
-    positionPointLight03.x +=  videoPlanePosition.x + cosf( 4 * ofGetElapsedTimef()  ) * machineVideoSize.x;
-    positionPointLight03.y += videoPlanePosition.y + sinf( 1 * ofGetElapsedTimef()  ) * machineVideoSize.x;
-    positionPointLight03.z += videoPlanePosition.z;
-    
-    pointLight.setPosition( positionPointLight01 );
-    pointLight2.setPosition( positionPointLight02 );
-    pointLight3.setPosition( positionPointLight03 );
-    
-//    pointLight.draw();
-//    pointLight2.draw();
-//    pointLight3.draw();
-//    
-    videoPlaneHorizontal.setWidth( machineVideoSize.x + 10 );
-    videoPlaneHorizontal.setHeight( machineVideoSize.x + 10 );
-    videoPlaneHorizontal.setPosition( videoPlanePosition );
-    
     ofPushMatrix();
     ofTranslate( positionOrigin );
-    
     ofEnableDepthTest();
     
     currentVideo->draw( videoPlanePosition.x +  ( ( machineVideoSize.x + 10 ) * 1.33 ) / 2 , videoPlanePosition.y - ( machineVideoSize.x + 10  ) / 2 , ( machineVideoSize.x + 10 ) * 1.33 , machineVideoSize.x + 10 );
     
     ofEnableLighting();
-    pointLight.enable();
-    pointLight2.enable();
-    pointLight3.enable();
     
     material.begin();
     videoPlaneHorizontal.draw();
     material.end();
     
-    map< int,of3dPrimitive* >::iterator it = states.begin();
+    map< int,of3dPrimitive* >::iterator it01 = statePrimitive01.begin();
+    map< int,of3dPrimitive* >::iterator it02 = statePrimitive01.begin();
+    map<int,vector<ofMeshFace>>::iterator ittr = statePrimitiveTriangles.begin();
+    
     int stateIndex = 0;
-    while( it != states.end() ){
-        of3dPrimitive* tempPrimitive = (*it).second;
+    while( it01 != statePrimitive01.end() ){
+        of3dPrimitive* tempPrimitive01 = (*it01).second;
+        if( stateIndex == stateCurrent ){
+            vector<ofMeshFace> triangles = (*ittr).second;;
+            float angle = ofGetElapsedTimef() * 5;
+            float strength = (sin( angle+.25 )) * 10 ;
+            ofVec3f faceNormal;
+            for( int i = 0; i < triangles.size(); i++ ) {
+                faceNormal = triangles[i].getFaceNormal();
+                for(int j = 0; j < 3; j++ ) {
+                    triangles[i].setVertex( j, triangles[i].getVertex(j) + faceNormal * strength);
+                }
+            }
+            tempPrimitive01->getMesh().setFromTriangles( triangles );
+        }
+        
+        of3dPrimitive* tempPrimitive02 = (*it02).second;
         ofSetColor( 255 );
         material.begin();
-        tempPrimitive->draw();
+        tempPrimitive01->draw();
         material.end();
+        tempPrimitive02->drawWireframe();
         
         ofDisableLighting();
         ofSetColor( 111,11,111);
         ofPoint textPosition = statesPositionsCenters[ stateIndex ];
-        string textState = statesNames[ (*it).first ] ;
+        string textState = statesNames[ (*it01).first ] ;
         ofDrawBitmapString( textState , textPosition );
         
         ofSetColor( 40 , 40 , 200  );
         textPosition = statesPositionsInits[ stateIndex ];
-        textState = "ini = " + ofToString( statesPercentageStarts[ (*it).first ] );
+        textState = ofToString( statesPercentageStarts[ (*it01).first ] , 2 );
         ofDrawBitmapString( textState , textPosition );
         
         ofSetColor( 200 , 40 , 40  );
         textPosition = statesPositionsEnds[ stateIndex ];
-        textState =  + "end = " + ofToString( statesPercentageEnds[ (*it).first ] );
+        textState = ofToString( statesPercentageEnds[ (*it01).first ] , 2 );
         ofDrawBitmapString( textState , textPosition );
         
         ofEnableLighting();
         
-        it++;
+        it01++;
+        it02++;
+        ittr++;
         stateIndex++;
     }
     
@@ -241,19 +327,58 @@ void KafkaStatesMachineView::draw(){
     int numTransitions = transitionStateNameInitial.size();
     
     for( int t = 0 ; t < numTransitions ; t ++ ){
-        ofDisableLighting();
-        ofSetColor( transitionsColors[transitionIndex ]  );
-        ofDrawBezier( transitionsPositionsInits[ t ].x , transitionsPositionsInits[ t ].y , transitionsPositionsInits[ t ].z ,
-                     transitionsPositionsCenters[ t ].x - deltaBezierX , transitionsPositionsCenters[ t ].y - deltaBezierY , transitionsPositionsCenters[ t ].z ,
-                     transitionsPositionsCenters[ t ].x + deltaBezierX, transitionsPositionsCenters[ t ].y + deltaBezierY , transitionsPositionsCenters[ t ].z ,
-                     transitionsPositionsEnds[ t ].x , transitionsPositionsEnds[ t ].y , transitionsPositionsEnds[ t ].z  );
+        
+        //        ofDisableLighting();
+        
+        ofSetColor( 200 , 40 , 40  );
+        ofDrawSphere(transitionsPositionsInits[ t ].x , transitionsPositionsInits[ t ].y , transitionsPositionsInits[ t ].z , machineVideoSize.x / 12);
+        
+        ofDrawBezier(transitionsPositionsInits[ t ].x ,
+                     transitionsPositionsInits[ t ].y ,
+                     transitionsPositionsInits[ t ].z ,
+                     transitionsPositionsInitsCenters01[ t ].x ,
+                     transitionsPositionsInitsCenters01[ t ].y ,
+                     transitionsPositionsInitsCenters01[ t ].z ,
+                     transitionsPositionsInitsCenters02[ t ].x ,
+                     transitionsPositionsInitsCenters02[ t ].y ,
+                     transitionsPositionsInitsCenters02[ t ].z ,
+                     transitionsPositionsCenters[ t ].x ,
+                     transitionsPositionsCenters[ t ].y ,
+                     transitionsPositionsCenters[ t ].z  );
+        
+        ofSetColor( ofColor( 20 , ofMap( transitionStateProbabilities[ t ] , 0 , 1 , 120 , 255 ) , 20 ) );
+        ofDrawSphere(transitionsPositionsCenters[ t ].x , transitionsPositionsCenters[ t ].y , transitionsPositionsCenters[ t ].z , ofMap( transitionStateProbabilities[ t ] , 0 , 1 , 1 , machineVideoSize.x / 7 ) );
         
         ofSetColor( 40 , 40 , 200  );
-        ofDrawSphere(transitionsPositionsInits[ t ].x , transitionsPositionsInits[ t ].y , transitionsPositionsInits[ t ].z , machineVideoSize.x / 12);
-        ofSetColor( transitionsColors[ t ] );
-        ofDrawSphere(transitionsPositionsCenters[ t ].x , transitionsPositionsCenters[ t ].y , transitionsPositionsCenters[ t ].z , machineVideoSize.x / 6);
-        ofSetColor( 200 , 40 , 40  );
-        ofDrawSphere(transitionsPositionsEnds[ t ].x , transitionsPositionsEnds[ t ].y , transitionsPositionsEnds[ t ].z  , machineVideoSize.x / 12);
+        ofDrawSphere(transitionsPositionsEnds[ t ].x , transitionsPositionsEnds[ t ].y , transitionsPositionsEnds[ t ].z  , machineVideoSize.x / 12 );
+        ofDrawBezier(transitionsPositionsCenters[ t ].x ,
+                     transitionsPositionsCenters[ t ].y ,
+                     transitionsPositionsCenters[ t ].z ,
+                     transitionsPositionsCentersEnds01[ t ].x ,
+                     transitionsPositionsCentersEnds01[ t ].y ,
+                     transitionsPositionsCentersEnds01[ t ].z ,
+                     transitionsPositionsCentersEnds02[ t ].x ,
+                     transitionsPositionsCentersEnds02[ t ].y  ,
+                     transitionsPositionsCentersEnds02[ t ].z ,
+                     transitionsPositionsEnds[ t ].x ,
+                     transitionsPositionsEnds[ t ].y ,
+                     transitionsPositionsEnds[ t ].z  );
+        
+        
+        //        ofSetColor( ofColor( 20 , ofMap( transitionStateProbabilities[ t ] , 0 , 1 , 120 , 255 ) , 20 )   );
+        //        ofDrawSphere(transitionsPositionsInitsCenters01[ t ].x , transitionsPositionsInitsCenters01[ t ].y , transitionsPositionsInitsCenters01[ t ].z , machineVideoSize.x / 20);
+        //
+        //        ofSetColor( ofColor( 20 , ofMap( transitionStateProbabilities[ t ] , 0 , 1 , 120 , 255 ) , 20 )   );
+        //        ofDrawSphere(transitionsPositionsInitsCenters02[ t ].x , transitionsPositionsInitsCenters02[ t ].y , transitionsPositionsInitsCenters02[ t ].z , machineVideoSize.x / 20);
+        //
+        //        ofSetColor( ofColor( 20 , ofMap( transitionStateProbabilities[ t ] , 0 , 1 , 120 , 255 ) , 20 )   );
+        //        ofDrawSphere(transitionsPositionsCentersEnds01[ t ].x , transitionsPositionsCentersEnds01[ t ].y , transitionsPositionsCentersEnds01[ t ].z , machineVideoSize.x / 20);
+        //
+        //        ofSetColor( ofColor( 20 , ofMap( transitionStateProbabilities[ t ] , 0 , 1 , 120 , 255 ) , 20 )   );
+        //        ofDrawSphere(transitionsPositionsCentersEnds02[ t ].x , transitionsPositionsCentersEnds02[ t ].y , transitionsPositionsCentersEnds02[ t ].z , machineVideoSize.x / 20);
+        //
+        //
+        ofDisableLighting();
         ofSetColor( 10 , 50 , 10  );
         ofDrawBitmapString( ofToString( transitionStateProbabilities[ transitionIndex ]), transitionsPositionsCenters[ t ] );
         ofEnableLighting();
@@ -262,7 +387,7 @@ void KafkaStatesMachineView::draw(){
     
     for( int videoIndex = 0 ; videoIndex < numVideos ; videoIndex ++ ){
         ofSetColor(videosColors[ videoIndex]);
-        videosBoxesPrimitives[videoIndex]->drawWireframe();
+        //videosBoxesPrimitives[videoIndex]->drawWireframe();
         ofPoint textPosition = machineVideosPositions[videoIndex];
         string textState = "video = " + ofToString( videoIndex );
         textPosition.x -= machineVideoSize.x / 2;
@@ -270,6 +395,7 @@ void KafkaStatesMachineView::draw(){
         ofDrawBitmapString( textState , textPosition );
     }
     ofPopMatrix();
+
     ofDisableLighting();
     ofDisableDepthTest();
     ofSetColor( 255 );
@@ -411,7 +537,7 @@ bool KafkaStatesMachineView::loadFromTSV( string fileName ){
     int numStates;
     int numTransitions;
     long numFramesTotal;
-
+    
     
     (*fileIn) >> junk;
     if( junk != "States" ){
@@ -486,7 +612,7 @@ bool KafkaStatesMachineView::loadFromTSV( string fileName ){
         
         percentageStartCurrent = float(frameStartCurrent) / float(numFramesTotal);
         percentageEndCurrent = float(frameEndCurrent) / float(numFramesTotal);
-
+        
         addState( name , videoIndexCurrent , energyCurrent , percentageStartCurrent , percentageEndCurrent );
     }
     
@@ -521,13 +647,13 @@ bool KafkaStatesMachineView::loadFromTSV( string fileName ){
         fileIn->close();
         return false;
     }
-
+    
     
     for( int t = 0 ; t < numTransitions ; t ++ ){
         std::string stateNameInitial;
         std::string stateNameFinal;
         float probability;
-
+        
         (*fileIn) >> stateNameInitial;
         (*fileIn) >> stateNameFinal;
         (*fileIn) >> probability;
@@ -567,9 +693,17 @@ void KafkaStatesMachineView::updateViewDataVideo( int theActiveVideoIndex , ofVi
 //-------------------------------------------------------------
 //-------------------------------------------------------------
 void KafkaStatesMachineView::clear(){
-    for( int s = 0 ; s < states.size() ; s ++ )
-        delete states[s];
-    states.clear();
+    for( int s = 0 ; s < statePrimitive01.size() ; s ++ )
+        delete statePrimitive01[s];
+    statePrimitive01.clear();
+    
+    for( int s = 0 ; s < statePrimitive02.size() ; s ++ )
+        delete statePrimitive02[s];
+    statePrimitive02.clear();
+    
+    
+    //todo:Clear all object memory
+    //videosBoxesPrimitives
 }
 //-------------------------------------------------------------
 int KafkaStatesMachineView::getStateIndex( string name){
