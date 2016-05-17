@@ -16,6 +16,12 @@ KafkaStatesMachineController::KafkaStatesMachineController( KafkaStatesMachine* 
     machineView->loadFromTSV(fileName);
 }
 //-------------------------------------------------------------
+KafkaStatesMachineController::KafkaStatesMachineController( KafkaStatesMachine* theMachineReference , int theNumVideos ){
+    machineReference = theMachineReference;
+    machineView = new KafkaStatesMachineView( theMachineReference->getName() , theNumVideos );
+    machineView->loadFromMachine( theMachineReference );
+}
+//-------------------------------------------------------------
 KafkaStatesMachineController::~KafkaStatesMachineController(){
     clear();
 }

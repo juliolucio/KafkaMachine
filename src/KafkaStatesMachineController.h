@@ -24,6 +24,7 @@ private:
     
 public:
     KafkaStatesMachineController( KafkaStatesMachine* theMachineReference , string fileName , int numVideo );
+    KafkaStatesMachineController( KafkaStatesMachine* theMachineReference , int numVideo );
     ~KafkaStatesMachineController();
     void update();
     void drawView();

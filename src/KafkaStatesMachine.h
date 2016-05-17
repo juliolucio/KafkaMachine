@@ -36,9 +36,12 @@ public:
 
     bool load( string fileName );
     bool loadFromTSV( string fileName );
+    bool addStatesFormFile( string fileName , int videoIndex );
+    void fullPopulateTransitions();
     bool save( string fileName );
     void updateStates( float theEnergy);
     bool step();
+    bool stepRandom();
     void draw();
     string getName();
     string getCurrentStateName();
@@ -46,7 +49,11 @@ public:
     float getCurrentStateStart();
     float getCurrentStateEnd();
     float getCurrentStateEnergy();
-
+    int getNumStates();
+    int getNumTransition();
+    KafkaStatesMachineState* getState( int stateIndex );
+    KafkaStatesMachineTransition* getTransition( int transitionIndex );
+    
     void setActive( bool ifIsItActive );
     bool isAtcive();
     bool justChangedState();

@@ -77,18 +77,24 @@ void ofApp::setup(){
     }
     isFirstTime = true;
 
-    //edit.setup( "MACHINE_BOAT" , "machines/machinesTest/Machine_Scene_14_Boat_01.tsv" , videos.size() );
+    
+    
+    edit.setup( "MACHINE_BOAT" , "machines/machinesTest/Machine_Scene_14_Boat_01.tsv" , videos.size() );
     edit.setup( "MACHINE_BOAT" , "machines/machinesTest/MachineB.tsv" , videos.size() );
+    machineRandom.setup( "Machine_RANDOM" , videos.size() );
     
     videoSelected = edit.machine->getCurrentStateVideoIndex();
+    videoSelected = machineRandom.machine->getCurrentStateVideoIndex();
     currentVideo = videos[ videoSelected ];
     currentVideo.setSpeed( currentVideoSpeed );
     currentVideoDurationMilli = currentVideo.getDuration() * 1000;
     
     cutStartPositionPercent = edit.machine->getCurrentStateStart();
+    cutStartPositionPercent = machineRandom.machine->getCurrentStateStart();
     cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
     
     cutEndPositionMilli = edit.machine->getCurrentStateEnd() * currentVideoDurationMilli;
+    cutEndPositionMilli = machineRandom.machine->getCurrentStateEnd() * currentVideoDurationMilli;
     cutLenghtMilli = cutEndPositionMilli - cutStartPositionMilli;
     
     currentVideo.setPosition( cutStartPositionPercent );
@@ -97,6 +103,8 @@ void ofApp::setup(){
     textureVideo.allocate( currentVideo.getWidth() , currentVideo.getHeight() ,GL_RGB );
     
     edit.machineController->updateViewDataVideo( videoSelected , &currentVideo );
+    machineRandom.machineController->updateViewDataVideo( videoSelected , &currentVideo );
+
     
     //Camera
     camera = new ofEasyCam();
@@ -129,14 +137,16 @@ void ofApp::sliderBrightnessChanged(int &sliderBright ){
 //--------------------------------------------------------------
 void ofApp::update(){
     if( hasFinishedPlaying ){
-        updateALeatorio();
-        updateClosedMachine();
+        //updateAleatorio();
+        updateRandom();
+        //updateClosedMachine();
     }
     else
         if( currentVideoPositionMilli >= cutEndPositionMilli )
             hasFinishedPlaying = true;
     
     edit.update();
+    machineRandom.update();
     currentVideo.update();
     
     pixelsVideo = currentVideo.getPixels();
@@ -153,10 +163,10 @@ void ofApp::update(){
 void ofApp::updateClosedMachine(){
     //stop previous video
     currentVideo.stop();
-    
+
     if( ! edit.machine->step() )
         cout << "Machine is closed fuckerssss!!!!!!";
-    
+  
     //chose a random next video
     videoSelected = edit.machine->getCurrentStateVideoIndex();
     currentVideo = videos[ videoSelected ];
@@ -178,7 +188,7 @@ void ofApp::updateClosedMachine(){
     hasFinishedPlaying = false;
 }
 //--------------------------------------------------------------
-void ofApp::updateALeatorio(){
+void ofApp::updateAleatorio(){
     //stop previous video
     currentVideo.stop();
     
@@ -210,19 +220,53 @@ void ofApp::updateALeatorio(){
     
     hasFinishedPlaying = false;
 }
+
+//--------------------------------------------------------------
+void ofApp::updateRandom(){
+    //stop previous video
+    currentVideo.stop();
+
+    if( ! machineRandom.machine->stepRandom() )
+        cout << "Machine is closed fuckerssss!!!!!!";
+    
+    //chose a random next video
+    videoSelected = machineRandom.machine->getCurrentStateVideoIndex();
+    currentVideo = videos[ videoSelected ];
+    currentVideo.setSpeed( currentVideoSpeed );
+    currentVideoDurationMilli = currentVideo.getDuration() * 1000;
+    
+    cutStartPositionPercent = machineRandom.machine->getCurrentStateStart();
+    cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
+    
+    cutEndPositionMilli = machineRandom.machine->getCurrentStateEnd() * currentVideoDurationMilli;
+    cutLenghtMilli = cutEndPositionMilli - cutStartPositionMilli;
+    
+    currentVideo.setPosition( cutStartPositionPercent );
+    currentVideo.play();
+    
+    machineRandom.machineController->update();
+    machineRandom.machineController->updateViewDataVideo( videoSelected , &currentVideo );
+    
+    hasFinishedPlaying = false;
+}
+
 //--------------------------------------------------------------
 void ofApp::draw(){
     //currentVideo.draw( 0 , 0 , ofGetWidth() , ofGetHeight() );
+    ofSetColor(255);
     textureVideo.draw( 0 , 0 , ofGetWidth() , ofGetHeight() );
     
     camera->begin();
-    edit.draw();
+    //machineRandom.draw();
+    //edit.draw();
     camera->end();
     
+    ofSetColor(255);
+    ofDisableLighting();
     drawDebugTimeline( 10 , ofGetHeight() - ofGetHeight() / 20  , ofGetWidth() - 20 , ofGetHeight() / 25 );
     drawDebugTimes( 20 , 180 );
     
-    gui.draw();
+    //gui.draw();
 }
 //--------------------------------------------------------------
 void ofApp::drawInteractionArea(){

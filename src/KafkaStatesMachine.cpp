@@ -101,6 +101,12 @@ bool KafkaStatesMachine::step(){
     }
 }
 //-------------------------------------------------------------
+bool KafkaStatesMachine::stepRandom(){
+    float dice = ofRandom( 0 , states.size() );
+    setCurrentState( states[ dice] );
+    return true;
+}
+//-------------------------------------------------------------
 void KafkaStatesMachine::updateStates( float theEnergy ){
     cout << "ERROROROROR:::NOT TO BE HERE JET\n";
     float dice = ofRandom( 0 , 1 );
@@ -109,8 +115,8 @@ void KafkaStatesMachine::updateStates( float theEnergy ){
     for( int t = 0 ; t < transitions.size() ; t ++ ){
         if( transitions[t]->getNameStateInitial() == currentState->getName() ){
             pair<float,KafkaStatesMachineTransition*> newPosibleTransition;
-            float energuiFinal = transitions[t]->getStateFinal()->getEnergy();
-            float energyInitial = transitions[t]->getStateInitial()->getEnergy();
+            float energuiFinal = transitions[t]->getStateFinal()->getEnergy01();
+            float energyInitial = transitions[t]->getStateInitial()->getEnergy01();
             
             if( theEnergy > 0.65 ){
                 if( energuiFinal > energyInitial ){
@@ -403,7 +409,119 @@ bool KafkaStatesMachine::loadFromTSV( string fileName ){
     fileIn->close();
     return true;
 }
+//-----------------------------------------------------------
+bool KafkaStatesMachine::addStatesFormFile( string fileName , int videoIndex ){
+    if( !fileIn )
+        fileIn = new ifstream();
+    
+    fileIn->open( ofToDataPath( fileName ).c_str() , std::ios_base::binary | std::ios_base::in );
+    if ( !fileIn->is_open() ){
+        cout << "Machine File not found: ";
+        cout << fileName << "\n";
+        fileIn->close();
+        return false;
+    }
+    
+    std::string junk;
+    int numStates;
+    long numFrames;
+    
+    (*fileIn) >> junk;
+    if( junk != "FramesTotal" ){
+        cout << "* KafkaStatesMachine  add states : Bad tag FramesTotal\n";
+        fileIn->close();
+        return false;
+    }
+    (*fileIn) >> numFrames;
+    
+    (*fileIn) >> junk;
+    if( junk != "NumCuts" ){
+        cout << "* KafkaStatesMachine  add states: Bad tag NumCuts\n";
+        fileIn->close();
+        return false;
+    }
+    (*fileIn) >> numStates;
+    
+    //crap tags
+    (*fileIn) >> junk;
+    if( junk != "CutEnds" ){
+        cout << "* KafkaStatesMachine  add states: Bad tag CutEnds\n";
+        fileIn->close();
+        return false;
+    }
+    
+    
+    (*fileIn) >> junk;
+    if( junk != "Energy01" ){
+        cout << "* KafkaStatesMachine  add states: Bad tag Energy01\n";
+        fileIn->close();
+        return false;
+    }
+    
+    
+    (*fileIn) >> junk;
+    if( junk != "Energy02" ){
+        cout << "* KafkaStatesMachine  add states: Bad tag Energy02\n";
+        fileIn->close();
+        return false;
+    }
+    
+    
+    (*fileIn) >> junk;
+    if( junk != "Energy03" ){
+        cout << "* KafkaStatesMachine  add states: Bad tag Energy03\n";
+        fileIn->close();
+        return false;
+    }
+    
+    float frameEnd;
+    for( int s = 0 ; s < numStates ; s ++ ){
+        float frameStart;
+        float energy01;
+        float energy03;
+        float energy02;
+        vector<float> params;
 
+        if( s == 0 ){
+            frameStart = 0;
+            (*fileIn) >> frameEnd;
+        }
+
+        else{
+            frameStart = frameEnd;
+            (*fileIn) >> frameEnd;
+        }
+        
+        (*fileIn) >> energy01;
+        (*fileIn) >> energy02;
+        (*fileIn) >> energy03;
+        
+        params.push_back( numFrames );
+        params.push_back( frameStart );
+        params.push_back( frameEnd );
+        params.push_back( energy01 );
+        params.push_back( energy02 );
+        params.push_back( energy03 );
+        
+        string stateName = "STATE_VIDEO_" + ofToString( videoIndex ) + "_CUT_" + ofToString( states.size() );
+        
+        KafkaStatesMachineState* newState = new KafkaStatesMachineState( stateName , videoIndex , params );
+        states.push_back(newState);
+        if( !currentState )
+            currentState = states[0];
+    }
+    fileIn->close();
+    return true;
+}
+//-----------------------------------------------------------
+void KafkaStatesMachine::fullPopulateTransitions(){
+    return;
+    //to mutch for big states
+    float equalTransitionProbability = 1.0f / float(states.size());
+    for( int sx = 0 ; sx < states.size() ; sx ++ )
+        for( int sy = 0 ; sy < states.size() ; sy ++ )
+            addTransition( states[sx]->getName() , states[sy]->getName(), equalTransitionProbability );
+}
 //-----------------------------------------------------------
 bool KafkaStatesMachine::save( string fileName ){
     if( !fileOut )
@@ -463,7 +581,7 @@ float KafkaStatesMachine::getCurrentStateEnd(){
 }
 //-----------------------------------------------------------
 float KafkaStatesMachine::getCurrentStateEnergy(){
-    return currentState->getEnergy();
+    return currentState->getEnergy01();
 }
 //-----------------------------------------------------------
 //-----------------------------------------------------------
@@ -482,7 +600,27 @@ bool KafkaStatesMachine::justChangedState(){
     }
     return false;
 }
-
+//-----------------------------------------------------------
+int KafkaStatesMachine::getNumStates(){
+    return states.size();
+}
+//-----------------------------------------------------------
+int KafkaStatesMachine::getNumTransition(){
+    return transitions.size();
+}
+//-----------------------------------------------------------
+KafkaStatesMachineState* KafkaStatesMachine::getState( int stateIndex ){
+    if( stateIndex < states.size() )
+        return states[ stateIndex ];
+    else return NULL;
+    
+}
+//-----------------------------------------------------------
+KafkaStatesMachineTransition* KafkaStatesMachine::getTransition( int transitionIndex ){
+    if( transitionIndex < transitions.size() )
+        return transitions[ transitionIndex ];
+    else return NULL;
+}
 //-----------------------------------------------------------
 void KafkaStatesMachine::setCurrentState( KafkaStatesMachineState* newState ){
     cout << "Machine : " << name << "  form " << currentState->getName();

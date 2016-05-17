@@ -11,6 +11,10 @@
 
 #include <stdio.h>
 #include "ofMain.h"
+#include "KafkaStatesMachine.h"
+#include "KafkaStatesMachineState.h"
+#include "KafkaStatesMachineTransition.h"
+
 typedef enum {
     MACHINE_VIEW_TYPE_BOXES,
     MACHINE_VIEW_TYPE_SPHERES,
@@ -114,6 +118,7 @@ public:
     void draw();
     bool load( string fileName );
     bool loadFromTSV( string fileName );
+    bool loadFromMachine( KafkaStatesMachine* machineRefernece );
     void setActive( bool ifIsItActive );
     bool setCurrentState( string stateName );
     void updateViewDataVideo( int activeVideoIndex , ofVideoPlayer* currentVideo );

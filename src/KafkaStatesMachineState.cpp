@@ -14,10 +14,15 @@ KafkaStatesMachineState::KafkaStatesMachineState(){
 KafkaStatesMachineState::KafkaStatesMachineState(  string theName ,int theVideoIndex , vector< float > params ){
     name = theName;
     videoIndex = theVideoIndex;
-    if( params.size() == 3 ){
-        energy = params[0];
-        percentStart = params[1];
-        percentEnd = params[2];
+    if( params.size() == 6 ){
+        float frames = params[0];;
+        frameStart = params[1];;
+        frameEnd = params[2];;
+        energy01 = params[3];;
+        energy03 = params[4];;
+        energy02 = params[5];;
+        percentStart = float(frameStart + 1) / float(frames);
+        percentEnd = float(frameEnd) / float(frames);
     }
 }
 //----------------------------------------------------------------------------------
@@ -25,8 +30,16 @@ string KafkaStatesMachineState::getName(){
     return name;
 }
 //----------------------------------------------------------------------------------
-float KafkaStatesMachineState::getEnergy(){
-    return energy;
+float KafkaStatesMachineState::getEnergy01(){
+    return energy01;
+}
+//----------------------------------------------------------------------------------
+float KafkaStatesMachineState::getEnergy02(){
+    return energy02;
+}
+//----------------------------------------------------------------------------------
+float KafkaStatesMachineState::getEnergy03(){
+    return energy03;
 }
 //----------------------------------------------------------------------------------
 int KafkaStatesMachineState::getVideoIndex(){
@@ -39,6 +52,14 @@ float KafkaStatesMachineState::getStart(){
 //----------------------------------------------------------------------------------
 float KafkaStatesMachineState::getEnd(){
     return percentEnd;
+}
+//----------------------------------------------------------------------------------
+float KafkaStatesMachineState::getFrameStart(){
+    return frameStart;
+}
+//----------------------------------------------------------------------------------
+float KafkaStatesMachineState::getFrameEnd(){
+    return frameEnd;
 }
 //----------------------------------------------------------------------------------
 bool KafkaStatesMachineState::load(std::ifstream* fileIn ){
@@ -63,7 +84,7 @@ bool KafkaStatesMachineState::load(std::ifstream* fileIn ){
         cout << "* KafkaStatesMachine  State load: Bad tag energy\n";
         return false;
     }
-    (*fileIn) >> energy;
+    (*fileIn) >> energy01;
     
     (*fileIn) >> junk;
     if( junk != "percentStart=" ){
@@ -93,7 +114,7 @@ bool KafkaStatesMachineState::loadFromTSV(std::ifstream* fileIn , long frames ){
     percentStart = float(frameStart + 1) / float(frames);
     percentEnd = float(frameEnd) / float(frames);
     
-    (*fileIn) >> energy;
+    (*fileIn) >> energy01;
     return true;
 }
 //-----------------------------------------------------------
@@ -107,7 +128,7 @@ bool KafkaStatesMachineState::save(std::ofstream* fileOut ){
     (*fileOut) << "\n";
     
     (*fileOut) << "energy= ";
-    (*fileOut) << energy;
+    (*fileOut) << energy01;
     (*fileOut) << "\n";
     
     (*fileOut) << "percentStart= ";

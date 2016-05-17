@@ -3,6 +3,8 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "KafkaEdit.h"
+#include "KafkaFullPopulatedMachine.h"
+
 
 class ofApp : public ofBaseApp{
     
@@ -25,7 +27,8 @@ public:
     void gotMessage(ofMessage msg);
     
     //updating modes
-    void updateALeatorio();
+    void updateAleatorio();
+    void updateRandom();
     void updateClosedMachine();
     long getcurrentVideoDurationMilli();
     
@@ -98,6 +101,7 @@ public:
     
     //composition
     KafkaEdit edit;
+    KafkaFullPopulatedMachine machineRandom;
     
     //gui
     ofxPanel gui;

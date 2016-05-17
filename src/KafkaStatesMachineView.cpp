@@ -401,6 +401,14 @@ void KafkaStatesMachineView::draw(){
     ofSetColor( 255 );
 }
 //----------------------------------------------------------------------------------
+bool KafkaStatesMachineView::loadFromMachine( KafkaStatesMachine* machineRefernece ){
+    for( int s = 0 ; s < machineRefernece->getNumStates() ; s ++ )
+        addState( machineRefernece->getState( s )->getName() , machineRefernece->getState( s )->getVideoIndex(), machineRefernece->getState( s )->getEnergy01(), machineRefernece->getState( s )->getStart(), machineRefernece->getState( s )->getEnd() );
+    
+    for( int t = 0 ; t < machineRefernece->getNumTransition() ; t ++ )
+        addTransition(  machineRefernece->getTransition( t )->getNameStateInitial() , machineRefernece->getTransition( t )->getNameStateFinal() , machineRefernece->getTransition( t )->getProbability() );
+}
+//----------------------------------------------------------------------------------
 bool KafkaStatesMachineView::load( string fileName ){
     if( !fileIn )
         fileIn = new ifstream();

@@ -16,22 +16,26 @@ class KafkaStatesMachineState{
 private:
     string name;
     int  videoIndex;
-    float energy;
+    float energy01;
+    float energy02;
+    float energy03;
     float percentStart;
     float percentEnd;
     long frameStart;
     long frameEnd;
-
+    
 public:
     KafkaStatesMachineState( );
     KafkaStatesMachineState( string theName ,int theVideoIndex, vector< float > params );
     string getName();
-    float getEnergy();
+    float getEnergy01();
+    float getEnergy02();
+    float getEnergy03();
     int getVideoIndex();
     float getStart();
     float getEnd();
-    
-    
+    float getFrameStart();
+    float getFrameEnd();
     bool load( std::ifstream* fileIn );
     bool loadFromTSV( std::ifstream* fileIn , long frames );
     bool save( std::ofstream* fileIn );
