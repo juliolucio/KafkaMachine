@@ -60,7 +60,8 @@ public:
     ofVideoPlayer   america;
     ofVideoPlayer   boat;
     
-    ofVideoPlayer   currentVideo;
+    ofVideoPlayer*   currentVideo;
+    ofVideoPlayer*   previousVideo;
     
     std::vector< ofVideoPlayer> videos;
     

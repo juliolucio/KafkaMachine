@@ -21,8 +21,8 @@ KafkaStatesMachineView::KafkaStatesMachineView( string theName , int theNumVideo
     fileIn = 0;
     fileOut = 0;
     isItActive = true;
-    primitivesSpacign = 3;
-    machineGap = 80;
+    primitivesSpacign = 4;
+    machineGap = 120;
     
     machineSize         = ofVec3f( ofGetWidth() - 2 * machineGap , ofGetHeight() - 2 * machineGap ,  ofGetHeight() - 2 * machineGap );
     machineOrigen       = ofVec3f( machineGap , machineGap , 0 );
@@ -53,17 +53,17 @@ KafkaStatesMachineView::KafkaStatesMachineView( string theName , int theNumVideo
     //lights
     ofSetSmoothLighting(true);
     pointLight01.setDiffuseColor( ofFloatColor( .8 , .5 , .7 ) );
-    pointLight01.setSpecularColor( ofFloatColor( .7 , .4 , .6 ) );
+    pointLight01.setSpecularColor( ofFloatColor( .5 , .5 , .5 ) );
 
     pointLight02.setDiffuseColor( ofFloatColor( .6, .5, .8 ) );
-    pointLight02.setSpecularColor(ofFloatColor(.5 , .4 , .7 ) );
+    pointLight02.setSpecularColor(ofFloatColor(.5 , .5 , .5 ) );
     
-    pointLight03.setDiffuseColor( ofFloatColor( .8 , .8, .9 ) );
-    pointLight03.setSpecularColor( ofFloatColor( 1 , 1 , 1 ) );
+//    pointLight03.setDiffuseColor( ofFloatColor( .8 , .8, .9 ) );
+//    pointLight03.setSpecularColor( ofFloatColor( 1 , 1 , 1 ) );
     
     pointLight01.enable();
     pointLight02.enable();
-    pointLight03.enable();
+//    pointLight03.enable();
 
     //material
     material.setShininess( 120 );
@@ -237,17 +237,17 @@ void KafkaStatesMachineView::update(){
     positionPointLight01.y = machineCenter.y;
     positionPointLight01.z = machineCenter.z + sin( .5 * ofGetElapsedTimef() ) * machineSize.x;
     
-    positionPointLight02.x = machineCenter.x;
-    positionPointLight02.y = machineCenter.y + cos( .6 * ofGetElapsedTimef() ) * machineSize.x;
-    positionPointLight02.z = machineCenter.z + sin( .6 * ofGetElapsedTimef() ) * 2 * machineSize.x;
+    positionPointLight02.x = machineCenter.x + cos( PI + .5 * ofGetElapsedTimef() ) * machineSize.x;
+    positionPointLight02.y = machineCenter.y;
+    positionPointLight02.z = machineCenter.z + sin( PI + .5 * ofGetElapsedTimef() ) * machineSize.x;
     
-    positionPointLight03.x = machineCenter.x;
-    positionPointLight03.y = machineCenter.y + cos( .2 * ofGetElapsedTimef() ) * machineSize.x;
-    positionPointLight03.z = machineCenter.z + sin( .2 * ofGetElapsedTimef() ) * 2 * machineSize.x;
+//    positionPointLight03.x = machineCenter.x;
+//    positionPointLight03.y = machineCenter.y + cos( .2 * ofGetElapsedTimef() ) * machineSize.x;
+//    positionPointLight03.z = machineCenter.z + sin( .2 * ofGetElapsedTimef() ) * 2 * machineSize.x;
     
     pointLight01.setPosition( positionPointLight01 );
     pointLight02.setPosition( positionPointLight02 );
-    pointLight03.setPosition( positionPointLight03 );
+//    pointLight03.setPosition( positionPointLight03 );
     
     videoPlaneHorizontal.setWidth( machineVideoSize.x + 20 );
     videoPlaneHorizontal.setHeight( machineVideoSize.x + 30 );
@@ -281,7 +281,7 @@ void KafkaStatesMachineView::draw(){
         if( stateIndex == stateCurrent ){
             vector<ofMeshFace> triangles = (*ittr).second;;
             float angle = ofGetElapsedTimef() * 5;
-            float strength = (sin( angle+.25 )) * 10 ;
+            float strength = (sin( angle+.25 )) * 20 ;
             ofVec3f faceNormal;
             for( int i = 0; i < triangles.size(); i++ ) {
                 faceNormal = triangles[i].getFaceNormal();

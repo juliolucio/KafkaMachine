@@ -488,7 +488,7 @@ bool KafkaStatesMachine::addStatesFormFile( string fileName , int videoIndex ){
         }
 
         else{
-            frameStart = frameEnd;
+            frameStart = frameEnd + 1;
             (*fileIn) >> frameEnd;
         }
         
@@ -498,7 +498,7 @@ bool KafkaStatesMachine::addStatesFormFile( string fileName , int videoIndex ){
         
         params.push_back( numFrames );
         params.push_back( frameStart );
-        params.push_back( frameEnd );
+        params.push_back( frameEnd - 2 );
         params.push_back( energy01 );
         params.push_back( energy02 );
         params.push_back( energy03 );
@@ -514,14 +514,14 @@ bool KafkaStatesMachine::addStatesFormFile( string fileName , int videoIndex ){
     return true;
 }
 //-----------------------------------------------------------
-void KafkaStatesMachine::fullPopulateTransitions(){
-    return;
-    //to mutch for big states
-    float equalTransitionProbability = 1.0f / float(states.size());
-    for( int sx = 0 ; sx < states.size() ; sx ++ )
-        for( int sy = 0 ; sy < states.size() ; sy ++ )
-            addTransition( states[sx]->getName() , states[sy]->getName(), equalTransitionProbability );
-}
+//void KafkaStatesMachine::fullPopulateTransitions(){
+//    float equalTransitionProbability = 1.0f / float(states.size());
+//    for( int sx = 0 ; sx < states.size() ; sx ++ )
+//        for( int sy = 0 ; sy < states.size() ; sy ++ ){
+//            addTransition( states[sx]->getName() , states[sy]->getName(), equalTransitionProbability );
+//            cout << "Transition " << ofToString( transitions.size() ) << "\n";
+//        }
+//}
 //-----------------------------------------------------------
 bool KafkaStatesMachine::save( string fileName ){
     if( !fileOut )

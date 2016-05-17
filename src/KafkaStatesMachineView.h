@@ -100,13 +100,13 @@ private:
     ofVec3f videoPlanePosition;
     ofVec3f positionPointLight01;
     ofVec3f positionPointLight02;
-    ofVec3f positionPointLight03;
+//    ofVec3f positionPointLight03;
 
     ofMaterial material;
     ofTexture textureFromVideo;
     ofLight pointLight01;
     ofLight pointLight02;
-    ofLight pointLight03;
+//    ofLight pointLight03;
 
     
 public:
