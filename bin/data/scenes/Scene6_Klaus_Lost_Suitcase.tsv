@@ -1,5 +1,5 @@
 FramesTotal	10345		
-NumCuts	51		
+NumCuts	52
 CutEnds	Energy01	Energy02	Energy03
 297	0.5	0.5	0.5
 458	0.5	0.5	0.5
@@ -52,3 +52,4 @@ CutEnds	Energy01	Energy02	Energy03
 9491	0.5	0.5	0.5
 10338	0.5	0.5	0.5
 10345	0.5	0.5	0.5
+10373	0.5	0.5	0.5
