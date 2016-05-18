@@ -107,6 +107,12 @@ bool KafkaStatesMachine::stepRandom(){
     return true;
 }
 //-------------------------------------------------------------
+bool KafkaStatesMachine::stepEnergys(){
+    float dice = ofRandom( 0 , states.size() );
+    setCurrentState( states[ dice] );
+    return true;
+}
+//-------------------------------------------------------------
 void KafkaStatesMachine::updateStates( float theEnergy ){
     cout << "ERROROROROR:::NOT TO BE HERE JET\n";
     float dice = ofRandom( 0 , 1 );
@@ -613,7 +619,6 @@ KafkaStatesMachineState* KafkaStatesMachine::getState( int stateIndex ){
     if( stateIndex < states.size() )
         return states[ stateIndex ];
     else return NULL;
-    
 }
 //-----------------------------------------------------------
 KafkaStatesMachineTransition* KafkaStatesMachine::getTransition( int transitionIndex ){
@@ -626,10 +631,5 @@ void KafkaStatesMachine::setCurrentState( KafkaStatesMachineState* newState ){
     cout << "Machine : " << name << "  form " << currentState->getName();
     currentState = newState;
     cout << " to " << currentState->getName() << "\n";
-    //todocurrentState->sound.play();
     hasJustChangedState = true;
-    //todoif( isAtcive() )
-        //todocurrentState->sound.setVolume(volume);
-    //todoelse
-        //todocurrentState->sound.setVolume(0);
 }

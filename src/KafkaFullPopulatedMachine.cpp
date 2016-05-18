@@ -2,8 +2,7 @@
 //  KafkaFullPopulatedMachine.h
 //  KafkaFullPopulatedMachine
 //
-//  Created by Julio Lucio on 10/24/15.
-//
+//  Created by Julio Lucio on 10/April/2016.//
 //
 #include "KafkaFullPopulatedMachine.h"
 //--------------------------------------------------------------
@@ -11,6 +10,8 @@ KafkaFullPopulatedMachine::KafkaFullPopulatedMachine(){
 }
 //--------------------------------------------------------------
 KafkaFullPopulatedMachine::~KafkaFullPopulatedMachine(){
+    delete machine;
+    delete machineController;
 }
 //--------------------------------------------------------------
 void KafkaFullPopulatedMachine::setup( string machineName , int theNumVideos ){
@@ -37,31 +38,4 @@ void KafkaFullPopulatedMachine::update(){
 //--------------------------------------------------------------
 void KafkaFullPopulatedMachine::draw(){
     machineController->drawView();
-}
-//--------------------------------------------------------------
-void KafkaFullPopulatedMachine::keyPressed  (int key){
-}
-//--------------------------------------------------------------
-void KafkaFullPopulatedMachine::keyReleased(int key){
-}
-//--------------------------------------------------------------
-void KafkaFullPopulatedMachine::mouseMoved(int x, int y ){
-}
-//--------------------------------------------------------------
-void KafkaFullPopulatedMachine::mouseDragged(int x, int y, int button){
-}
-//--------------------------------------------------------------
-void KafkaFullPopulatedMachine::mousePressed(int x, int y, int button){
-}
-//--------------------------------------------------------------
-void KafkaFullPopulatedMachine::mouseReleased(int x, int y, int button){
-}
-//--------------------------------------------------------------
-void KafkaFullPopulatedMachine::windowResized(int w, int h){
-}
-//--------------------------------------------------------------
-void KafkaFullPopulatedMachine::gotMessage(ofMessage msg){
-}
-//--------------------------------------------------------------
-void KafkaFullPopulatedMachine::dragEvent(ofDragInfo dragInfo){
 }

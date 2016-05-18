@@ -2,18 +2,27 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
-#include "KafkaEdit.h"
+
 #include "KafkaFullPopulatedMachine.h"
+#include "KafkaClosedMachine.h"
 
 
-class ofApp : public ofBaseApp{
-    
+class ofApp: public ofBaseApp{
 public:
     
+    typedef enum {
+        APP_STATE_RANDOM,
+        APP_STATE_CLOSED_MACHINES,
+        APP_STATE_ENERGYS
+    }appStates;
+    
+
+    //loops
     void setup();
     void update();
     void draw();
     
+    //user interacion
     void keyPressed(int key);
     void keyReleased(int key);
     void mouseMoved(int x, int y );
@@ -27,9 +36,13 @@ public:
     void gotMessage(ofMessage msg);
     
     //updating modes
+    void setAppState( appStates theState  );
     void updateAleatorio();
     void updateRandom();
+    void updateEnergys();
     void updateClosedMachine();
+    
+    //timing
     long getcurrentVideoDurationMilli();
     
     //drawing
@@ -42,12 +55,7 @@ public:
     //camera
     void drawInteractionArea();
     
-    //gui
-    void setupGUI();
-    void sliderCutMinimumLenghtMilliChanged(int &sliderCutMinimumLenghtMilli);
-    void sliderCutMaximumLenghtMillihanged(int &sliderCutMaximumLenghtMilli );
-    void sliderBrightnessChanged(int &sliderBright );
-
+    //video
     ofVideoPlayer   bed_fight;
     ofVideoPlayer   karl_suitcase;
     ofVideoPlayer   access;
@@ -63,56 +71,92 @@ public:
     ofVideoPlayer*   currentVideo;
     ofVideoPlayer*   previousVideo;
     
+    ofTexture textureVideo;
+    ofPixels pixelsVideo;
     std::vector< ofVideoPlayer> videos;
+    int             videoSelected;
     
+    //control flags
     bool            hasFinishedPlaying;
     bool            isFirstTime;
     bool            isFirstTimeUpdateAleatorio;
     
-    int             videoSelected;
-    
+    //timing
     long            cutLenghtMilli;
     
-    float           cutStartPositionPercent;
     long            cutStartPositionMilli;
-    
     long            cutEndPositionMilli;
     
-    long            cutMinimumLenghtMilli;
-    long            cutMaximusLenghtMilli;
-    
-    
     long            currentVideoDurationMilli;
+    long            currentVideoPositionMilli;
     
     float           currentVideoPositionNormalized;
-    long            currentVideoPositionMilli;
-
+    float           cutStartPositionPercent;
+    
     float           currentVideoSpeed;
     
-    long            currentVideoBrightness;
-    
     float           delataEnd;
-    
-    ofPixels        pixelsVideo;
     
     ofTrueTypeFont  font;
     
     //camera
     ofEasyCam* camera;
     
-    //composition
-    KafkaEdit edit;
-    KafkaFullPopulatedMachine machineRandom;
+    //machines for modes
+    vector<KafkaClosedMachine*> machinesClosed;
+    KafkaFullPopulatedMachine* machineRandom;
+    KafkaFullPopulatedMachine* machineEnergys;
     
-    //gui
-    ofxPanel gui;
-    ofxIntSlider sliderCutMinimumLenghtMilli;
-    ofxIntSlider sliderCutMaximusLenghtMilli;
-    ofxIntSlider sliderBrightness;
+    appStates appState;
     
-    ofTexture textureVideo;
-    
+    //GUI  //-----------------------------------------------
+    //parameters
+    long            cutMaximusLenghtMilli;
+    float           currentVideoBrightness;
+    float           currentVideoZoom;
+    float           currentVideoText;
+    float           currentEnergy01;
+    float           currentEnergy02;
+    float           currentEnergy03;
 
-
+    void setupGUI();
+    void drawGUI();
+    
+    //gui Global
+    ofxPanel guiGlobal;
+    
+    ofxFloatSlider sliderBrightness;
+    ofxFloatSlider sliderZoom;
+    ofxFloatSlider sliderText;
+    
+    ofxButton buttonSelectRandom;
+    ofxButton buttonSelectClosedMachines;
+    ofxButton buttonSelectREnergy;
+    
+    void sliderBrightnessChanged(float &sliderBright );
+    void sliderZoomChanged(float &sliderZoom );
+    void sliderTextChanged(float &slidetText );
+    
+    void buttonSelectRandomChanged(bool &buttonSelectState );
+    void buttonSelectClosedMachinesChanged(bool &buttonSelectClosedMachinesState );
+    void buttonSelectREnergyChanged(bool &buttonSelectREnergyState );
+    
+    //GUI Random
+    ofxPanel guiRandom;
+    
+    ofxFloatSlider sliderCutMaximusLenghtMilli;
+    
+    void sliderCutMaximumLenghtMilliChanged(float &sliderCutMaximumLenghtMilli );
+    
+    //GUI Energys
+    ofxPanel guiEnergys;
+    
+    ofxFloatSlider sliderEnergy01;
+    ofxFloatSlider sliderEnergy02;
+    ofxFloatSlider sliderEnergy03;
+    
+    void sliderEnergy01Changed(float &sliderEne01 );
+    void sliderEnergy02Changed(float &sliderEne02 );
+    void sliderEnergy03Changed(float &sliderEne03 );
 };
 

@@ -42,6 +42,7 @@ public:
     void updateStates( float theEnergy);
     bool step();
     bool stepRandom();
+    bool stepEnergys();
     void draw();
     string getName();
     string getCurrentStateName();

@@ -1,15 +1,14 @@
 #include "ofApp.h"
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     setupGUI();
+    ofSetWindowTitle("Kafka Machine App");
     
     ofBackground(140,140,160);
     ofSetVerticalSync(true);
-     
-    font.load( "Contl___.ttf" , 12 );
     
-    hasFinishedPlaying = true;
-    videoSelected;
+    font.load( "Contl___.ttf" , 12 );
     
     cutLenghtMilli = 0;
     
@@ -18,7 +17,7 @@ void ofApp::setup(){
     
     cutEndPositionMilli = 0;
     
-    cutMinimumLenghtMilli = 0;
+    //cutMinimumLenghtMilli = 0;
     cutMaximusLenghtMilli = 0;
     
     currentVideoDurationMilli = 0;
@@ -26,7 +25,7 @@ void ofApp::setup(){
     currentVideoPositionNormalized = 0;
     currentVideoPositionMilli = 0;
     
-    cutMinimumLenghtMilli = sliderCutMinimumLenghtMilli;
+    //   cutMinimumLenghtMilli = sliderCutMinimumLenghtMilli;
     cutMaximusLenghtMilli = sliderCutMaximusLenghtMilli;
     currentVideoBrightness = sliderBrightness;
     
@@ -76,81 +75,170 @@ void ofApp::setup(){
     
     isFirstTime = true;
     
-    edit.setup( "MACHINE_BOAT" , "machines/machinesTest/Machine_Scene_14_Boat_01.tsv" , videos.size() );
-    edit.setup( "MACHINE_BOAT" , "machines/machinesTest/MachineB.tsv" , videos.size() );
-    machineRandom.setup( "Machine_RANDOM" , videos.size() );
     
-    videoSelected = edit.machine->getCurrentStateVideoIndex();
-    videoSelected = machineRandom.machine->getCurrentStateVideoIndex();
+    //machines closed loops
+    KafkaClosedMachine* closedMachineTest = new KafkaClosedMachine();
+    closedMachineTest->setup( "MACHINE_BOAT" , "machines/machinesTest/Machine_Scene_14_Boat_01.tsv" , videos.size() );
+    machinesClosed.push_back( closedMachineTest );
+  
+    //machine Random
+    machineRandom = new KafkaFullPopulatedMachine();
+    machineRandom->setup( "Machine_RANDOM" , videos.size() );
+    
+    //machine Energy
+    machineEnergys = new KafkaFullPopulatedMachine();
+    machineEnergys->setup( "Machine_ENERGY" , videos.size() );
+
+    //Camera
+    camera = new ofEasyCam();
+    camera->setDistance(1500);
+    
+    setAppState( APP_STATE_CLOSED_MACHINES );
+    
+    textureVideo.allocate( currentVideo->getWidth() , currentVideo->getHeight() ,GL_RGB );
+}
+//--------------------------------------------------------------
+void ofApp::setAppState( appStates theState  ){
+    appState = theState;
+    
+    switch( appState ){
+        case APP_STATE_RANDOM:
+            videoSelected = machineRandom->machine->getCurrentStateVideoIndex();
+            break;
+            
+        case APP_STATE_CLOSED_MACHINES:
+            videoSelected = machinesClosed[0]->machine->getCurrentStateVideoIndex();
+            break;
+            
+        case APP_STATE_ENERGYS:
+            videoSelected = machineEnergys->machine->getCurrentStateVideoIndex();
+            break;
+    }
+    
+    //video
     currentVideo = &videos[ videoSelected ];
     currentVideo->setSpeed( currentVideoSpeed );
     currentVideoDurationMilli = currentVideo->getDuration() * 1000;
     
-    cutStartPositionPercent = edit.machine->getCurrentStateStart();
-    cutStartPositionPercent = machineRandom.machine->getCurrentStateStart();
+    
+    if( isFirstTime ){
+        cutStartPositionPercent = 0;
+        isFirstTime = false;
+    }
+    else
+        switch( appState ){
+            case APP_STATE_RANDOM:
+                cutStartPositionPercent = machineRandom->machine->getCurrentStateEnd();
+                break;
+                
+            case APP_STATE_CLOSED_MACHINES:
+                cutStartPositionPercent = machinesClosed[0]->machine->getCurrentStateEnd();
+                break;
+                
+            case APP_STATE_ENERGYS:
+                cutStartPositionPercent = machineEnergys->machine->getCurrentStateEnd();
+                break;
+        }
+    
     cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
     
-    cutEndPositionMilli = edit.machine->getCurrentStateEnd() * currentVideoDurationMilli;
-    cutEndPositionMilli = machineRandom.machine->getCurrentStateEnd() * currentVideoDurationMilli;
-    cutLenghtMilli = cutEndPositionMilli - cutStartPositionMilli;
     
+    
+    switch( appState ){
+        case APP_STATE_RANDOM:
+            cutEndPositionMilli = machineRandom->machine->getCurrentStateEnd() * currentVideoDurationMilli;
+            machineRandom->machineController->updateViewDataVideo( videoSelected , currentVideo );
+            break;
+            
+        case APP_STATE_CLOSED_MACHINES:
+            machinesClosed[0]->machineController->updateViewDataVideo( videoSelected , currentVideo );
+            break;
+            
+        case APP_STATE_ENERGYS:
+            cutEndPositionMilli = machineEnergys->machine->getCurrentStateEnd() * currentVideoDurationMilli;
+            machineEnergys->machineController->updateViewDataVideo( videoSelected , currentVideo );
+            
+            break;
+    }
+    
+    //timing
+    cutLenghtMilli = cutEndPositionMilli - cutStartPositionMilli;
+
     currentVideo->setPosition( cutStartPositionPercent );
     currentVideo->play();
     
-    textureVideo.allocate( currentVideo->getWidth() , currentVideo->getHeight() ,GL_RGB );
+    //flags
+    hasFinishedPlaying = false;
     
-    edit.machineController->updateViewDataVideo( videoSelected , currentVideo );
-    machineRandom.machineController->updateViewDataVideo( videoSelected , currentVideo );
+}
+//--------------------------------------------------------------
+//void ofApp::update(){
+//    if( hasFinishedPlaying ){
+//        //updateAleatorio();
+//        updateRandom();
+//        //updateClosedMachine();
+//    }
+//    else
+//        if( currentVideoPositionMilli >= cutEndPositionMilli )
+//            hasFinishedPlaying = true;
+//
+//    edit.update();
+//    machineRandom.update();
+//    currentVideo->update();
+//
+//    pixelsVideo = currentVideo->getPixels();
+//    int numPixels = currentVideo->getWidth() * currentVideo->getHeight() * 3;
+//    for( int p = 0 ; p < numPixels ; p ++ )
+//        pixelsVideo[p] *= currentVideoBrightness ;
+//
+//    textureVideo.loadData( pixelsVideo );
+//
+//    currentVideoPositionNormalized = currentVideo->getPosition();
+//    currentVideoPositionMilli = currentVideoPositionNormalized * currentVideoDurationMilli;
+//}
+//--------------------------------------------------------------
 
-    
-    //Camera
-    camera = new ofEasyCam();
-    camera->setDistance(1500);
-}
-//--------------------------------------------------------------
-void ofApp::setupGUI(){
-    // we add this listener before setting up so the initial circle resolution is correct
-    gui.setup();
-    sliderCutMinimumLenghtMilli.addListener(this, &ofApp::sliderCutMinimumLenghtMilliChanged);
-    sliderCutMaximusLenghtMilli.addListener(this, &ofApp::sliderCutMaximumLenghtMillihanged);
-    sliderBrightness.addListener(this, &ofApp::sliderBrightnessChanged );
-    
-    gui.add( sliderCutMinimumLenghtMilli.setup("Min cut llenght", 2000, 1000, 50000 ));
-    gui.add( sliderCutMaximusLenghtMilli.setup("Max cut llenght", 8000, 1000, 50000  ));
-    gui.add( sliderBrightness.setup("Brightness", 1, 1, 20 ) );
-}
-//--------------------------------------------------------------
-void ofApp::sliderCutMinimumLenghtMilliChanged(int &sliderCutMinimumLenghtMilli){
-    cutMinimumLenghtMilli = sliderCutMinimumLenghtMilli;
-}
-//--------------------------------------------------------------
-void ofApp::sliderCutMaximumLenghtMillihanged(int &sliderCutMaximumLenghtMilli ){
-    cutMaximusLenghtMilli = sliderCutMaximumLenghtMilli;
-}
-//--------------------------------------------------------------
-void ofApp::sliderBrightnessChanged(int &sliderBright ){
-    currentVideoBrightness = sliderBright;
-}
-//--------------------------------------------------------------
 void ofApp::update(){
     if( hasFinishedPlaying ){
-        //updateAleatorio();
-        updateRandom();
-        //updateClosedMachine();
+        switch( appState ){
+            case APP_STATE_RANDOM:
+                updateRandom();
+                break;
+                
+            case APP_STATE_CLOSED_MACHINES:
+                updateClosedMachine();
+                break;
+                
+            case APP_STATE_ENERGYS:
+                updateEnergys();
+                break;
+        }
     }
     else
         if( currentVideoPositionMilli >= cutEndPositionMilli )
             hasFinishedPlaying = true;
     
-    edit.update();
-    machineRandom.update();
-    currentVideo->update();
     
+    switch( appState ){
+        case APP_STATE_RANDOM:
+            machineRandom->update();
+            
+            break;
+            
+        case APP_STATE_CLOSED_MACHINES:
+            machinesClosed[0]->update();
+            break;
+            
+        case APP_STATE_ENERGYS:
+            machineEnergys->update();;
+            break;
+    }
+
+    currentVideo->update();
     pixelsVideo = currentVideo->getPixels();
     int numPixels = currentVideo->getWidth() * currentVideo->getHeight() * 3;
     for( int p = 0 ; p < numPixels ; p ++ )
         pixelsVideo[p] *= currentVideoBrightness ;
-    
     textureVideo.loadData( pixelsVideo );
     
     currentVideoPositionNormalized = currentVideo->getPosition();
@@ -158,21 +246,24 @@ void ofApp::update(){
 }
 //--------------------------------------------------------------
 void ofApp::updateClosedMachine(){
+    if( appState != APP_STATE_CLOSED_MACHINES )
+        return;
     previousVideo = currentVideo;
-
-    if( ! edit.machine->step() )
+    
+    
+    if( ! machinesClosed[0]->machine->step() )
         cout << "Machine is closed fuckerssss!!!!!!";
-  
+    
     //chose a random next video
-    videoSelected = edit.machine->getCurrentStateVideoIndex();
+    videoSelected = machinesClosed[0]->machine->getCurrentStateVideoIndex();
     currentVideo = &videos[ videoSelected ];
     currentVideo->setSpeed( currentVideoSpeed );
     currentVideoDurationMilli = currentVideo->getDuration() * 1000;
     
-    cutStartPositionPercent = edit.machine->getCurrentStateStart();
+    cutStartPositionPercent = machinesClosed[0]->machine->getCurrentStateStart();
     cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
-
-    cutEndPositionMilli = edit.machine->getCurrentStateEnd() * currentVideoDurationMilli;
+    
+    cutEndPositionMilli = machinesClosed[0]->machine->getCurrentStateEnd() * currentVideoDurationMilli;
     cutLenghtMilli = cutEndPositionMilli - cutStartPositionMilli;
     
     currentVideo->setPosition( cutStartPositionPercent );
@@ -180,72 +271,105 @@ void ofApp::updateClosedMachine(){
     if( previousVideo != currentVideo )
         previousVideo->stop();
     
-    edit.machineController->update();
-    edit.machineController->updateViewDataVideo( videoSelected , currentVideo );
+    machinesClosed[0]->machineController->update();
+    machinesClosed[0]->machineController->updateViewDataVideo( videoSelected , currentVideo );
     
     hasFinishedPlaying = false;
 }
-//--------------------------------------------------------------
-void ofApp::updateAleatorio(){
-    previousVideo = currentVideo;
-    
-    //chose a random next video
-    videoSelected = ofRandom( 0 , videos.size() );
-    currentVideo = &videos[ videoSelected ];
-    currentVideo->setSpeed( currentVideoSpeed );
-    currentVideoDurationMilli = currentVideo->getDuration() * 1000;
-    
-    //calculating start position for the cut
-    if( isFirstTime ){
-        cutStartPositionPercent = 0;
-        isFirstTime = false;
-    }
-    else
-        cutStartPositionPercent = ofRandom( 0 , delataEnd );
-    cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
-    
-    //calculating cut lenght
-    cutLenghtMilli = ofRandom( cutMinimumLenghtMilli , cutMaximusLenghtMilli );
-    
-    //loock if the end is out of the video.
-    if(cutStartPositionMilli + cutLenghtMilli >= delataEnd * currentVideoDurationMilli )
-        cutLenghtMilli = currentVideoDurationMilli - cutStartPositionMilli;
-    cutEndPositionMilli = cutStartPositionMilli + cutLenghtMilli;
-    
-    currentVideo->setPosition( cutStartPositionPercent );
-    currentVideo->play();
-    if( previousVideo != currentVideo )
-        previousVideo->stop();
-    
-    hasFinishedPlaying = false;
-}
-
+////--------------------------------------------------------------
+//void ofApp::updateAleatorio(){
+//    previousVideo = currentVideo;
+//
+//    //chose a random next video
+//    videoSelected = ofRandom( 0 , videos.size() );
+//    currentVideo = &videos[ videoSelected ];
+//    currentVideo->setSpeed( currentVideoSpeed );
+//    currentVideoDurationMilli = currentVideo->getDuration() * 1000;
+//
+//    //calculating start position for the cut
+//    if( isFirstTime ){
+//        cutStartPositionPercent = 0;
+//        isFirstTime = false;
+//    }
+//    else
+//        cutStartPositionPercent = ofRandom( 0 , delataEnd );
+//    cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
+//
+//    //calculating cut lenght
+//    cutLenghtMilli = ofRandom( 0 , cutMaximusLenghtMilli );
+//
+//    //loock if the end is out of the video.
+//    if(cutStartPositionMilli + cutLenghtMilli >= delataEnd * currentVideoDurationMilli )
+//        cutLenghtMilli = currentVideoDurationMilli - cutStartPositionMilli;
+//    cutEndPositionMilli = cutStartPositionMilli + cutLenghtMilli;
+//
+//    currentVideo->setPosition( cutStartPositionPercent );
+//    currentVideo->play();
+//    if( previousVideo != currentVideo )
+//        previousVideo->stop();
+//
+//    hasFinishedPlaying = false;
+//}
+//
 //--------------------------------------------------------------
 void ofApp::updateRandom(){
+    if( appState != APP_STATE_RANDOM )
+        return;
     previousVideo = currentVideo;
-
-    if( ! machineRandom.machine->stepRandom() )
+    
+    if( ! machineRandom->machine->stepRandom() )
         cout << "Machine is closed fuckerssss!!!!!!";
     
     //chose a random next video
-    videoSelected = machineRandom.machine->getCurrentStateVideoIndex();
+    videoSelected = machineRandom->machine->getCurrentStateVideoIndex();
     currentVideo = &videos[ videoSelected ];
     currentVideo->setSpeed( currentVideoSpeed );
     currentVideoDurationMilli = currentVideo->getDuration() * 1000;
     
-    cutStartPositionPercent = machineRandom.machine->getCurrentStateStart();
+    cutStartPositionPercent = machineRandom->machine->getCurrentStateStart();
     cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
     
-    cutEndPositionMilli = machineRandom.machine->getCurrentStateEnd() * currentVideoDurationMilli;
+    cutEndPositionMilli = machineRandom->machine->getCurrentStateEnd() * currentVideoDurationMilli;
     cutLenghtMilli = cutEndPositionMilli - cutStartPositionMilli;
     
     currentVideo->setPosition( cutStartPositionPercent );
     currentVideo->play();
     if( previousVideo != currentVideo )
         previousVideo->stop();
-
-    machineRandom.machineController->update();
-    machineRandom.machineController->updateViewDataVideo( videoSelected , currentVideo );
+    
+    machineRandom->machineController->update();
+    machineRandom->machineController->updateViewDataVideo( videoSelected , currentVideo );
+    
+    hasFinishedPlaying = false;
+}
+//--------------------------------------------------------------
+void ofApp::updateEnergys(){
+    if( appState != APP_STATE_ENERGYS )
+        return;
+    previousVideo = currentVideo;
+    
+    if( ! machineEnergys->machine->stepEnergys( ) )
+        cout << "Machine is closed fuckerssss!!!!!!";
+    
+    //chose a random next video
+    videoSelected = machineEnergys->machine->getCurrentStateVideoIndex();
+    currentVideo = &videos[ videoSelected ];
+    currentVideo->setSpeed( currentVideoSpeed );
+    currentVideoDurationMilli = currentVideo->getDuration() * 1000;
+    
+    cutStartPositionPercent = machineEnergys->machine->getCurrentStateStart();
+    cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
+    
+    cutEndPositionMilli = machineEnergys->machine->getCurrentStateEnd() * currentVideoDurationMilli;
+    cutLenghtMilli = cutEndPositionMilli - cutStartPositionMilli;
+    
+    currentVideo->setPosition( cutStartPositionPercent );
+    currentVideo->play();
+    if( previousVideo != currentVideo )
+        previousVideo->stop();
+    
+    machineEnergys->machineController->update();
+    machineEnergys->machineController->updateViewDataVideo( videoSelected , currentVideo );
     
     hasFinishedPlaying = false;
 }
@@ -257,8 +381,18 @@ void ofApp::draw(){
     textureVideo.draw( 0 , 0 , ofGetWidth() , ofGetHeight() );
     
     camera->begin();
-    machineRandom.draw();
-    //edit.draw();
+    switch( appState ){
+        case APP_STATE_RANDOM:
+            machineRandom->draw();
+            break;
+        case APP_STATE_ENERGYS:
+            machineEnergys->draw();
+            break;
+            
+        case APP_STATE_CLOSED_MACHINES:
+            machinesClosed[0]->draw();
+            break;
+    }
     camera->end();
     
     ofSetColor(255);
@@ -266,7 +400,7 @@ void ofApp::draw(){
     drawDebugTimeline( 10 , ofGetHeight() - ofGetHeight() / 20  , ofGetWidth() - 20 , ofGetHeight() / 25 );
     drawDebugTimes( 20 , 180 );
     
-    //gui.draw();
+    drawGUI();
 }
 //--------------------------------------------------------------
 void ofApp::drawInteractionArea(){
@@ -393,11 +527,17 @@ void ofApp::keyPressed  (int key){
     if( key == ' ' )
         hasFinishedPlaying = true;
     
-    if(key == 's')
-        gui.saveToFile("settings.xml");
+    if(key == 's'){
+        guiRandom.saveToFile("settingsRandom.xml");
+        guiGlobal.saveToFile("settingsGlobal.xml");
+        guiEnergys.saveToFile("settingsEnergys.xml");
+    }
     
-    if(key == 'l')
-        gui.loadFromFile("settings.xml");
+    if(key == 'l'){
+        guiRandom.loadFromFile("settingsRandom.xml");
+        guiGlobal.loadFromFile("settingsGlobal.xml");
+        guiEnergys.loadFromFile("settingsEnergys.xml");
+    }
 }
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
@@ -429,3 +569,104 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){
 }
+
+//--------------------------------------------------------------
+//GUI
+//--------------------------------------------------------------
+
+//--------------------------------------------------------------
+void ofApp::setupGUI(){
+    //listeners
+    //globals
+    sliderBrightness.addListener( this , &ofApp::sliderBrightnessChanged );
+    sliderZoom.addListener( this , &ofApp::sliderZoomChanged );
+    sliderText.addListener( this , &ofApp::sliderTextChanged );
+    
+    //buttonSelectRandom.addListener( this , &ofApp::sliderBrightnessChanged );
+    //buttonSelectClosedMachines.addListener( this , &ofApp::buttonSelectClosedMachinesChanged );
+    //buttonSelectREnergy.addListener( this , &ofApp::buttonSelectREnergyChanged );
+    
+    //random
+    sliderCutMaximusLenghtMilli.addListener( this , &ofApp::sliderCutMaximumLenghtMilliChanged );
+    
+    //enery
+    sliderEnergy01.addListener( this , &ofApp::sliderEnergy01Changed );
+    sliderEnergy02.addListener( this , &ofApp::sliderEnergy02Changed );
+    sliderEnergy03.addListener( this , &ofApp::sliderEnergy03Changed );
+    
+    //panels
+    guiGlobal.setup();
+    guiGlobal.setPosition(ofPoint( 10 , 10 ) );
+    guiRandom.setup();
+    guiRandom.setPosition(ofPoint( 230 , 10 ) );
+    guiEnergys.setup();
+    guiEnergys.setPosition(ofPoint( 450 , 10 ) );
+    
+    //globals
+    guiGlobal.add( sliderBrightness.setup("bright", 1, 1, 20  ));
+    guiGlobal.add( sliderZoom.setup("zoom", 1, 1, 5  ));
+    guiGlobal.add( sliderText.setup("text", 1, 1, 2  ));
+    
+    guiGlobal.add( buttonSelectRandom.setup("random") );
+    guiGlobal.add( buttonSelectClosedMachines.setup("closed") );
+    guiGlobal.add( buttonSelectREnergy.setup("energy") );
+    
+    //random
+    guiRandom.add( sliderCutMaximusLenghtMilli.setup("duration", 1, .001, 1  ));
+    
+    //enery
+    guiEnergys.add( sliderEnergy01.setup("amor", 1, 0, 1  ));
+    guiEnergys.add( sliderEnergy02.setup("tristeza", 1,0, 1  ));
+    guiEnergys.add( sliderEnergy03.setup("beleza", 1, 0, 1  ));
+}
+//--------------------------------------------------------------
+void ofApp::drawGUI(){
+    guiGlobal.draw();
+    guiRandom.draw();
+    guiEnergys.draw();
+}
+//--------------------------------------------------------------
+//GUI Global
+void ofApp::sliderBrightnessChanged(float &sliderBright ){
+    currentVideoBrightness = sliderBright;
+}
+//--------------------------------------------------------------
+void ofApp::sliderZoomChanged(float &sliderZoom ){
+    currentVideoZoom = sliderZoom;
+}
+//--------------------------------------------------------------
+void ofApp::sliderTextChanged(float &slidetText ){
+    currentVideoText = slidetText;
+}
+//--------------------------------------------------------------
+void ofApp::buttonSelectRandomChanged(bool &buttonSelectState ){
+    appState = APP_STATE_RANDOM;
+}
+//--------------------------------------------------------------
+void ofApp::buttonSelectClosedMachinesChanged(bool &buttonSelectClosedMachinesState ){
+    appState = APP_STATE_CLOSED_MACHINES;
+}
+//--------------------------------------------------------------
+void ofApp::buttonSelectREnergyChanged(bool &buttonSelectREnergyState ){
+    appState = APP_STATE_ENERGYS;
+}
+//--------------------------------------------------------------
+//GUI Random
+void ofApp::sliderCutMaximumLenghtMilliChanged(float &sliderCutMaximumLenghtMilli ){
+    cutMaximusLenghtMilli = sliderCutMaximumLenghtMilli;
+}
+//--------------------------------------------------------------
+//GUI Energy
+void ofApp::sliderEnergy01Changed(float &sliderEne01 ){
+    currentEnergy01 = sliderEne01;
+}
+//--------------------------------------------------------------
+void ofApp::sliderEnergy02Changed(float &sliderEne02 ){
+    currentEnergy02 = sliderEne02;
+}
+//--------------------------------------------------------------
+void ofApp::sliderEnergy03Changed(float &sliderEne03 ){
+    currentEnergy03 = sliderEne03;
+}
+
+
