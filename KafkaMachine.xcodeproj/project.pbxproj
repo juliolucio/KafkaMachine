@@ -83,13 +83,6 @@
 		897C66151CDCEFD40025B06E /* KafkaStatesMachineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KafkaStatesMachineView.h; sourceTree = "<group>"; };
 		897C661C1CDD00340025B06E /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
 		897C661D1CDD00340025B06E /* Contl___.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Contl___.ttf"; sourceTree = "<group>"; };
-		897C66201CDD00340025B06E /* MachineA.mmf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MachineA.mmf; sourceTree = "<group>"; };
-		897C66211CDD00340025B06E /* MachineB.mmf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MachineB.mmf; sourceTree = "<group>"; };
-		897C66221CDD00340025B06E /* MachineC.mmf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MachineC.mmf; sourceTree = "<group>"; };
-		897C66231CDD00340025B06E /* MachineD.mmf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MachineD.mmf; sourceTree = "<group>"; };
-		897C66241CDD00340025B06E /* MachineE.mmf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MachineE.mmf; sourceTree = "<group>"; };
-		897C66251CDD00340025B06E /* MachineF.mmf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MachineF.mmf; sourceTree = "<group>"; };
-		897C66261CDD00340025B06E /* MachineG.mmf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MachineG.mmf; sourceTree = "<group>"; };
 		897C66281CDD00340025B06E /* fingers.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = fingers.mov; sourceTree = "<group>"; };
 		897C66291CDD00340025B06E /* Scene10_America_Edit-4.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = "Scene10_America_Edit-4.mov"; sourceTree = "<group>"; };
 		897C662A1CDD00340025B06E /* Scene14_Boat_Edit-2.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = "Scene14_Boat_Edit-2.mov"; sourceTree = "<group>"; };
@@ -104,6 +97,7 @@
 		897C66331CDD00340025B06E /* Scene9 Lisbon_Protest.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = "Scene9 Lisbon_Protest.mov"; sourceTree = "<group>"; };
 		897C66351CDD03EA0025B06E /* KafkaEdit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KafkaEdit.cpp; sourceTree = "<group>"; };
 		897C66361CDD03EA0025B06E /* KafkaEdit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KafkaEdit.h; sourceTree = "<group>"; };
+		898A32911CEC88F10080B1F6 /* Machine_Scene_14_Boat_01.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Machine_Scene_14_Boat_01.tsv; sourceTree = "<group>"; };
 		89E680211CEB9CE100EA9084 /* Scene10_America_Edit-4.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Scene10_America_Edit-4.tsv"; sourceTree = "<group>"; };
 		89E680221CEB9CE100EA9084 /* Scene14_Boat_Edit-2.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Scene14_Boat_Edit-2.tsv"; sourceTree = "<group>"; };
 		89E680231CEB9CE100EA9084 /* Scene1_Bedfight_Edit-1.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Scene1_Bedfight_Edit-1.tsv"; sourceTree = "<group>"; };
@@ -177,6 +171,7 @@
 		897C661E1CDD00340025B06E /* machines */ = {
 			isa = PBXGroup;
 			children = (
+				898A32901CEC88F10080B1F6 /* machinesClosedPaths */,
 				897C661F1CDD00340025B06E /* machinesTest */,
 			);
 			path = machines;
@@ -189,13 +184,6 @@
 				8936E4581CE67734005307F2 /* Machine_Scene_14_Boat_01.tsv */,
 				8933CCB41CE52B8B00DD7222 /* MachineB.tsv */,
 				8936E4571CE6605B005307F2 /* MaquinaC.tsv */,
-				897C66201CDD00340025B06E /* MachineA.mmf */,
-				897C66211CDD00340025B06E /* MachineB.mmf */,
-				897C66221CDD00340025B06E /* MachineC.mmf */,
-				897C66231CDD00340025B06E /* MachineD.mmf */,
-				897C66241CDD00340025B06E /* MachineE.mmf */,
-				897C66251CDD00340025B06E /* MachineF.mmf */,
-				897C66261CDD00340025B06E /* MachineG.mmf */,
 			);
 			path = machinesTest;
 			sourceTree = "<group>";
@@ -217,6 +205,14 @@
 				897C66331CDD00340025B06E /* Scene9 Lisbon_Protest.mov */,
 			);
 			path = movies;
+			sourceTree = "<group>";
+		};
+		898A32901CEC88F10080B1F6 /* machinesClosedPaths */ = {
+			isa = PBXGroup;
+			children = (
+				898A32911CEC88F10080B1F6 /* Machine_Scene_14_Boat_01.tsv */,
+			);
+			path = machinesClosedPaths;
 			sourceTree = "<group>";
 		};
 		89E680201CEB9CE100EA9084 /* scenes */ = {
@@ -466,7 +462,7 @@
 					src,
 					../../../addons/ofxGui/src,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-D__MACOSX_CORE__",
@@ -501,7 +497,7 @@
 					src,
 					../../../addons/ofxGui/src,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-D__MACOSX_CORE__",
 					"-mtune=native",
