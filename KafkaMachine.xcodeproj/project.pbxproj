@@ -83,7 +83,6 @@
 		897C66151CDCEFD40025B06E /* KafkaStatesMachineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KafkaStatesMachineView.h; sourceTree = "<group>"; };
 		897C661C1CDD00340025B06E /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
 		897C661D1CDD00340025B06E /* Contl___.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Contl___.ttf"; sourceTree = "<group>"; };
-		897C66281CDD00340025B06E /* fingers.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = fingers.mov; sourceTree = "<group>"; };
 		897C66291CDD00340025B06E /* Scene10_America_Edit-4.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = "Scene10_America_Edit-4.mov"; sourceTree = "<group>"; };
 		897C662A1CDD00340025B06E /* Scene14_Boat_Edit-2.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = "Scene14_Boat_Edit-2.mov"; sourceTree = "<group>"; };
 		897C662B1CDD00340025B06E /* Scene1_Bedfight_Edit-1.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = "Scene1_Bedfight_Edit-1.mov"; sourceTree = "<group>"; };
@@ -193,7 +192,6 @@
 			isa = PBXGroup;
 			children = (
 				898A32921CEC8D5E0080B1F6 /* movies names.png */,
-				897C66281CDD00340025B06E /* fingers.mov */,
 				897C66291CDD00340025B06E /* Scene10_America_Edit-4.mov */,
 				897C662A1CDD00340025B06E /* Scene14_Boat_Edit-2.mov */,
 				897C662B1CDD00340025B06E /* Scene1_Bedfight_Edit-1.mov */,
