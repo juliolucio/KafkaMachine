@@ -497,8 +497,8 @@ bool KafkaStatesMachine::addStatesFormFile( string fileName , int videoIndex ){
         (*fileIn) >> energy03;
         
         params.push_back( numFrames );
-        params.push_back( frameStart );
-        params.push_back( frameEnd - 2 );
+        params.push_back( frameStart + 1 );
+        params.push_back( frameEnd - 2 );//what the hack???
         params.push_back( energy01 );
         params.push_back( energy02 );
         params.push_back( energy03 );

@@ -299,23 +299,23 @@ void KafkaStatesMachineView::draw(){
         material.end();
         tempPrimitive02->drawWireframe();
         
-        ofDisableLighting();
-        ofSetColor( 111,11,111);
-        ofPoint textPosition = statesPositionsCenters[ stateIndex ];
-        string textState = statesNames[ (*it01).first ] ;
-        ofDrawBitmapString( textState , textPosition );
-        
-        ofSetColor( 40 , 40 , 200  );
-        textPosition = statesPositionsInits[ stateIndex ];
-        textState = ofToString( statesPercentageStarts[ (*it01).first ] , 2 );
-        ofDrawBitmapString( textState , textPosition );
-        
-        ofSetColor( 200 , 40 , 40  );
-        textPosition = statesPositionsEnds[ stateIndex ];
-        textState = ofToString( statesPercentageEnds[ (*it01).first ] , 2 );
-        ofDrawBitmapString( textState , textPosition );
-        
-        ofEnableLighting();
+//        ofDisableLighting();
+//        ofSetColor( 111,11,111);
+//        ofPoint textPosition = statesPositionsCenters[ stateIndex ];
+//        string textState = statesNames[ (*it01).first ] ;
+//        ofDrawBitmapString( textState , textPosition );
+//        
+//        ofSetColor( 40 , 40 , 200  );
+//        textPosition = statesPositionsInits[ stateIndex ];
+//        textState = ofToString( statesPercentageStarts[ (*it01).first ] , 2 );
+//        ofDrawBitmapString( textState , textPosition );
+//        
+//        ofSetColor( 200 , 40 , 40  );
+//        textPosition = statesPositionsEnds[ stateIndex ];
+//        textState = ofToString( statesPercentageEnds[ (*it01).first ] , 2 );
+//        ofDrawBitmapString( textState , textPosition );
+//        
+//        ofEnableLighting();
         
         it01++;
         it02++;

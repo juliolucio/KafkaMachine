@@ -98,6 +98,7 @@
 		897C66351CDD03EA0025B06E /* KafkaEdit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KafkaEdit.cpp; sourceTree = "<group>"; };
 		897C66361CDD03EA0025B06E /* KafkaEdit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KafkaEdit.h; sourceTree = "<group>"; };
 		898A32911CEC88F10080B1F6 /* Machine_Scene_14_Boat_01.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Machine_Scene_14_Boat_01.tsv; sourceTree = "<group>"; };
+		898A32921CEC8D5E0080B1F6 /* movies names.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "movies names.png"; sourceTree = "<group>"; };
 		89E680211CEB9CE100EA9084 /* Scene10_America_Edit-4.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Scene10_America_Edit-4.tsv"; sourceTree = "<group>"; };
 		89E680221CEB9CE100EA9084 /* Scene14_Boat_Edit-2.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Scene14_Boat_Edit-2.tsv"; sourceTree = "<group>"; };
 		89E680231CEB9CE100EA9084 /* Scene1_Bedfight_Edit-1.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Scene1_Bedfight_Edit-1.tsv"; sourceTree = "<group>"; };
@@ -191,6 +192,7 @@
 		897C66271CDD00340025B06E /* movies */ = {
 			isa = PBXGroup;
 			children = (
+				898A32921CEC8D5E0080B1F6 /* movies names.png */,
 				897C66281CDD00340025B06E /* fingers.mov */,
 				897C66291CDD00340025B06E /* Scene10_America_Edit-4.mov */,
 				897C662A1CDD00340025B06E /* Scene14_Boat_Edit-2.mov */,
