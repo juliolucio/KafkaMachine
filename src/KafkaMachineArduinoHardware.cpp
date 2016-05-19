@@ -57,10 +57,14 @@ bool KafkaMachineArduinoHardware::setup( std::string portName ){
 
     return true;
 }
-
+//--------------------------------------------------------------
+bool KafkaMachineArduinoHardware::isRuning(){
+    return isSetedUpArduino;
+}
 //--------------------------------------------------------------
 void KafkaMachineArduinoHardware::update(){
-    updateArduino();
+    if( isSetedUpArduino )
+        updateArduino();
 }
 //--------------------------------------------------------------
 int KafkaMachineArduinoHardware::getAppState(){

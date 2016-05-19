@@ -138,10 +138,13 @@ void ofApp::update(){
     currentVideoPositionNormalized = currentVideo->getPosition();
     currentVideoPositionMilli = currentVideoPositionNormalized * currentVideoDurationMilli;
     
-    updateHardware();
+    if( !updateHardware() )
+        cout << "couldnt update arduino /n";
 }
 //--------------------------------------------------------------
 bool ofApp::updateHardware(){
+    if( !hardware.isRuning() )
+        return false;
     hardware.update();
     cutTimeMillis = ofGetElapsedTimeMillis();
     if(  cutTimeMillis - lastHardwareUpdateRefresh > harwareUpdateRefresh ){
@@ -165,6 +168,7 @@ bool ofApp::updateHardware(){
             setAppState( appStates(newAppState) );
         lastHardwareUpdateRefresh = cutTimeMillis;
     }
+    return true;
 }
 //--------------------------------------------------------------
 void ofApp::setAppState( appStates theState  ){

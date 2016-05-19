@@ -11,6 +11,7 @@ public:
 	bool setup( std::string portName );
 	void update();
 	void draw();
+    bool isRuning();
     
     int getAppState();
     float  getBrightness();
