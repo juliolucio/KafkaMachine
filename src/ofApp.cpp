@@ -75,10 +75,9 @@ void ofApp::setup(){
     
     isFirstTime = true;
     
-    
     //machines closed loops
     KafkaClosedMachine* closedMachineTest = new KafkaClosedMachine();
-    closedMachineTest->setup( "MACHINE_BOAT" , "machines/machinesTest/Machine_Scene_14_Boat_01.tsv" , videos.size() );
+    closedMachineTest->setup( "MACHINE_BOAT" , "machines/machinesTest/MachineA.tsv" , videos.size() );
     machinesClosed.push_back( closedMachineTest );
   
     //machine Random
@@ -86,154 +85,48 @@ void ofApp::setup(){
     machineRandom->setup( "Machine_RANDOM" , videos.size() );
     
     //machine Energy
-    machineEnergys = new KafkaFullPopulatedMachine();
-    machineEnergys->setup( "Machine_ENERGY" , videos.size() );
+    machineEnergys = machineRandom;
 
     //Camera
     camera = new ofEasyCam();
     camera->setDistance(1500);
     
-    setAppState( APP_STATE_CLOSED_MACHINES );
+    setAppState( APP_STATE_ENERGYS );
     
     textureVideo.allocate( currentVideo->getWidth() , currentVideo->getHeight() ,GL_RGB );
 }
 //--------------------------------------------------------------
-void ofApp::setAppState( appStates theState  ){
-    appState = theState;
-    
-    switch( appState ){
-        case APP_STATE_RANDOM:
-            videoSelected = machineRandom->machine->getCurrentStateVideoIndex();
-            break;
-            
-        case APP_STATE_CLOSED_MACHINES:
-            videoSelected = machinesClosed[0]->machine->getCurrentStateVideoIndex();
-            break;
-            
-        case APP_STATE_ENERGYS:
-            videoSelected = machineEnergys->machine->getCurrentStateVideoIndex();
-            break;
-    }
-    
-    //video
-    currentVideo = &videos[ videoSelected ];
-    currentVideo->setSpeed( currentVideoSpeed );
-    currentVideoDurationMilli = currentVideo->getDuration() * 1000;
-    
-    
-    if( isFirstTime ){
-        cutStartPositionPercent = 0;
-        isFirstTime = false;
-    }
-    else
-        switch( appState ){
-            case APP_STATE_RANDOM:
-                cutStartPositionPercent = machineRandom->machine->getCurrentStateEnd();
-                break;
-                
-            case APP_STATE_CLOSED_MACHINES:
-                cutStartPositionPercent = machinesClosed[0]->machine->getCurrentStateEnd();
-                break;
-                
-            case APP_STATE_ENERGYS:
-                cutStartPositionPercent = machineEnergys->machine->getCurrentStateEnd();
-                break;
-        }
-    
-    cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
-    
-    
-    
-    switch( appState ){
-        case APP_STATE_RANDOM:
-            cutEndPositionMilli = machineRandom->machine->getCurrentStateEnd() * currentVideoDurationMilli;
-            machineRandom->machineController->updateViewDataVideo( videoSelected , currentVideo );
-            break;
-            
-        case APP_STATE_CLOSED_MACHINES:
-            machinesClosed[0]->machineController->updateViewDataVideo( videoSelected , currentVideo );
-            break;
-            
-        case APP_STATE_ENERGYS:
-            cutEndPositionMilli = machineEnergys->machine->getCurrentStateEnd() * currentVideoDurationMilli;
-            machineEnergys->machineController->updateViewDataVideo( videoSelected , currentVideo );
-            
-            break;
-    }
-    
-    //timing
-    cutLenghtMilli = cutEndPositionMilli - cutStartPositionMilli;
-
-    currentVideo->setPosition( cutStartPositionPercent );
-    currentVideo->play();
-    
-    //flags
-    hasFinishedPlaying = false;
-    
-}
-//--------------------------------------------------------------
-//void ofApp::update(){
-//    if( hasFinishedPlaying ){
-//        //updateAleatorio();
-//        updateRandom();
-//        //updateClosedMachine();
-//    }
-//    else
-//        if( currentVideoPositionMilli >= cutEndPositionMilli )
-//            hasFinishedPlaying = true;
-//
-//    edit.update();
-//    machineRandom.update();
-//    currentVideo->update();
-//
-//    pixelsVideo = currentVideo->getPixels();
-//    int numPixels = currentVideo->getWidth() * currentVideo->getHeight() * 3;
-//    for( int p = 0 ; p < numPixels ; p ++ )
-//        pixelsVideo[p] *= currentVideoBrightness ;
-//
-//    textureVideo.loadData( pixelsVideo );
-//
-//    currentVideoPositionNormalized = currentVideo->getPosition();
-//    currentVideoPositionMilli = currentVideoPositionNormalized * currentVideoDurationMilli;
-//}
-//--------------------------------------------------------------
-
 void ofApp::update(){
-    if( hasFinishedPlaying ){
-        switch( appState ){
-            case APP_STATE_RANDOM:
-                updateRandom();
-                break;
-                
-            case APP_STATE_CLOSED_MACHINES:
-                updateClosedMachine();
-                break;
-                
-            case APP_STATE_ENERGYS:
-                updateEnergys();
-                break;
-        }
-    }
-    else
-        if( currentVideoPositionMilli >= cutEndPositionMilli )
-            hasFinishedPlaying = true;
-    
-    
     switch( appState ){
         case APP_STATE_RANDOM:
+            if( hasFinishedPlaying )
+                updateRandom();
+            else
+                if( currentVideoPositionMilli >= cutEndPositionMilli )
+                    hasFinishedPlaying = true;
             machineRandom->update();
-            
             break;
             
         case APP_STATE_CLOSED_MACHINES:
+            if( hasFinishedPlaying )
+                updateClosedMachine();
+            else
+                if( currentVideoPositionMilli >= cutEndPositionMilli )
+                    hasFinishedPlaying = true;
             machinesClosed[0]->update();
             break;
             
         case APP_STATE_ENERGYS:
-            machineEnergys->update();;
+            if( hasFinishedPlaying )
+                updateEnergys();
+            else
+                if( currentVideoPositionMilli >= cutEndPositionMilli )
+                    hasFinishedPlaying = true;
+            machineEnergys->update();
             break;
     }
 
+    //updating brightness effect
     currentVideo->update();
     pixelsVideo = currentVideo->getPixels();
     int numPixels = currentVideo->getWidth() * currentVideo->getHeight() * 3;
@@ -241,139 +134,114 @@ void ofApp::update(){
         pixelsVideo[p] *= currentVideoBrightness ;
     textureVideo.loadData( pixelsVideo );
     
+    //timers for ending cuts
     currentVideoPositionNormalized = currentVideo->getPosition();
     currentVideoPositionMilli = currentVideoPositionNormalized * currentVideoDurationMilli;
+}
+//--------------------------------------------------------------
+void ofApp::setAppState( appStates theState  ){
+    appState = theState;
+    switch( appState ){
+        case APP_STATE_RANDOM:
+            updateRandom();
+            break;
+            
+        case APP_STATE_CLOSED_MACHINES:
+            updateClosedMachine();
+            break;
+            
+        case APP_STATE_ENERGYS:
+            updateEnergys();
+            break;
+    }
+}
+////--------------------------------------------------------------
+void ofApp::setCurrentVideoState( int theIndexVideoSelected , float theStatrtPercent , float theEndPercent ){
+    previousVideo = currentVideo;
+    
+    videoSelected = theIndexVideoSelected;
+    currentVideo = &videos[ theIndexVideoSelected ];
+    currentVideo->setSpeed( currentVideoSpeed );
+    currentVideoDurationMilli = currentVideo->getDuration() * 1000.0f;
+    
+    cutStartPositionPercent = theStatrtPercent;
+    cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
+    
+    cutEndPositionMilli = theEndPercent * currentVideoDurationMilli;
+    
+    cutLenghtMilli = cutEndPositionMilli - cutStartPositionMilli;
+    
+    currentVideo->setPosition( cutStartPositionPercent );
+    currentVideo->play();
+    if( previousVideo != currentVideo && previousVideo )
+        previousVideo->stop();
+    hasFinishedPlaying = false;
+}
+//--------------------------------------------------------------
+void ofApp::updateRandom(){
+    if( appState != APP_STATE_RANDOM )
+        return;
+    
+    machineRandom->machine->stepRandom();
+    
+    //chose a random next video
+    int indexVideo = machineRandom->machine->getCurrentStateVideoIndex();
+    float startPercent = machineRandom->machine->getCurrentStateStart();
+    float endPercent = machineRandom->machine->getCurrentStateEnd();
+    startPercent = machineEnergys->machine->getCurrentStateStart();
+    if( isFirstTime ){
+        startPercent = 0;
+        isFirstTime = false;
+    }
+    setCurrentVideoState( indexVideo , startPercent , endPercent );
+    machineRandom->machineController->updateViewDataVideo( videoSelected , currentVideo );    
+    machineRandom->machineController->update();
 }
 //--------------------------------------------------------------
 void ofApp::updateClosedMachine(){
     if( appState != APP_STATE_CLOSED_MACHINES )
         return;
-    previousVideo = currentVideo;
-    
-    
-    if( ! machinesClosed[0]->machine->step() )
+   
+    if( !machinesClosed[0]->machine->step() )
         cout << "Machine is closed fuckerssss!!!!!!";
     
     //chose a random next video
-    videoSelected = machinesClosed[0]->machine->getCurrentStateVideoIndex();
-    currentVideo = &videos[ videoSelected ];
-    currentVideo->setSpeed( currentVideoSpeed );
-    currentVideoDurationMilli = currentVideo->getDuration() * 1000;
-    
-    cutStartPositionPercent = machinesClosed[0]->machine->getCurrentStateStart();
-    cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
-    
-    cutEndPositionMilli = machinesClosed[0]->machine->getCurrentStateEnd() * currentVideoDurationMilli;
-    cutLenghtMilli = cutEndPositionMilli - cutStartPositionMilli;
-    
-    currentVideo->setPosition( cutStartPositionPercent );
-    currentVideo->play();
-    if( previousVideo != currentVideo )
-        previousVideo->stop();
-    
-    machinesClosed[0]->machineController->update();
+    int indexVideo = machinesClosed[0]->machine->getCurrentStateVideoIndex();
+    float startPercent = machinesClosed[0]->machine->getCurrentStateStart();
+    float endPercent = machinesClosed[0]->machine->getCurrentStateEnd();
+    if( isFirstTime ){
+        startPercent = 0;
+        isFirstTime = false;
+    }
+    setCurrentVideoState( indexVideo , startPercent , endPercent );
     machinesClosed[0]->machineController->updateViewDataVideo( videoSelected , currentVideo );
-    
-    hasFinishedPlaying = false;
-}
-////--------------------------------------------------------------
-//void ofApp::updateAleatorio(){
-//    previousVideo = currentVideo;
-//
-//    //chose a random next video
-//    videoSelected = ofRandom( 0 , videos.size() );
-//    currentVideo = &videos[ videoSelected ];
-//    currentVideo->setSpeed( currentVideoSpeed );
-//    currentVideoDurationMilli = currentVideo->getDuration() * 1000;
-//
-//    //calculating start position for the cut
-//    if( isFirstTime ){
-//        cutStartPositionPercent = 0;
-//        isFirstTime = false;
-//    }
-//    else
-//        cutStartPositionPercent = ofRandom( 0 , delataEnd );
-//    cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
-//
-//    //calculating cut lenght
-//    cutLenghtMilli = ofRandom( 0 , cutMaximusLenghtMilli );
-//
-//    //loock if the end is out of the video.
-//    if(cutStartPositionMilli + cutLenghtMilli >= delataEnd * currentVideoDurationMilli )
-//        cutLenghtMilli = currentVideoDurationMilli - cutStartPositionMilli;
-//    cutEndPositionMilli = cutStartPositionMilli + cutLenghtMilli;
-//
-//    currentVideo->setPosition( cutStartPositionPercent );
-//    currentVideo->play();
-//    if( previousVideo != currentVideo )
-//        previousVideo->stop();
-//
-//    hasFinishedPlaying = false;
-//}
-//
-//--------------------------------------------------------------
-void ofApp::updateRandom(){
-    if( appState != APP_STATE_RANDOM )
-        return;
-    previousVideo = currentVideo;
-    
-    if( ! machineRandom->machine->stepRandom() )
-        cout << "Machine is closed fuckerssss!!!!!!";
-    
-    //chose a random next video
-    videoSelected = machineRandom->machine->getCurrentStateVideoIndex();
-    currentVideo = &videos[ videoSelected ];
-    currentVideo->setSpeed( currentVideoSpeed );
-    currentVideoDurationMilli = currentVideo->getDuration() * 1000;
-    
-    cutStartPositionPercent = machineRandom->machine->getCurrentStateStart();
-    cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
-    
-    cutEndPositionMilli = machineRandom->machine->getCurrentStateEnd() * currentVideoDurationMilli;
-    cutLenghtMilli = cutEndPositionMilli - cutStartPositionMilli;
-    
-    currentVideo->setPosition( cutStartPositionPercent );
-    currentVideo->play();
-    if( previousVideo != currentVideo )
-        previousVideo->stop();
-    
-    machineRandom->machineController->update();
-    machineRandom->machineController->updateViewDataVideo( videoSelected , currentVideo );
-    
-    hasFinishedPlaying = false;
+    machinesClosed[0]->machineController->update();
+   
 }
 //--------------------------------------------------------------
 void ofApp::updateEnergys(){
     if( appState != APP_STATE_ENERGYS )
         return;
-    previousVideo = currentVideo;
     
-    if( ! machineEnergys->machine->stepEnergys( ) )
-        cout << "Machine is closed fuckerssss!!!!!!";
+    currentEnergys.clear();
+    currentEnergys.push_back(currentEnergy01);
+    currentEnergys.push_back(currentEnergy02);
+    currentEnergys.push_back(currentEnergy03);
+
+    machineEnergys->machine->stepEnergys( currentEnergys );
     
     //chose a random next video
-    videoSelected = machineEnergys->machine->getCurrentStateVideoIndex();
-    currentVideo = &videos[ videoSelected ];
-    currentVideo->setSpeed( currentVideoSpeed );
-    currentVideoDurationMilli = currentVideo->getDuration() * 1000;
-    
-    cutStartPositionPercent = machineEnergys->machine->getCurrentStateStart();
-    cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
-    
-    cutEndPositionMilli = machineEnergys->machine->getCurrentStateEnd() * currentVideoDurationMilli;
-    cutLenghtMilli = cutEndPositionMilli - cutStartPositionMilli;
-    
-    currentVideo->setPosition( cutStartPositionPercent );
-    currentVideo->play();
-    if( previousVideo != currentVideo )
-        previousVideo->stop();
-    
-    machineEnergys->machineController->update();
+    int indexVideo = machineEnergys->machine->getCurrentStateVideoIndex();
+    float startPercent = machineEnergys->machine->getCurrentStateStart();
+    float endPercent = machineEnergys->machine->getCurrentStateEnd();
+    if( isFirstTime ){
+        startPercent = 0;
+        isFirstTime = false;
+    }
+    setCurrentVideoState( indexVideo , startPercent , endPercent );
     machineEnergys->machineController->updateViewDataVideo( videoSelected , currentVideo );
-    
-    hasFinishedPlaying = false;
+    machineEnergys->machineController->update();
 }
-
 //--------------------------------------------------------------
 void ofApp::draw(){
     //currentVideo->draw( 0 , 0 , ofGetWidth() , ofGetHeight() );
@@ -385,12 +253,13 @@ void ofApp::draw(){
         case APP_STATE_RANDOM:
             machineRandom->draw();
             break;
-        case APP_STATE_ENERGYS:
-            machineEnergys->draw();
-            break;
             
         case APP_STATE_CLOSED_MACHINES:
             machinesClosed[0]->draw();
+            break;
+            
+        case APP_STATE_ENERGYS:
+            machineEnergys->draw();
             break;
     }
     camera->end();
@@ -538,6 +407,18 @@ void ofApp::keyPressed  (int key){
         guiGlobal.loadFromFile("settingsGlobal.xml");
         guiEnergys.loadFromFile("settingsEnergys.xml");
     }
+
+    if(key == '1'){
+        setAppState( APP_STATE_RANDOM );
+    }
+
+    if(key == '2'){
+        setAppState( APP_STATE_CLOSED_MACHINES );
+    }
+  
+    if(key == '3'){
+        setAppState( APP_STATE_ENERGYS );
+    }
 }
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
@@ -581,11 +462,11 @@ void ofApp::setupGUI(){
     sliderBrightness.addListener( this , &ofApp::sliderBrightnessChanged );
     sliderZoom.addListener( this , &ofApp::sliderZoomChanged );
     sliderText.addListener( this , &ofApp::sliderTextChanged );
-    
-    //buttonSelectRandom.addListener( this , &ofApp::sliderBrightnessChanged );
-    //buttonSelectClosedMachines.addListener( this , &ofApp::buttonSelectClosedMachinesChanged );
-    //buttonSelectREnergy.addListener( this , &ofApp::buttonSelectREnergyChanged );
-    
+
+//    buttonSelectRandom.addListener( this , &ofApp::sliderBrightnessChanged );
+//    buttonSelectClosedMachines.addListener( this , &ofApp::buttonSelectClosedMachinesChanged );
+//    buttonSelectREnergy.addListener( this , &ofApp::buttonSelectREnergyChanged );
+//    
     //random
     sliderCutMaximusLenghtMilli.addListener( this , &ofApp::sliderCutMaximumLenghtMilliChanged );
     
@@ -607,17 +488,25 @@ void ofApp::setupGUI(){
     guiGlobal.add( sliderZoom.setup("zoom", 1, 1, 5  ));
     guiGlobal.add( sliderText.setup("text", 1, 1, 2  ));
     
-    guiGlobal.add( buttonSelectRandom.setup("random") );
-    guiGlobal.add( buttonSelectClosedMachines.setup("closed") );
-    guiGlobal.add( buttonSelectREnergy.setup("energy") );
+//    guiGlobal.add( buttonSelectRandom.setup("random") );
+//    guiGlobal.add( buttonSelectClosedMachines.setup("closed") );
+//    guiGlobal.add( buttonSelectREnergy.setup("energy") );
     
     //random
     guiRandom.add( sliderCutMaximusLenghtMilli.setup("duration", 1, .001, 1  ));
     
     //enery
-    guiEnergys.add( sliderEnergy01.setup("amor", 1, 0, 1  ));
-    guiEnergys.add( sliderEnergy02.setup("tristeza", 1,0, 1  ));
-    guiEnergys.add( sliderEnergy03.setup("beleza", 1, 0, 1  ));
+    guiEnergys.add( sliderEnergy01.setup("amor", 1 , 0.001 , 1.000  ));
+    guiEnergys.add( sliderEnergy02.setup("tristeza", 1 , 0.001 , 1.000  ));
+    guiEnergys.add( sliderEnergy03.setup("beleza", 1 , 0.001 , 1.000  ));
+    
+    currentVideoBrightness = sliderBrightness;;
+    currentVideoZoom = sliderZoom;
+    currentVideoText = sliderText;
+    cutMaximusLenghtMilli = sliderCutMaximusLenghtMilli;
+    currentEnergy01 = sliderEnergy01;
+    currentEnergy02 = sliderEnergy02;
+    currentEnergy03 = sliderEnergy03;
 }
 //--------------------------------------------------------------
 void ofApp::drawGUI(){
@@ -638,18 +527,18 @@ void ofApp::sliderZoomChanged(float &sliderZoom ){
 void ofApp::sliderTextChanged(float &slidetText ){
     currentVideoText = slidetText;
 }
-//--------------------------------------------------------------
-void ofApp::buttonSelectRandomChanged(bool &buttonSelectState ){
-    appState = APP_STATE_RANDOM;
-}
-//--------------------------------------------------------------
-void ofApp::buttonSelectClosedMachinesChanged(bool &buttonSelectClosedMachinesState ){
-    appState = APP_STATE_CLOSED_MACHINES;
-}
-//--------------------------------------------------------------
-void ofApp::buttonSelectREnergyChanged(bool &buttonSelectREnergyState ){
-    appState = APP_STATE_ENERGYS;
-}
+////--------------------------------------------------------------
+//void ofApp::buttonSelectRandomChanged(){
+//    setAppState( APP_STATE_RANDOM );
+//}
+////--------------------------------------------------------------
+//void ofApp::buttonSelectClosedMachinesChanged(){
+//    setAppState( APP_STATE_CLOSED_MACHINES );
+//}
+////--------------------------------------------------------------
+//void ofApp::buttonSelectREnergyChanged(){
+//    setAppState( APP_STATE_ENERGYS );
+//}
 //--------------------------------------------------------------
 //GUI Random
 void ofApp::sliderCutMaximumLenghtMilliChanged(float &sliderCutMaximumLenghtMilli ){
@@ -669,4 +558,64 @@ void ofApp::sliderEnergy03Changed(float &sliderEne03 ){
     currentEnergy03 = sliderEne03;
 }
 
+////--------------------------------------------------------------
+//void ofApp::updateAleatorio(){
+//    previousVideo = currentVideo;
+//
+//    //chose a random next video
+//    videoSelected = ofRandom( 0 , videos.size() );
+//    currentVideo = &videos[ videoSelected ];
+//    currentVideo->setSpeed( currentVideoSpeed );
+//    currentVideoDurationMilli = currentVideo->getDuration() * 1000;
+//
+//    //calculating start position for the cut
+//    if( isFirstTime ){
+//        cutStartPositionPercent = 0;
+//        isFirstTime = false;
+//    }
+//    else
+//        cutStartPositionPercent = ofRandom( 0 , delataEnd );
+//    cutStartPositionMilli = cutStartPositionPercent * currentVideoDurationMilli;
+//
+//    //calculating cut lenght
+//    cutLenghtMilli = ofRandom( 0 , cutMaximusLenghtMilli );
+//
+//    //loock if the end is out of the video.
+//    if(cutStartPositionMilli + cutLenghtMilli >= delataEnd * currentVideoDurationMilli )
+//        cutLenghtMilli = currentVideoDurationMilli - cutStartPositionMilli;
+//    cutEndPositionMilli = cutStartPositionMilli + cutLenghtMilli;
+//
+//    currentVideo->setPosition( cutStartPositionPercent );
+//    currentVideo->play();
+//    if( previousVideo != currentVideo )
+//        previousVideo->stop();
+//
+//    hasFinishedPlaying = false;
+//}
+//
 
+//--------------------------------------------------------------
+//void ofApp::update(){
+//    if( hasFinishedPlaying ){
+//        //updateAleatorio();
+//        updateRandom();
+//        //updateClosedMachine();
+//    }
+//    else
+//        if( currentVideoPositionMilli >= cutEndPositionMilli )
+//            hasFinishedPlaying = true;
+//
+//    edit.update();
+//    machineRandom.update();
+//    currentVideo->update();
+//
+//    pixelsVideo = currentVideo->getPixels();
+//    int numPixels = currentVideo->getWidth() * currentVideo->getHeight() * 3;
+//    for( int p = 0 ; p < numPixels ; p ++ )
+//        pixelsVideo[p] *= currentVideoBrightness ;
+//
+//    textureVideo.loadData( pixelsVideo );
+//
+//    currentVideoPositionNormalized = currentVideo->getPosition();
+//    currentVideoPositionMilli = currentVideoPositionNormalized * currentVideoDurationMilli;
+//}

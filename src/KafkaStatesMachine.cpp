@@ -107,9 +107,36 @@ bool KafkaStatesMachine::stepRandom(){
     return true;
 }
 //-------------------------------------------------------------
-bool KafkaStatesMachine::stepEnergys(){
-    float dice = ofRandom( 0 , states.size() );
-    setCurrentState( states[ dice] );
+bool KafkaStatesMachine::stepEnergys(vector<float> theEnergys){
+    if( theEnergys.size() != 3 )
+        return false;
+    
+    float dice = ofRandom( 0 , 1 );
+    float energy01 = theEnergys[0];
+    float energy02 = theEnergys[1];
+    float energy03 = theEnergys[2];
+    
+    vector<float> nextStatesProbabilities;
+    float totalProbability = 0;
+    int s;
+    for( s = 0 ; s < states.size() ; s ++ ){
+        float probability = energy01 * states[ s ]->getEnergy01() + energy02 * states[ s ]->getEnergy02() + energy03 * states[ s ]->getEnergy03();
+        totalProbability += probability;
+        nextStatesProbabilities.push_back(( probability ) ) ;
+    }
+    
+    for( s = 0 ; s < states.size() ; s ++ )
+        nextStatesProbabilities[ s ] /= totalProbability;
+
+    float valuerReached = 0;
+    for( s = 0 ; s < states.size() ; s ++ ){
+        valuerReached += nextStatesProbabilities[ s ];
+        if( valuerReached >= dice ){
+            setCurrentState( states[ s ] );
+            return true;
+        }
+    }
+    setCurrentState( states[ s ] );
     return true;
 }
 //-------------------------------------------------------------

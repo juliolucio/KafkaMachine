@@ -45,10 +45,10 @@ KafkaStatesMachineView::KafkaStatesMachineView( string theName , int theNumVideo
         videosColors.push_back( ofColor( ofRandom( 10 , 70 ) , 10, ofRandom( 100 , 200 ) ) );
     }
     
-    type = MACHINE_VIEW_TYPE_BOXES;
+    type = MACHINE_VIEW_TYPE_SPHERES;
     //font.load( "Contl___.ttf" , 16 );
     
-    ofSetSphereResolution(24);
+    //ofSetSphereResolution(3);
     
     //lights
     ofSetSmoothLighting(true);
@@ -74,6 +74,7 @@ KafkaStatesMachineView::KafkaStatesMachineView( string theName , int theNumVideo
 //-------------------------------------------------------------
 KafkaStatesMachineView::~KafkaStatesMachineView(){
     clear();
+    delete fileIn;
 }
 //-------------------------------------------------------------
 bool KafkaStatesMachineView::addState( string theName , int theVideoIndex , float theEnergy , float thePercentageStart , float thePercentageEnd  ){
@@ -123,15 +124,19 @@ bool KafkaStatesMachineView::addState( string theName , int theVideoIndex , floa
             
             
         case MACHINE_VIEW_TYPE_SPHERES:{
+            float scale = ( statePrimitiveHeight - primitivesSpacign ) / ( machineVideoSize.x - primitivesSpacign );
             ofIcoSpherePrimitive* sphere = new ofIcoSpherePrimitive();
-            sphere->setRadius( machineVideoSize.x / 2 - primitivesSpacign );
+            sphere->setRadius(  ( machineVideoSize.x - primitivesSpacign ) / 2  );
             sphere->setPosition( positionPrimitive - primitivesSpacign );
-            sphere->setResolution( 3 );
+            sphere->setResolution( 1 );
             sphere->setMode( OF_PRIMITIVE_TRIANGLES );
+            sphere->setScale( 1 , scale , 1 );
+            
             ofIcoSpherePrimitive* sphere2 = new ofIcoSpherePrimitive();
-            sphere2->setRadius( machineVideoSize.x / 2 - primitivesSpacign  );
+            sphere2->setRadius( ( machineVideoSize.x - primitivesSpacign ) / 2 );
             sphere2->setPosition( positionPrimitive - primitivesSpacign );
-            sphere2->setResolution( 3 );
+            sphere2->setResolution( 1 );
+            sphere2->setScale( 1 , scale , 1 );
             primitive01 = sphere;
             primitive02 = sphere2;
         }
@@ -704,6 +709,10 @@ void KafkaStatesMachineView::clear(){
     for( int s = 0 ; s < statePrimitive01.size() ; s ++ )
         delete statePrimitive01[s];
     statePrimitive01.clear();
+    
+    for( int v = 0 ; v < videosBoxesPrimitives.size() ; v ++ )
+        delete videosBoxesPrimitives[v];
+    videosBoxesPrimitives.clear();
     
     for( int s = 0 ; s < statePrimitive02.size() ; s ++ )
         delete statePrimitive02[s];

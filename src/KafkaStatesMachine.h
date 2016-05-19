@@ -42,7 +42,7 @@ public:
     void updateStates( float theEnergy);
     bool step();
     bool stepRandom();
-    bool stepEnergys();
+    bool stepEnergys(vector<float> theEnergys);
     void draw();
     string getName();
     string getCurrentStateName();

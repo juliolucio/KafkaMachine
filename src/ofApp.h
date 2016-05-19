@@ -37,6 +37,7 @@ public:
     
     //updating modes
     void setAppState( appStates theState  );
+    void setCurrentVideoState( int theIndexVideoSelected , float theStatrtPositionPercent , float theCurrentPositionPercent );
     void updateAleatorio();
     void updateRandom();
     void updateEnergys();
@@ -107,6 +108,8 @@ public:
     KafkaFullPopulatedMachine* machineRandom;
     KafkaFullPopulatedMachine* machineEnergys;
     
+    vector<float> currentEnergys;
+    
     appStates appState;
     
     //GUI  //-----------------------------------------------
@@ -129,17 +132,17 @@ public:
     ofxFloatSlider sliderZoom;
     ofxFloatSlider sliderText;
     
-    ofxButton buttonSelectRandom;
-    ofxButton buttonSelectClosedMachines;
-    ofxButton buttonSelectREnergy;
+//    ofxButton buttonSelectRandom;
+//    ofxButton buttonSelectClosedMachines;
+//    ofxButton buttonSelectREnergy;
     
     void sliderBrightnessChanged(float &sliderBright );
     void sliderZoomChanged(float &sliderZoom );
     void sliderTextChanged(float &slidetText );
     
-    void buttonSelectRandomChanged(bool &buttonSelectState );
-    void buttonSelectClosedMachinesChanged(bool &buttonSelectClosedMachinesState );
-    void buttonSelectREnergyChanged(bool &buttonSelectREnergyState );
+//    void buttonSelectRandomChanged();
+//    void buttonSelectClosedMachinesChanged();
+//    void buttonSelectREnergyChanged();
     
     //GUI Random
     ofxPanel guiRandom;
