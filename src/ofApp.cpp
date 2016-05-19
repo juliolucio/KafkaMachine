@@ -17,16 +17,11 @@ void ofApp::setup(){
     
     cutEndPositionMilli = 0;
     
-    //cutMinimumLenghtMilli = 0;
-    cutMaximusLenghtMilli = 0;
-    
     currentVideoDurationMilli = 0;
     
     currentVideoPositionNormalized = 0;
     currentVideoPositionMilli = 0;
     
-    //   cutMinimumLenghtMilli = sliderCutMinimumLenghtMilli;
-    cutMaximusLenghtMilli = sliderCutMaximusLenghtMilli;
     currentVideoBrightness = sliderBrightness;
     
     currentVideoSpeed = 1;
@@ -79,14 +74,14 @@ void ofApp::setup(){
     KafkaClosedMachine* closedMachineTest = new KafkaClosedMachine();
     closedMachineTest->setup( "MACHINE_BOAT" , "machines/machinesTest/MachineA.tsv" , videos.size() );
     machinesClosed.push_back( closedMachineTest );
-  
+    
     //machine Random
     machineRandom = new KafkaFullPopulatedMachine();
     machineRandom->setup( "Machine_RANDOM" , videos.size() );
     
     //machine Energy
     machineEnergys = machineRandom;
-
+    
     //Camera
     camera = new ofEasyCam();
     camera->setDistance(1500);
@@ -94,6 +89,11 @@ void ofApp::setup(){
     setAppState( APP_STATE_ENERGYS );
     
     textureVideo.allocate( currentVideo->getWidth() , currentVideo->getHeight() ,GL_RGB );
+    
+    string portName = "/dev/cu.usbserial-A4001qyq";
+    if( !hardware.setup( portName ) )
+        cout << "couldnt find arduino at port : " << portName << "/n";
+    lastHardwareUpdateRefresh = 500;
 }
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -125,7 +125,7 @@ void ofApp::update(){
             machineEnergys->update();
             break;
     }
-
+    
     //updating brightness effect
     currentVideo->update();
     pixelsVideo = currentVideo->getPixels();
@@ -137,6 +137,34 @@ void ofApp::update(){
     //timers for ending cuts
     currentVideoPositionNormalized = currentVideo->getPosition();
     currentVideoPositionMilli = currentVideoPositionNormalized * currentVideoDurationMilli;
+    
+    updateHardware();
+}
+//--------------------------------------------------------------
+bool ofApp::updateHardware(){
+    hardware.update();
+    cutTimeMillis = ofGetElapsedTimeMillis();
+    if(  cutTimeMillis - lastHardwareUpdateRefresh > harwareUpdateRefresh ){
+        currentVideoBrightness = ofMap( hardware.getBrightness() , 0 , 1023 , 0 , 20 );
+        currentVideoZoom = ofMap( hardware.getZoom() , 0 , 1023 , 0 , 1 );
+        currentVideoText = ofMap( hardware.getText() , 0 , 1023 , 0 , 1 );
+        currentEnergy01 = ofMap( hardware.getEnergy01() , 0 , 1023 , 0 , 1 );
+        currentEnergy02 = ofMap( hardware.getEnergy02() , 0 , 1023 , 0 , 1 );
+        currentEnergy03 = ofMap( hardware.getEnergy03() , 0 , 1023 , 0 , 1 );
+        
+        sliderBrightness.valueChanged( currentVideoBrightness );
+        sliderZoom.valueChanged( currentVideoZoom );
+        sliderText.valueChanged( currentVideoText );
+        
+        sliderEnergy01.valueChanged( currentEnergy01 );
+        sliderEnergy02.valueChanged( currentEnergy02 );
+        sliderEnergy03.valueChanged( currentEnergy03 );
+        
+        int newAppState =  hardware.getAppState();
+        if( newAppState != appState )
+            setAppState( appStates(newAppState) );
+        lastHardwareUpdateRefresh = cutTimeMillis;
+    }
 }
 //--------------------------------------------------------------
 void ofApp::setAppState( appStates theState  ){
@@ -194,14 +222,14 @@ void ofApp::updateRandom(){
         isFirstTime = false;
     }
     setCurrentVideoState( indexVideo , startPercent , endPercent );
-    machineRandom->machineController->updateViewDataVideo( videoSelected , currentVideo );    
+    machineRandom->machineController->updateViewDataVideo( videoSelected , currentVideo );
     machineRandom->machineController->update();
 }
 //--------------------------------------------------------------
 void ofApp::updateClosedMachine(){
     if( appState != APP_STATE_CLOSED_MACHINES )
         return;
-   
+    
     if( !machinesClosed[0]->machine->step() )
         cout << "Machine is closed fuckerssss!!!!!!";
     
@@ -216,7 +244,7 @@ void ofApp::updateClosedMachine(){
     setCurrentVideoState( indexVideo , startPercent , endPercent );
     machinesClosed[0]->machineController->updateViewDataVideo( videoSelected , currentVideo );
     machinesClosed[0]->machineController->update();
-   
+    
 }
 //--------------------------------------------------------------
 void ofApp::updateEnergys(){
@@ -227,7 +255,7 @@ void ofApp::updateEnergys(){
     currentEnergys.push_back(currentEnergy01);
     currentEnergys.push_back(currentEnergy02);
     currentEnergys.push_back(currentEnergy03);
-
+    
     machineEnergys->machine->stepEnergys( currentEnergys );
     
     //chose a random next video
@@ -268,6 +296,8 @@ void ofApp::draw(){
     ofDisableLighting();
     drawDebugTimeline( 10 , ofGetHeight() - ofGetHeight() / 20  , ofGetWidth() - 20 , ofGetHeight() / 25 );
     drawDebugTimes( 20 , 180 );
+    
+    hardware.draw();
     
     drawGUI();
 }
@@ -397,25 +427,23 @@ void ofApp::keyPressed  (int key){
         hasFinishedPlaying = true;
     
     if(key == 's'){
-        guiRandom.saveToFile("settingsRandom.xml");
         guiGlobal.saveToFile("settingsGlobal.xml");
         guiEnergys.saveToFile("settingsEnergys.xml");
     }
     
     if(key == 'l'){
-        guiRandom.loadFromFile("settingsRandom.xml");
         guiGlobal.loadFromFile("settingsGlobal.xml");
         guiEnergys.loadFromFile("settingsEnergys.xml");
     }
-
+    
     if(key == '1'){
         setAppState( APP_STATE_RANDOM );
     }
-
+    
     if(key == '2'){
         setAppState( APP_STATE_CLOSED_MACHINES );
     }
-  
+    
     if(key == '3'){
         setAppState( APP_STATE_ENERGYS );
     }
@@ -462,13 +490,6 @@ void ofApp::setupGUI(){
     sliderBrightness.addListener( this , &ofApp::sliderBrightnessChanged );
     sliderZoom.addListener( this , &ofApp::sliderZoomChanged );
     sliderText.addListener( this , &ofApp::sliderTextChanged );
-
-//    buttonSelectRandom.addListener( this , &ofApp::sliderBrightnessChanged );
-//    buttonSelectClosedMachines.addListener( this , &ofApp::buttonSelectClosedMachinesChanged );
-//    buttonSelectREnergy.addListener( this , &ofApp::buttonSelectREnergyChanged );
-//    
-    //random
-    sliderCutMaximusLenghtMilli.addListener( this , &ofApp::sliderCutMaximumLenghtMilliChanged );
     
     //enery
     sliderEnergy01.addListener( this , &ofApp::sliderEnergy01Changed );
@@ -478,22 +499,13 @@ void ofApp::setupGUI(){
     //panels
     guiGlobal.setup();
     guiGlobal.setPosition(ofPoint( 10 , 10 ) );
-    guiRandom.setup();
-    guiRandom.setPosition(ofPoint( 230 , 10 ) );
     guiEnergys.setup();
-    guiEnergys.setPosition(ofPoint( 450 , 10 ) );
+    guiEnergys.setPosition(ofPoint( 230 , 10  ) );
     
     //globals
     guiGlobal.add( sliderBrightness.setup("bright", 1, 1, 20  ));
     guiGlobal.add( sliderZoom.setup("zoom", 1, 1, 5  ));
     guiGlobal.add( sliderText.setup("text", 1, 1, 2  ));
-    
-//    guiGlobal.add( buttonSelectRandom.setup("random") );
-//    guiGlobal.add( buttonSelectClosedMachines.setup("closed") );
-//    guiGlobal.add( buttonSelectREnergy.setup("energy") );
-    
-    //random
-    guiRandom.add( sliderCutMaximusLenghtMilli.setup("duration", 1, .001, 1  ));
     
     //enery
     guiEnergys.add( sliderEnergy01.setup("amor", 1 , 0.001 , 1.000  ));
@@ -503,7 +515,6 @@ void ofApp::setupGUI(){
     currentVideoBrightness = sliderBrightness;;
     currentVideoZoom = sliderZoom;
     currentVideoText = sliderText;
-    cutMaximusLenghtMilli = sliderCutMaximusLenghtMilli;
     currentEnergy01 = sliderEnergy01;
     currentEnergy02 = sliderEnergy02;
     currentEnergy03 = sliderEnergy03;
@@ -511,7 +522,6 @@ void ofApp::setupGUI(){
 //--------------------------------------------------------------
 void ofApp::drawGUI(){
     guiGlobal.draw();
-    guiRandom.draw();
     guiEnergys.draw();
 }
 //--------------------------------------------------------------
@@ -526,23 +536,6 @@ void ofApp::sliderZoomChanged(float &sliderZoom ){
 //--------------------------------------------------------------
 void ofApp::sliderTextChanged(float &slidetText ){
     currentVideoText = slidetText;
-}
-////--------------------------------------------------------------
-//void ofApp::buttonSelectRandomChanged(){
-//    setAppState( APP_STATE_RANDOM );
-//}
-////--------------------------------------------------------------
-//void ofApp::buttonSelectClosedMachinesChanged(){
-//    setAppState( APP_STATE_CLOSED_MACHINES );
-//}
-////--------------------------------------------------------------
-//void ofApp::buttonSelectREnergyChanged(){
-//    setAppState( APP_STATE_ENERGYS );
-//}
-//--------------------------------------------------------------
-//GUI Random
-void ofApp::sliderCutMaximumLenghtMilliChanged(float &sliderCutMaximumLenghtMilli ){
-    cutMaximusLenghtMilli = sliderCutMaximumLenghtMilli;
 }
 //--------------------------------------------------------------
 //GUI Energy

@@ -5,6 +5,7 @@
 
 #include "KafkaFullPopulatedMachine.h"
 #include "KafkaClosedMachine.h"
+#include "KafkaMachineArduinoHardware.h"
 
 
 class ofApp: public ofBaseApp{
@@ -16,7 +17,7 @@ public:
         APP_STATE_ENERGYS
     }appStates;
     
-
+    
     //loops
     void setup();
     void update();
@@ -37,6 +38,7 @@ public:
     
     //updating modes
     void setAppState( appStates theState  );
+    bool updateHardware();
     void setCurrentVideoState( int theIndexVideoSelected , float theStatrtPositionPercent , float theCurrentPositionPercent );
     void updateAleatorio();
     void updateRandom();
@@ -84,6 +86,7 @@ public:
     
     //timing
     long            cutLenghtMilli;
+    long            cutTimeMillis;
     
     long            cutStartPositionMilli;
     long            cutEndPositionMilli;
@@ -112,16 +115,19 @@ public:
     
     appStates appState;
     
+    KafkaMachineArduinoHardware hardware;
+    long harwareUpdateRefresh;
+    long lastHardwareUpdateRefresh;
+    
     //GUI  //-----------------------------------------------
     //parameters
-    long            cutMaximusLenghtMilli;
     float           currentVideoBrightness;
     float           currentVideoZoom;
     float           currentVideoText;
     float           currentEnergy01;
     float           currentEnergy02;
     float           currentEnergy03;
-
+    
     void setupGUI();
     void drawGUI();
     
@@ -132,24 +138,9 @@ public:
     ofxFloatSlider sliderZoom;
     ofxFloatSlider sliderText;
     
-//    ofxButton buttonSelectRandom;
-//    ofxButton buttonSelectClosedMachines;
-//    ofxButton buttonSelectREnergy;
-    
     void sliderBrightnessChanged(float &sliderBright );
     void sliderZoomChanged(float &sliderZoom );
     void sliderTextChanged(float &slidetText );
-    
-//    void buttonSelectRandomChanged();
-//    void buttonSelectClosedMachinesChanged();
-//    void buttonSelectREnergyChanged();
-    
-    //GUI Random
-    ofxPanel guiRandom;
-    
-    ofxFloatSlider sliderCutMaximusLenghtMilli;
-    
-    void sliderCutMaximumLenghtMilliChanged(float &sliderCutMaximumLenghtMilli );
     
     //GUI Energys
     ofxPanel guiEnergys;

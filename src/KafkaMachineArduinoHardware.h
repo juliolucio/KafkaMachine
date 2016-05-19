@@ -4,13 +4,21 @@
 #include "ofEvents.h"
 
 
-class KafkaMachineArduinoHardware : public ofBaseApp{
+class KafkaMachineArduinoHardware{
 
 public:
 
-	void setup();
+	bool setup( std::string portName );
 	void update();
 	void draw();
+    
+    int getAppState();
+    float  getBrightness();
+    float getZoom();
+    float getText();
+    float getEnergy01();
+    float getEnergy02();
+    float getEnergy03();
 
 	void keyPressed(int key);
 	void keyReleased(int key);
@@ -25,11 +33,44 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
-	ofImage				bgImage;
+	ofImage				imageKonb;
+    ofImage				imageButon;
+    ofImage				imageLedOn;
+    ofImage				imageLedOff;
+    
 	ofTrueTypeFont		font;
     ofTrueTypeFont      smallFont;
-	ofArduino	ard;
-	bool		bSetupArduino;			// flag variable for setting up arduino once
+	ofArduino           arduinoBoard;
+    
+    bool                isSetedUpArduino;
+    
+    int pinButtonRandom;
+    int pinButtonClosedMachines;
+    int pinButtonEnergys;
+    
+    int pinKnobBrightness;
+    int pinKnobZoom;
+    int pinKnobText;
+    
+    int pinKnobEnergy01;
+    int pinKnobEnergy02;
+    int pinKnobEnergy03;
+    
+    int pinLedRandom;
+    int pinLedClosedMachines;
+    int pinLedEnergys;
+    
+    float energy01;
+    float energy02;
+    float energy03;
+    
+    float brightness;
+    float zoom;
+    float text;
+    
+    bool isRandom;
+    bool isClosedMachines;
+    bool isEnergys; 
     
 private:
     
@@ -37,9 +78,6 @@ private:
     void digitalPinChanged(const int & pinNum);
     void analogPinChanged(const int & pinNum);
 	void updateArduino();
-    
-    string buttonState;
-    string potValue;
 
 };
 
