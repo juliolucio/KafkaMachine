@@ -53,7 +53,7 @@ bool KafkaMachineArduinoHardware::setup( std::string portName ){
 	if( !arduinoBoard.connect( portName , 57600) )
         return false;
     
-	ofAddListener(arduinoBoard.EInitialized, this, &KafkaMachineArduinoHardware::setupArduino);
+	ofAddListener( arduinoBoard.EInitialized , this , &KafkaMachineArduinoHardware::setupArduino );
 
     return true;
 }
@@ -63,8 +63,7 @@ bool KafkaMachineArduinoHardware::isRuning(){
 }
 //--------------------------------------------------------------
 void KafkaMachineArduinoHardware::update(){
-    if( isSetedUpArduino )
-        updateArduino();
+    updateArduino();
 }
 //--------------------------------------------------------------
 int KafkaMachineArduinoHardware::getAppState(){
@@ -104,8 +103,6 @@ float KafkaMachineArduinoHardware::getEnergy03(){
 void KafkaMachineArduinoHardware::setupArduino(const int & version) {
 	ofRemoveListener(arduinoBoard.EInitialized, this, &KafkaMachineArduinoHardware::setupArduino);
     
-    isSetedUpArduino = true;
-    
     ofLogNotice() << arduinoBoard.getFirmwareName(); 
     ofLogNotice() << "firmata v" << arduinoBoard.getMajorFirmwareVersion() << "." << arduinoBoard.getMinorFirmwareVersion();
     
@@ -126,6 +123,9 @@ void KafkaMachineArduinoHardware::setupArduino(const int & version) {
     
     ofAddListener( arduinoBoard.EDigitalPinChanged, this, &KafkaMachineArduinoHardware::digitalPinChanged );
     ofAddListener( arduinoBoard.EAnalogPinChanged, this, &KafkaMachineArduinoHardware::analogPinChanged );
+    
+    cout << "\nArduino ready !";
+    isSetedUpArduino = true;
 }
 //--------------------------------------------------------------
 void KafkaMachineArduinoHardware::updateArduino(){
@@ -176,8 +176,17 @@ void KafkaMachineArduinoHardware::analogPinChanged(const int & pinNum ) {
         energy03 = arduinoBoard.getAnalog(pinKnobEnergy03);
 }
 //--------------------------------------------------------------
-void KafkaMachineArduinoHardware::draw(){
-    ofSetColor(255, 255, 255);
+void KafkaMachineArduinoHardware::draw( int x , int y ){
+    string debugString;
+    ofFill();
+    ofEnableAlphaBlending();
+    ofSetColor( 20 , 200 , 0 , 100 );
+    ofDrawRectangle( x - 10 , y - 20 , 200 , 230 );
+    ofDisableAlphaBlending();
+    ofNoFill();
+    
+    ofSetColor( 255,255,255  );
+
 	if (!isSetedUpArduino){
 		font.drawString("arduino not ready...\n", 515, 40);
 	} else {
@@ -192,66 +201,6 @@ void KafkaMachineArduinoHardware::draw(){
         result += "\nCLOSED : " + ofToString( isClosedMachines );
         result += "\nENERGYS : " + ofToString( isEnergys );
         
-        ofSetColor(0, 255, 0);
-		smallFont.drawString( result , 500 , 200 );
-
-        ofSetColor(255, 255, 255);
+		smallFont.drawString( result , x , y );
 	}
-}
-//--------------------------------------------------------------
-void KafkaMachineArduinoHardware::keyPressed  (int key){
-    switch (key) {
-        case OF_KEY_RIGHT:
-            // rotate servo head to 180 degrees
-            arduinoBoard.sendServo(9, 180, false);
-            arduinoBoard.sendDigital(18, ARD_HIGH);  // pin 20 if using StandardFirmata from Arduino 0022 or older
-            break;
-        case OF_KEY_LEFT:
-            // rotate servo head to 0 degrees
-            arduinoBoard.sendServo(9, 0, false);
-            arduinoBoard.sendDigital(18, ARD_LOW);  // pin 20 if using StandardFirmata from Arduino 0022 or older
-            break;
-        default:
-            break;
-    }
-}
-//--------------------------------------------------------------
-void KafkaMachineArduinoHardware::keyReleased(int key){
-
-}
-//--------------------------------------------------------------
-void KafkaMachineArduinoHardware::mouseMoved(int x, int y ){
-
-}
-//--------------------------------------------------------------
-void KafkaMachineArduinoHardware::mouseDragged(int x, int y, int button){
-
-}
-//--------------------------------------------------------------
-void KafkaMachineArduinoHardware::mousePressed(int x, int y, int button){
-
-}
-//--------------------------------------------------------------
-void KafkaMachineArduinoHardware::mouseReleased(int x, int y, int button){
-
-}
-//--------------------------------------------------------------
-void KafkaMachineArduinoHardware::mouseEntered(int x, int y){
-
-}
-//--------------------------------------------------------------
-void KafkaMachineArduinoHardware::mouseExited(int x, int y){
-
-}
-//--------------------------------------------------------------
-void KafkaMachineArduinoHardware::windowResized(int w, int h){
-
-}
-//--------------------------------------------------------------
-void KafkaMachineArduinoHardware::gotMessage(ofMessage msg){
-
-}
-//--------------------------------------------------------------
-void KafkaMachineArduinoHardware::dragEvent(ofDragInfo dragInfo){ 
-
 }

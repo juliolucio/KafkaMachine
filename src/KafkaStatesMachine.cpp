@@ -136,7 +136,7 @@ bool KafkaStatesMachine::stepEnergys(vector<float> theEnergys){
             return true;
         }
     }
-    setCurrentState( states[ s ] );
+    setCurrentState( states[ s-1 ] );
     return true;
 }
 //-------------------------------------------------------------

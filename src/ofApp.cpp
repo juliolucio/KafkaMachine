@@ -94,6 +94,34 @@ void ofApp::setup(){
     if( !hardware.setup( portName ) )
         cout << "couldnt find arduino at port : " << portName << "/n";
     lastHardwareUpdateRefresh = 500;
+    
+    cout << "\nWaiting for arduino ";
+    
+    //parametaers INITIAL MAX and MIN values to set up by teh artist
+    currentVideoBrightness = 1;
+    currentVideoZoom = 1;
+    currentVideoText = .5;
+    currentEnergy01 = .5;
+    currentEnergy02 = .5;
+    currentEnergy03 = .5;
+    
+    currentVideoBrightnessMax = 10;
+    currentVideoBrightnessMin = .5;
+    
+    currentVideoZoomMax = 5;
+    currentVideoZoomMin = 1;
+    
+    currentVideoTextMax = 1;
+    currentVideoTextMin = 0;
+    
+    currentEnergy01Max = 1;
+    currentEnergy01Min = 0;
+    
+    currentEnergy02Max = 1;
+    currentEnergy02Min = 0;
+    
+    currentEnergy03Max = 1;
+    currentEnergy03Min = 0;
 }
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -139,21 +167,21 @@ void ofApp::update(){
     currentVideoPositionMilli = currentVideoPositionNormalized * currentVideoDurationMilli;
     
     if( !updateHardware() )
-        cout << "couldnt update arduino /n";
+        cout << "couldnt update arduino \n";
 }
 //--------------------------------------------------------------
 bool ofApp::updateHardware(){
+    hardware.update();
     if( !hardware.isRuning() )
         return false;
-    hardware.update();
     cutTimeMillis = ofGetElapsedTimeMillis();
     if(  cutTimeMillis - lastHardwareUpdateRefresh > harwareUpdateRefresh ){
-        currentVideoBrightness = ofMap( hardware.getBrightness() , 0 , 1023 , 0 , 20 );
-        currentVideoZoom = ofMap( hardware.getZoom() , 0 , 1023 , 0 , 1 );
-        currentVideoText = ofMap( hardware.getText() , 0 , 1023 , 0 , 1 );
-        currentEnergy01 = ofMap( hardware.getEnergy01() , 0 , 1023 , 0 , 1 );
-        currentEnergy02 = ofMap( hardware.getEnergy02() , 0 , 1023 , 0 , 1 );
-        currentEnergy03 = ofMap( hardware.getEnergy03() , 0 , 1023 , 0 , 1 );
+        currentVideoBrightness = ofMap( hardware.getBrightness() , 1023 , 0 , currentVideoBrightnessMin , currentVideoBrightnessMax );
+        currentVideoZoom = ofMap( hardware.getZoom() , 1023 , 0 , currentVideoZoomMin , currentVideoZoomMax );
+        currentVideoText = ofMap( hardware.getText() , 1023 , 0 , currentVideoTextMin, currentVideoTextMax );
+        currentEnergy01 = ofMap( hardware.getEnergy01() , 1023 , 0 , currentEnergy01Min , currentEnergy01Max );
+        currentEnergy02 = ofMap( hardware.getEnergy02() , 1023 , 0 , currentEnergy02Min , currentEnergy02Max );
+        currentEnergy03 = ofMap( hardware.getEnergy03() , 1023 , 0 , currentEnergy03Min , currentEnergy03Max );
         
         sliderBrightness.valueChanged( currentVideoBrightness );
         sliderZoom.valueChanged( currentVideoZoom );
@@ -268,6 +296,7 @@ void ofApp::updateEnergys(){
     float endPercent = machineEnergys->machine->getCurrentStateEnd();
     if( isFirstTime ){
         startPercent = 0;
+        endPercent = machineEnergys->machine->
         isFirstTime = false;
     }
     setCurrentVideoState( indexVideo , startPercent , endPercent );
@@ -278,7 +307,17 @@ void ofApp::updateEnergys(){
 void ofApp::draw(){
     //currentVideo->draw( 0 , 0 , ofGetWidth() , ofGetHeight() );
     ofSetColor(255);
-    textureVideo.draw( 0 , 0 , ofGetWidth() , ofGetHeight() );
+    
+    if( currentVideoZoom != 1 ){
+        ofPushMatrix();
+        ofTranslate(( 1-currentVideoZoom )* ( ofGetWidth() / 2 )  , (1-currentVideoZoom) * ( ofGetHeight() / 2 ) );
+        ofScale( currentVideoZoom , currentVideoZoom );
+        textureVideo.draw(0,0, ofGetWidth() , ofGetHeight() );
+        ofPopMatrix();
+    }
+    else
+        textureVideo.draw( 0 , 0 , ofGetWidth() , ofGetHeight() );
+    
     
     camera->begin();
     switch( appState ){
@@ -298,12 +337,15 @@ void ofApp::draw(){
     
     ofSetColor(255);
     ofDisableLighting();
-    drawDebugTimeline( 10 , ofGetHeight() - ofGetHeight() / 20  , ofGetWidth() - 20 , ofGetHeight() / 25 );
-    drawDebugTimes( 20 , 180 );
+    //drawDebugTimeline( 10 , ofGetHeight() - ofGetHeight() / 20  , ofGetWidth() - 20 , ofGetHeight() / 25 );
+    //drawDebugTimes( 20 , 420 );
     
-    hardware.draw();
     
-    drawGUI();
+    if( hardware.isRuning() )
+        drawHardware( 20 , 50 );
+        //hardware.draw(20 , 50);
+    else
+        drawGUI();
 }
 //--------------------------------------------------------------
 void ofApp::drawInteractionArea(){
@@ -370,6 +412,46 @@ void ofApp::drawDebugTimeline( int x , int y , int w , int h ){
     ofDisableAlphaBlending();
     ofNoFill();
     ofSetColor( 255,255,255  );
+}
+
+//--------------------------------------------------------------
+void ofApp::drawHardware( int x , int y ){
+    ofFill();
+    ofEnableAlphaBlending();
+    ofSetColor( 20 , 200 , 0 , 100 );
+    ofDrawRectangle( x - 10 , y - 20 , 160 , 180 );
+    ofDisableAlphaBlending();
+    ofNoFill();
+    
+    ofSetColor( 255,255,255  );
+    
+    if( !hardware.isRuning() ){
+        font.drawString("Arduino not connected...\n", x, y);
+    } else {
+        string result;
+        switch( appState ){
+            case APP_STATE_RANDOM:
+                result += "RANDOM MACHINE";
+                break;
+                
+            case APP_STATE_CLOSED_MACHINES:
+                result += "CLOSED MACHINES";
+                break;
+                
+            case APP_STATE_ENERGYS:
+                result += "ENERGY MACHINE";
+                break;
+        }
+
+        result += "\n\nBrigthness : " + ofToString( currentVideoBrightness , 2 );
+        result += "\nZoom : " + ofToString( currentVideoZoom , 2 );
+        result += "\nText : " + ofToString( currentVideoText , 2 );
+        result += "\n\nEnergy01 : " + ofToString( currentEnergy01 , 2 );
+        result += "\nEnergy02 : " + ofToString( currentEnergy02 , 2 );
+        result += "\nEnergy03 : " + ofToString( currentEnergy03 , 2 );
+        
+        font.drawString( result , x , y );
+    }
 }
 //--------------------------------------------------------------
 string ofApp::getTimeStringFromMilli (long milliseconds ){
@@ -507,14 +589,14 @@ void ofApp::setupGUI(){
     guiEnergys.setPosition(ofPoint( 230 , 10  ) );
     
     //globals
-    guiGlobal.add( sliderBrightness.setup("bright", 1, 1, 20  ));
-    guiGlobal.add( sliderZoom.setup("zoom", 1, 1, 5  ));
-    guiGlobal.add( sliderText.setup("text", 1, 1, 2  ));
+    guiGlobal.add( sliderBrightness.setup("bright", currentVideoBrightness , currentVideoBrightnessMin , currentVideoBrightnessMax  ));
+    guiGlobal.add( sliderZoom.setup("zoom", currentVideoZoom , currentVideoZoomMin , currentVideoZoomMax  ));
+    guiGlobal.add( sliderText.setup("text", currentVideoText , currentVideoTextMin , currentVideoTextMax  ));
     
     //enery
-    guiEnergys.add( sliderEnergy01.setup("amor", 1 , 0.001 , 1.000  ));
-    guiEnergys.add( sliderEnergy02.setup("tristeza", 1 , 0.001 , 1.000  ));
-    guiEnergys.add( sliderEnergy03.setup("beleza", 1 , 0.001 , 1.000  ));
+    guiEnergys.add( sliderEnergy01.setup("energy01", currentEnergy01 , currentEnergy01Min , currentEnergy01Max ));
+    guiEnergys.add( sliderEnergy02.setup("energy02", currentEnergy02 , currentEnergy02Min , currentEnergy02Max ));
+    guiEnergys.add( sliderEnergy03.setup("energy03", currentEnergy03 , currentEnergy03Min , currentEnergy03Max ));
     
     currentVideoBrightness = sliderBrightness;;
     currentVideoZoom = sliderZoom;

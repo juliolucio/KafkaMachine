@@ -51,6 +51,7 @@ public:
     //drawing
     void drawDebugTimes( int x , int y );
     void drawDebugTimeline( int x , int y , int w , int h);
+    void drawHardware( int x , int y );
     string getTimeStringFromMilli (long Milli);
     void drawEnergy( ofVec3f position , int height , int radius);
     void drawVolumen( ofVec3f position , int height , int radius);
@@ -119,7 +120,6 @@ public:
     long harwareUpdateRefresh;
     long lastHardwareUpdateRefresh;
     
-    //GUI  //-----------------------------------------------
     //parameters
     float           currentVideoBrightness;
     float           currentVideoZoom;
@@ -128,6 +128,20 @@ public:
     float           currentEnergy02;
     float           currentEnergy03;
     
+    float           currentVideoBrightnessMax;
+    float           currentVideoBrightnessMin;
+    float           currentVideoZoomMax;
+    float           currentVideoZoomMin;
+    float           currentVideoTextMax;
+    float           currentVideoTextMin;
+    float           currentEnergy01Max;
+    float           currentEnergy01Min;
+    float           currentEnergy02Max;
+    float           currentEnergy02Min;
+    float           currentEnergy03Max;
+    float           currentEnergy03Min;
+    
+    //GUI  //-----------------------------------------------
     void setupGUI();
     void drawGUI();
     
