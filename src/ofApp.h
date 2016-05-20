@@ -36,9 +36,12 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
+    bool loadTextForEffect( string fileName );
+    
     //updating modes
     void setAppState( appStates theState  );
     bool updateHardware();
+    void updateTextEffect();
     void setCurrentVideoState( int theIndexVideoSelected , float theStatrtPositionPercent , float theCurrentPositionPercent );
     void updateAleatorio();
     void updateRandom();
@@ -104,6 +107,20 @@ public:
     
     ofTrueTypeFont  font;
     
+    //text effect
+    ofTrueTypeFont  fontTextEffect;
+    ifstream* fileIn;
+    string textForEffect;
+    string textDrawingEffect;
+    long textEfectUpdateRefresh;
+    long lasttextEfectUpdateRefresh;
+    int numLetersInTextEffect;
+    int firstEffectCharacter;
+    int textEffectDirection;
+    int textEffectSize;
+    ofVec3f textEffectPosition;
+    ofVec3f textEffectRotation;
+    
     //camera
     ofEasyCam* camera;
     
@@ -112,10 +129,13 @@ public:
     KafkaFullPopulatedMachine* machineRandom;
     KafkaFullPopulatedMachine* machineEnergys;
     
+    //energuy state
     vector<float> currentEnergys;
     
+    //app state
     appStates appState;
     
+    //arduino hardware
     KafkaMachineArduinoHardware hardware;
     long harwareUpdateRefresh;
     long lastHardwareUpdateRefresh;

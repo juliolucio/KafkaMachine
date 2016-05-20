@@ -10,6 +10,7 @@ void ofApp::setup(){
     
     font.load( "Contl___.ttf" , 12 );
     
+    
     cutLenghtMilli = 0;
     
     cutStartPositionPercent = 0;
@@ -68,6 +69,27 @@ void ofApp::setup(){
         //videos[ v] .setVolume(0);
     }
     
+    //text effect
+    textEffectSize = 50;
+    fontTextEffect.load( "Contl___.ttf" , textEffectSize );
+    
+    textEfectUpdateRefresh = 800;
+    numLetersInTextEffect = 60;
+    
+    if( !loadTextForEffect(("text/Text01.txt")) )
+        cout << "\nCouldnt fint test efect file :( ";
+    
+    for( int c = firstEffectCharacter ; c < firstEffectCharacter + numLetersInTextEffect ; c ++ )
+        textDrawingEffect.push_back( textForEffect[ c ] );
+    firstEffectCharacter++;
+    textEffectDirection = 1;
+    textEffectPosition = ofVec3f( 100 , 900 , 0 );
+    textEffectRotation = ofVec3f( 0 , 0 , 0 );
+    
+    firstEffectCharacter = 0;
+    lasttextEfectUpdateRefresh = 0;
+    
+    //flags
     isFirstTime = true;
     
     //machines closed loops
@@ -77,7 +99,7 @@ void ofApp::setup(){
     
     //machine Random
     machineRandom = new KafkaFullPopulatedMachine();
-    machineRandom->setup( "Machine_RANDOM" , videos.size() );
+    machineRandom->setup( "RANDOM + ENERGY" , videos.size() );
     
     //machine Energy
     machineEnergys = machineRandom;
@@ -88,13 +110,15 @@ void ofApp::setup(){
     
     setAppState( APP_STATE_ENERGYS );
     
+    //zoom effect
     textureVideo.allocate( currentVideo->getWidth() , currentVideo->getHeight() ,GL_RGB );
     
+    //arduino hardware
     string portName = "/dev/cu.usbserial-A4001qyq";
     if( !hardware.setup( portName ) )
         cout << "couldnt find arduino at port : " << portName << "/n";
-    lastHardwareUpdateRefresh = 500;
-    
+    harwareUpdateRefresh = 500;
+    lastHardwareUpdateRefresh = 0;
     cout << "\nWaiting for arduino ";
     
     //parametaers INITIAL MAX and MIN values to set up by teh artist
@@ -154,6 +178,10 @@ void ofApp::update(){
             break;
     }
     
+
+    
+    
+    
     //updating brightness effect
     currentVideo->update();
     pixelsVideo = currentVideo->getPixels();
@@ -168,6 +196,8 @@ void ofApp::update(){
     
     if( !updateHardware() )
         cout << "couldnt update arduino \n";
+    
+    updateTextEffect();
 }
 //--------------------------------------------------------------
 bool ofApp::updateHardware(){
@@ -197,6 +227,27 @@ bool ofApp::updateHardware(){
         lastHardwareUpdateRefresh = cutTimeMillis;
     }
     return true;
+}
+//--------------------------------------------------------------
+void ofApp::updateTextEffect(){
+    cutTimeMillis = ofGetElapsedTimeMillis();
+    if(  cutTimeMillis - lasttextEfectUpdateRefresh > textEfectUpdateRefresh ){
+        textDrawingEffect.clear();
+        if( textEffectDirection == 1 ){
+            firstEffectCharacter++;
+            for( int c = firstEffectCharacter ; c < firstEffectCharacter + numLetersInTextEffect ; c ++ )
+                textDrawingEffect.push_back( textForEffect[ c ] );
+            if( firstEffectCharacter + numLetersInTextEffect >= textForEffect.size() )
+                textEffectDirection = -1;
+        }
+        else{
+            firstEffectCharacter--;
+            for( int c = firstEffectCharacter ; c < firstEffectCharacter + numLetersInTextEffect ; c ++ )
+                textDrawingEffect.push_back( textForEffect[ c ] );
+            if( firstEffectCharacter <= 0 )
+                textEffectDirection = 1;
+        }
+    }
 }
 //--------------------------------------------------------------
 void ofApp::setAppState( appStates theState  ){
@@ -296,7 +347,6 @@ void ofApp::updateEnergys(){
     float endPercent = machineEnergys->machine->getCurrentStateEnd();
     if( isFirstTime ){
         startPercent = 0;
-        endPercent = machineEnergys->machine->
         isFirstTime = false;
     }
     setCurrentVideoState( indexVideo , startPercent , endPercent );
@@ -338,7 +388,13 @@ void ofApp::draw(){
     ofSetColor(255);
     ofDisableLighting();
     //drawDebugTimeline( 10 , ofGetHeight() - ofGetHeight() / 20  , ofGetWidth() - 20 , ofGetHeight() / 25 );
-    //drawDebugTimes( 20 , 420 );
+    //drawDebugTimes( 20 , 420 );;
+    
+    //text effect
+    ofPushMatrix();
+    ofTranslate( textEffectPosition );
+    fontTextEffect.drawString( textDrawingEffect , 0 , 0 );
+    ofPopMatrix();
     
     
     if( hardware.isRuning() )
@@ -564,7 +620,32 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){
 }
-
+//--------------------------------------------------------------
+bool ofApp::loadTextForEffect( string fileName ){
+    if( !fileIn )
+        fileIn = new ifstream();
+    
+    fileIn->open( ofToDataPath( fileName ).c_str() , std::ios_base::binary | std::ios_base::in );
+    if ( !fileIn->is_open() ){
+        cout << "Machine File not found: ";
+        cout << fileName << "\n";
+        fileIn->close();
+        return false;
+    }
+    
+    textForEffect = "";
+    string read;
+    string readPrev;
+    (*fileIn) >> read;
+    while( ( read != readPrev && read != " " ) ) {
+        readPrev = read;
+        (*fileIn) >> read;
+        textForEffect += read;
+        textForEffect += " ";
+    }
+    fileIn->close();
+    return true;
+}
 //--------------------------------------------------------------
 //GUI
 //--------------------------------------------------------------
