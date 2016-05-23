@@ -163,8 +163,8 @@ void KafkaMachineArduinoHardware::analogPinChanged(const int & pinNum ) {
     if( pinNumber == pinKnobZoom )
         zoom = arduinoBoard.getAnalog(pinKnobZoom);
     
-    if( pinNumber == pinButtonEnergys )
-        text = arduinoBoard.getAnalog(pinButtonEnergys);
+    if( pinNumber == pinKnobText )
+        text = arduinoBoard.getAnalog(pinKnobText);
     
     if( pinNumber == pinKnobEnergy01 )
         energy01 = arduinoBoard.getAnalog(pinKnobEnergy01);

@@ -113,8 +113,10 @@ public:
     string textForEffect;
     string textDrawingEffect;
     long textEfectUpdateRefresh;
+    long textEfectUpdateRefreshMin;
     long lasttextEfectUpdateRefresh;
     int numLetersInTextEffect;
+    int numLetersInTextEffectMin;
     int firstEffectCharacter;
     int textEffectDirection;
     int textEffectSize;

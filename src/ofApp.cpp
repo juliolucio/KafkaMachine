@@ -70,11 +70,11 @@ void ofApp::setup(){
     }
     
     //text effect
-    textEffectSize = 50;
+    textEffectSize = 120;
     fontTextEffect.load( "Contl___.ttf" , textEffectSize );
     
-    textEfectUpdateRefresh = 800;
-    numLetersInTextEffect = 60;
+    textEfectUpdateRefreshMin = 40;
+    numLetersInTextEffectMin = 3;
     
     if( !loadTextForEffect(("text/Text01.txt")) )
         cout << "\nCouldnt fint test efect file :( ";
@@ -117,7 +117,7 @@ void ofApp::setup(){
     string portName = "/dev/cu.usbserial-A4001qyq";
     if( !hardware.setup( portName ) )
         cout << "couldnt find arduino at port : " << portName << "/n";
-    harwareUpdateRefresh = 500;
+    harwareUpdateRefresh = 200;
     lastHardwareUpdateRefresh = 0;
     cout << "\nWaiting for arduino ";
     
@@ -135,8 +135,8 @@ void ofApp::setup(){
     currentVideoZoomMax = 5;
     currentVideoZoomMin = 1;
     
-    currentVideoTextMax = 1;
-    currentVideoTextMin = 0;
+    currentVideoTextMax = 10;
+    currentVideoTextMin = 1;
     
     currentEnergy01Max = 1;
     currentEnergy01Min = 0;
@@ -231,6 +231,8 @@ bool ofApp::updateHardware(){
 //--------------------------------------------------------------
 void ofApp::updateTextEffect(){
     cutTimeMillis = ofGetElapsedTimeMillis();
+    textEfectUpdateRefresh = textEfectUpdateRefreshMin * ( currentVideoTextMax - currentVideoText );
+    numLetersInTextEffect = numLetersInTextEffectMin * currentVideoText;
     if(  cutTimeMillis - lasttextEfectUpdateRefresh > textEfectUpdateRefresh ){
         textDrawingEffect.clear();
         if( textEffectDirection == 1 ){
@@ -247,6 +249,7 @@ void ofApp::updateTextEffect(){
             if( firstEffectCharacter <= 0 )
                 textEffectDirection = 1;
         }
+        lasttextEfectUpdateRefresh = cutTimeMillis;
     }
 }
 //--------------------------------------------------------------
@@ -641,7 +644,7 @@ bool ofApp::loadTextForEffect( string fileName ){
         readPrev = read;
         (*fileIn) >> read;
         textForEffect += read;
-        textForEffect += " ";
+        textForEffect += "  ";
     }
     fileIn->close();
     return true;
