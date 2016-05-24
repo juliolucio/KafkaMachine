@@ -72,6 +72,23 @@
 		89248A241CEE490E009791EA /* KafkaMachineArduinoHardware.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KafkaMachineArduinoHardware.cpp; sourceTree = "<group>"; };
 		89248A251CEE490E009791EA /* KafkaMachineArduinoHardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KafkaMachineArduinoHardware.h; sourceTree = "<group>"; };
 		89449E3044D456F7DE7BEA14 /* ofxPanel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxPanel.h; path = ../../../addons/ofxGui/src/ofxPanel.h; sourceTree = SOURCE_ROOT; };
+		89E8779D1CF4F608009116BD /* Machine_Scene_14_Boat_01.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Machine_Scene_14_Boat_01.tsv; sourceTree = "<group>"; };
+		89E8779F1CF4F608009116BD /* Machine_Scene_14_Boat_01.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Machine_Scene_14_Boat_01.tsv; sourceTree = "<group>"; };
+		89E877A01CF4F608009116BD /* MachineA.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = MachineA.tsv; sourceTree = "<group>"; };
+		89E877A11CF4F608009116BD /* MachineB.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = MachineB.tsv; sourceTree = "<group>"; };
+		89E877A21CF4F608009116BD /* MaquinaC.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = MaquinaC.tsv; sourceTree = "<group>"; };
+		89E877A41CF4F613009116BD /* Scene10_America_Edit-4.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Scene10_America_Edit-4.tsv"; sourceTree = "<group>"; };
+		89E877A51CF4F613009116BD /* Scene14_Boat_Edit-2.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Scene14_Boat_Edit-2.tsv"; sourceTree = "<group>"; };
+		89E877A71CF4F613009116BD /* Scene1_Bedfight_Edit-1.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Scene1_Bedfight_Edit-1.tsv"; sourceTree = "<group>"; };
+		89E877A91CF4F613009116BD /* Scene2_Karl_Suitcase.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Scene2_Karl_Suitcase.tsv; sourceTree = "<group>"; };
+		89E877AB1CF4F613009116BD /* Scene3_All_Access.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Scene3_All_Access.tsv; sourceTree = "<group>"; };
+		89E877AC1CF4F613009116BD /* Scene4_Stoker_Cabin_Edit-3.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Scene4_Stoker_Cabin_Edit-3.tsv"; sourceTree = "<group>"; };
+		89E877AD1CF4F613009116BD /* Scene5_Stoker_Lanzarote.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Scene5_Stoker_Lanzarote.tsv; sourceTree = "<group>"; };
+		89E877AE1CF4F613009116BD /* Scene6_Klaus_Lost_Suitcase.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Scene6_Klaus_Lost_Suitcase.tsv; sourceTree = "<group>"; };
+		89E877AF1CF4F613009116BD /* Scene7_Ramses_Edit-5.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Scene7_Ramses_Edit-5.tsv"; sourceTree = "<group>"; };
+		89E877B01CF4F613009116BD /* Scene8_Liftboy_Edit-1.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Scene8_Liftboy_Edit-1.tsv"; sourceTree = "<group>"; };
+		89E877B11CF4F613009116BD /* Scene9 Lisbon_Protest.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Scene9 Lisbon_Protest.tsv"; sourceTree = "<group>"; };
+		89E877B31CF4F619009116BD /* Text01.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Text01.txt; sourceTree = "<group>"; };
 		89F0364B1CECF61600AFFE20 /* KafkaClosedMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KafkaClosedMachine.cpp; sourceTree = "<group>"; };
 		89F0364C1CECF61600AFFE20 /* KafkaClosedMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KafkaClosedMachine.h; sourceTree = "<group>"; };
 		907C5B5E104864A2D3A25745 /* ofxToggle.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxToggle.cpp; path = ../../../addons/ofxGui/src/ofxToggle.cpp; sourceTree = SOURCE_ROOT; };
@@ -128,6 +145,73 @@
 			name = local_addons;
 			sourceTree = "<group>";
 		};
+		89E8779A1CF4F5E7009116BD /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				89E8779B1CF4F608009116BD /* machines */,
+				89E877A31CF4F613009116BD /* scenes */,
+				89E877B21CF4F619009116BD /* text */,
+			);
+			name = Data;
+			sourceTree = "<group>";
+		};
+		89E8779B1CF4F608009116BD /* machines */ = {
+			isa = PBXGroup;
+			children = (
+				89E8779C1CF4F608009116BD /* machinesClosedPaths */,
+				89E8779E1CF4F608009116BD /* machinesTest */,
+			);
+			name = machines;
+			path = bin/data/machines;
+			sourceTree = "<group>";
+		};
+		89E8779C1CF4F608009116BD /* machinesClosedPaths */ = {
+			isa = PBXGroup;
+			children = (
+				89E8779D1CF4F608009116BD /* Machine_Scene_14_Boat_01.tsv */,
+			);
+			path = machinesClosedPaths;
+			sourceTree = "<group>";
+		};
+		89E8779E1CF4F608009116BD /* machinesTest */ = {
+			isa = PBXGroup;
+			children = (
+				89E8779F1CF4F608009116BD /* Machine_Scene_14_Boat_01.tsv */,
+				89E877A01CF4F608009116BD /* MachineA.tsv */,
+				89E877A11CF4F608009116BD /* MachineB.tsv */,
+				89E877A21CF4F608009116BD /* MaquinaC.tsv */,
+			);
+			path = machinesTest;
+			sourceTree = "<group>";
+		};
+		89E877A31CF4F613009116BD /* scenes */ = {
+			isa = PBXGroup;
+			children = (
+				89E877A41CF4F613009116BD /* Scene10_America_Edit-4.tsv */,
+				89E877A51CF4F613009116BD /* Scene14_Boat_Edit-2.tsv */,
+				89E877A71CF4F613009116BD /* Scene1_Bedfight_Edit-1.tsv */,
+				89E877A91CF4F613009116BD /* Scene2_Karl_Suitcase.tsv */,
+				89E877AB1CF4F613009116BD /* Scene3_All_Access.tsv */,
+				89E877AC1CF4F613009116BD /* Scene4_Stoker_Cabin_Edit-3.tsv */,
+				89E877AD1CF4F613009116BD /* Scene5_Stoker_Lanzarote.tsv */,
+				89E877AE1CF4F613009116BD /* Scene6_Klaus_Lost_Suitcase.tsv */,
+				89E877AF1CF4F613009116BD /* Scene7_Ramses_Edit-5.tsv */,
+				89E877B01CF4F613009116BD /* Scene8_Liftboy_Edit-1.tsv */,
+				89E877B11CF4F613009116BD /* Scene9 Lisbon_Protest.tsv */,
+			);
+			name = scenes;
+			path = bin/data/scenes;
+			sourceTree = "<group>";
+		};
+		89E877B21CF4F619009116BD /* text */ = {
+			isa = PBXGroup;
+			children = (
+				89E877B31CF4F619009116BD /* Text01.txt */,
+			);
+			name = text;
+			path = bin/data/text;
+			sourceTree = "<group>";
+		};
 		A763ED608B35AE3310251DEE /* src */ = {
 			isa = PBXGroup;
 			children = (
@@ -174,6 +258,7 @@
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
+				89E8779A1CF4F5E7009116BD /* Data */,
 				E4EEC9E9138DF44700A80321 /* openFrameworks */,
 				BB4B014C10F69532006C3DED /* addons */,
 				6948EE371B920CB800B5AC1A /* local_addons */,

@@ -93,9 +93,31 @@ void ofApp::setup(){
     isFirstTime = true;
     
     //machines closed loops
-    KafkaClosedMachine* closedMachineTest = new KafkaClosedMachine();
-    closedMachineTest->setup( "MACHINE_BOAT" , "machines/machinesTest/MachineA.tsv" , videos.size() );
-    machinesClosed.push_back( closedMachineTest );
+    KafkaClosedMachine* closedMachineTest01 = new KafkaClosedMachine();
+    closedMachineTest01->setup( "MACHINE_BOAT" , "machines/machinesTest/Machine_Scene_14_Boat_01.tsv" , videos.size() );
+    
+    KafkaClosedMachine* closedMachineTest02 = new KafkaClosedMachine();
+    closedMachineTest02->setup( "MACHINE_A" , "machines/machinesTest/MachineA.tsv" , videos.size() );
+
+    KafkaClosedMachine* closedMachineTest03 = new KafkaClosedMachine();
+    closedMachineTest03->setup( "MACHINE_B" , "machines/machinesTest/MachineB.tsv" , videos.size() );
+    
+    KafkaClosedMachine* closedMachineTest04 = new KafkaClosedMachine();
+    closedMachineTest04->setup( "MACHINE_C" , "machines/machinesTest/MaquinaC.tsv" , videos.size() );
+    
+    machinesClosed.push_back( closedMachineTest01 );
+    machinesClosed.push_back( closedMachineTest02 );
+    machinesClosed.push_back( closedMachineTest03 );
+    machinesClosed.push_back( closedMachineTest04 );
+    currentClosedMacineIndex = 0;
+    currentClosedMacine = machinesClosed[ currentClosedMacineIndex ];
+    
+    closedMachinesUpdateRefreshMin = 10000;
+    closedMachinesUpdateRefreshMax = 20000;
+    
+    lastClosedMachinesUpdateTime = 0;
+    
+    closedMachinesUpdateRefresh = ofRandom( closedMachinesUpdateRefreshMin , closedMachinesUpdateRefreshMax );
     
     //machine Random
     machineRandom = new KafkaFullPopulatedMachine();
@@ -149,6 +171,7 @@ void ofApp::setup(){
 }
 //--------------------------------------------------------------
 void ofApp::update(){
+    long cutTimeMillis = ofGetElapsedTimeMillis();
     switch( appState ){
         case APP_STATE_RANDOM:
             if( hasFinishedPlaying )
@@ -160,12 +183,21 @@ void ofApp::update(){
             break;
             
         case APP_STATE_CLOSED_MACHINES:
-            if( hasFinishedPlaying )
+            if( hasFinishedPlaying ){
+                if( cutTimeMillis - lastClosedMachinesUpdateTime > closedMachinesUpdateRefresh ){
+                    closedMachinesUpdateRefresh = ofRandom( closedMachinesUpdateRefreshMin , closedMachinesUpdateRefreshMax );
+                    lastClosedMachinesUpdateTime = cutTimeMillis;
+                    int newMachineIndex = ofRandom( machinesClosed.size() );
+                    while( newMachineIndex == currentClosedMacineIndex )
+                        newMachineIndex = ofRandom( machinesClosed.size() );
+                    currentClosedMacine = machinesClosed[ newMachineIndex ];
+                }
                 updateClosedMachine();
+            }
             else
                 if( currentVideoPositionMilli >= cutEndPositionMilli )
                     hasFinishedPlaying = true;
-            machinesClosed[0]->update();
+            currentClosedMacine->update();
             break;
             
         case APP_STATE_ENERGYS:
@@ -201,10 +233,11 @@ void ofApp::update(){
 }
 //--------------------------------------------------------------
 bool ofApp::updateHardware(){
+    long cutTimeMillis = ofGetElapsedTimeMillis();
     hardware.update();
     if( !hardware.isRuning() )
         return false;
-    cutTimeMillis = ofGetElapsedTimeMillis();
+    
     if(  cutTimeMillis - lastHardwareUpdateRefresh > harwareUpdateRefresh ){
         currentVideoBrightness = ofMap( hardware.getBrightness() , 1023 , 0 , currentVideoBrightnessMin , currentVideoBrightnessMax );
         currentVideoZoom = ofMap( hardware.getZoom() , 1023 , 0 , currentVideoZoomMin , currentVideoZoomMax );
@@ -213,13 +246,13 @@ bool ofApp::updateHardware(){
         currentEnergy02 = ofMap( hardware.getEnergy02() , 1023 , 0 , currentEnergy02Min , currentEnergy02Max );
         currentEnergy03 = ofMap( hardware.getEnergy03() , 1023 , 0 , currentEnergy03Min , currentEnergy03Max );
         
-        sliderBrightness.valueChanged( currentVideoBrightness );
-        sliderZoom.valueChanged( currentVideoZoom );
-        sliderText.valueChanged( currentVideoText );
+        //sliderBrightness.valueChanged( currentVideoBrightness );
+        //sliderZoom.valueChanged( currentVideoZoom );
+        //sliderText.valueChanged( currentVideoText );
         
-        sliderEnergy01.valueChanged( currentEnergy01 );
-        sliderEnergy02.valueChanged( currentEnergy02 );
-        sliderEnergy03.valueChanged( currentEnergy03 );
+        //sliderEnergy01.valueChanged( currentEnergy01 );
+        //sliderEnergy02.valueChanged( currentEnergy02 );
+        //sliderEnergy03.valueChanged( currentEnergy03 );
         
         int newAppState =  hardware.getAppState();
         if( newAppState != appState )
@@ -230,7 +263,7 @@ bool ofApp::updateHardware(){
 }
 //--------------------------------------------------------------
 void ofApp::updateTextEffect(){
-    cutTimeMillis = ofGetElapsedTimeMillis();
+    long cutTimeMillis = ofGetElapsedTimeMillis();
     textEfectUpdateRefresh = textEfectUpdateRefreshMin * ( currentVideoTextMax - currentVideoText );
     numLetersInTextEffect = numLetersInTextEffectMin * currentVideoText;
     if(  cutTimeMillis - lasttextEfectUpdateRefresh > textEfectUpdateRefresh ){
@@ -316,20 +349,20 @@ void ofApp::updateClosedMachine(){
     if( appState != APP_STATE_CLOSED_MACHINES )
         return;
     
-    if( !machinesClosed[0]->machine->step() )
+    if( !currentClosedMacine->machine->step() )
         cout << "Machine is closed fuckerssss!!!!!!";
     
     //chose a random next video
-    int indexVideo = machinesClosed[0]->machine->getCurrentStateVideoIndex();
-    float startPercent = machinesClosed[0]->machine->getCurrentStateStart();
-    float endPercent = machinesClosed[0]->machine->getCurrentStateEnd();
+    int indexVideo = currentClosedMacine->machine->getCurrentStateVideoIndex();
+    float startPercent = currentClosedMacine->machine->getCurrentStateStart();
+    float endPercent = currentClosedMacine->machine->getCurrentStateEnd();
     if( isFirstTime ){
         startPercent = 0;
         isFirstTime = false;
     }
     setCurrentVideoState( indexVideo , startPercent , endPercent );
-    machinesClosed[0]->machineController->updateViewDataVideo( videoSelected , currentVideo );
-    machinesClosed[0]->machineController->update();
+    currentClosedMacine->machineController->updateViewDataVideo( videoSelected , currentVideo );
+    currentClosedMacine->machineController->update();
     
 }
 //--------------------------------------------------------------
@@ -379,7 +412,7 @@ void ofApp::draw(){
             break;
             
         case APP_STATE_CLOSED_MACHINES:
-            machinesClosed[0]->draw();
+            currentClosedMacine->draw();
             break;
             
         case APP_STATE_ENERGYS:

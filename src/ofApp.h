@@ -90,7 +90,6 @@ public:
     
     //timing
     long            cutLenghtMilli;
-    long            cutTimeMillis;
     
     long            cutStartPositionMilli;
     long            cutEndPositionMilli;
@@ -128,6 +127,12 @@ public:
     
     //machines for modes
     vector<KafkaClosedMachine*> machinesClosed;
+    KafkaClosedMachine* currentClosedMacine;
+    int currentClosedMacineIndex;
+    long closedMachinesUpdateRefresh;
+    long closedMachinesUpdateRefreshMin;
+    long closedMachinesUpdateRefreshMax;
+    long lastClosedMachinesUpdateTime;
     KafkaFullPopulatedMachine* machineRandom;
     KafkaFullPopulatedMachine* machineEnergys;
     

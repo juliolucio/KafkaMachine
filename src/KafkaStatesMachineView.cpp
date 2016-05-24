@@ -338,6 +338,7 @@ void KafkaStatesMachineView::draw(){
         ofSetColor( 200 , 40 , 40  );
         ofDrawSphere(transitionsPositionsInits[ t ].x , transitionsPositionsInits[ t ].y , transitionsPositionsInits[ t ].z , machineVideoSize.x / 12);
         
+        ofNoFill();
         ofDrawBezier(transitionsPositionsInits[ t ].x ,
                      transitionsPositionsInits[ t ].y ,
                      transitionsPositionsInits[ t ].z ,
