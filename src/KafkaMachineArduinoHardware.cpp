@@ -50,6 +50,10 @@ bool KafkaMachineArduinoHardware::setup( std::string portName ){
     pinLedClosedMachines = 12;
     pinLedEnergys = 13;
     
+    deltaToCjangeValue = 5;
+    
+    presedNow = false;
+    
 	if( !arduinoBoard.connect( portName , 57600) )
         return false;
     
@@ -99,6 +103,15 @@ float KafkaMachineArduinoHardware::getEnergy02(){
 float KafkaMachineArduinoHardware::getEnergy03(){
     return energy03;
 }
+
+//--------------------------------------------------------------
+bool KafkaMachineArduinoHardware::justPresedButton(){
+    if( presedNow ){
+        presedNow = false;
+        return true;
+    }
+    return false;
+}
 //--------------------------------------------------------------
 void KafkaMachineArduinoHardware::setupArduino(const int & version) {
 	ofRemoveListener(arduinoBoard.EInitialized, this, &KafkaMachineArduinoHardware::setupArduino);
@@ -137,18 +150,21 @@ void KafkaMachineArduinoHardware::digitalPinChanged(const int & pinNum) {
         isRandom = true;
         isClosedMachines = false;
         isEnergys = false;
+        presedNow = true;
     }
     
     else if( arduinoBoard.getDigital( pinButtonClosedMachines ) ){
         isRandom = false;
         isClosedMachines = true;
         isEnergys = false;
+        presedNow = true;
     }
     
     else if( arduinoBoard.getDigital( pinButtonEnergys ) ){
         isRandom = false;
         isClosedMachines = false;
         isEnergys = true;
+        presedNow = true;
     }
     arduinoBoard.sendDigital( pinLedRandom , isRandom );
     arduinoBoard.sendDigital( pinLedClosedMachines , isClosedMachines );
@@ -157,23 +173,32 @@ void KafkaMachineArduinoHardware::digitalPinChanged(const int & pinNum) {
 //--------------------------------------------------------------
 void KafkaMachineArduinoHardware::analogPinChanged(const int & pinNum ) {
     int pinNumber = int(pinNum);
+    int newValue = arduinoBoard.getAnalog(pinNum);
+    
     if( pinNumber == pinKnobBrightness )
-        brightness = arduinoBoard.getAnalog(pinKnobBrightness);
+        if( abs( newValue - brightness ) > deltaToCjangeValue  )
+            brightness = newValue;
     
     if( pinNumber == pinKnobZoom )
-        zoom = arduinoBoard.getAnalog(pinKnobZoom);
+        if( abs( newValue - zoom ) > deltaToCjangeValue  )
+            zoom = newValue;
     
     if( pinNumber == pinKnobText )
-        text = arduinoBoard.getAnalog(pinKnobText);
+        if( abs( newValue - text ) > deltaToCjangeValue  )
+            text = newValue;
     
     if( pinNumber == pinKnobEnergy01 )
-        energy01 = arduinoBoard.getAnalog(pinKnobEnergy01);
-    
+        if( abs( newValue - energy01 ) > deltaToCjangeValue  )
+            energy01 = newValue;
+
     if( pinNumber == pinKnobEnergy02 )
-        energy02 = arduinoBoard.getAnalog(pinKnobEnergy02);
-    
+        if( abs( newValue - energy02 ) > deltaToCjangeValue  )
+            energy02 = newValue;
+
     if( pinNumber == pinKnobEnergy03 )
-        energy03 = arduinoBoard.getAnalog(pinKnobEnergy03);
+        if( abs( newValue - energy03 ) > deltaToCjangeValue  )
+            energy03 = newValue;
+
 }
 //--------------------------------------------------------------
 void KafkaMachineArduinoHardware::draw( int x , int y ){

@@ -20,6 +20,8 @@ public:
     float getEnergy01();
     float getEnergy02();
     float getEnergy03();
+    
+    bool justPresedButton();
 
 
 	ofImage				imageKonb;
@@ -31,7 +33,8 @@ public:
     ofTrueTypeFont      smallFont;
 	ofArduino           arduinoBoard;
     
-    bool                isSetedUpArduino;
+    bool isSetedUpArduino;
+    bool presedNow;
     
     int pinButtonRandom;
     int pinButtonClosedMachines;
@@ -59,7 +62,9 @@ public:
     
     bool isRandom;
     bool isClosedMachines;
-    bool isEnergys; 
+    bool isEnergys;
+    
+    int deltaToCjangeValue;
     
 private:
     

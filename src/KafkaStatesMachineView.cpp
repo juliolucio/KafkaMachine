@@ -51,18 +51,18 @@ KafkaStatesMachineView::KafkaStatesMachineView( string theName , int theNumVideo
     //ofSetSphereResolution(3);
     
     //lights
-    ofSetSmoothLighting(true);
-    pointLight01.setDiffuseColor( ofFloatColor( .8 , .5 , .7 ) );
-    pointLight01.setSpecularColor( ofFloatColor( .5 , .5 , .5 ) );
-
-    pointLight02.setDiffuseColor( ofFloatColor( .6, .5, .8 ) );
-    pointLight02.setSpecularColor(ofFloatColor(.5 , .5 , .5 ) );
-    
+//    ofSetSmoothLighting(true);
+//    pointLight01.setDiffuseColor( ofFloatColor( .8 , .5 , .7 ) );
+//    pointLight01.setSpecularColor( ofFloatColor( .5 , .5 , .5 ) );
+//
+//    pointLight02.setDiffuseColor( ofFloatColor( .6, .5, .8 ) );
+//    pointLight02.setSpecularColor(ofFloatColor(.5 , .5 , .5 ) );
+//    
 //    pointLight03.setDiffuseColor( ofFloatColor( .8 , .8, .9 ) );
 //    pointLight03.setSpecularColor( ofFloatColor( 1 , 1 , 1 ) );
     
-    pointLight01.enable();
-    pointLight02.enable();
+//    pointLight01.enable();
+//    pointLight02.enable();
 //    pointLight03.enable();
 
     //material
@@ -238,20 +238,20 @@ void KafkaStatesMachineView::update(){
 
     videoPlanePosition = machineVideosPositions[ activeVideoIndex ] + ofVec3f( 0 , currentVideo->getPosition() *  machineVideoSize.y ,  0  );
     
-    positionPointLight01.x = machineCenter.x + cos( .5 * ofGetElapsedTimef() ) * machineSize.x;
-    positionPointLight01.y = machineCenter.y;
-    positionPointLight01.z = machineCenter.z + sin( .5 * ofGetElapsedTimef() ) * machineSize.x;
-    
-    positionPointLight02.x = machineCenter.x + cos( PI + .5 * ofGetElapsedTimef() ) * machineSize.x;
-    positionPointLight02.y = machineCenter.y;
-    positionPointLight02.z = machineCenter.z + sin( PI + .5 * ofGetElapsedTimef() ) * machineSize.x;
-    
+//    positionPointLight01.x = machineCenter.x + cos( .5 * ofGetElapsedTimef() ) * machineSize.x;
+//    positionPointLight01.y = machineCenter.y;
+//    positionPointLight01.z = machineCenter.z + sin( .5 * ofGetElapsedTimef() ) * machineSize.x;
+//    
+//    positionPointLight02.x = machineCenter.x + cos( PI + .5 * ofGetElapsedTimef() ) * machineSize.x;
+//    positionPointLight02.y = machineCenter.y;
+//    positionPointLight02.z = machineCenter.z + sin( PI + .5 * ofGetElapsedTimef() ) * machineSize.x;
+//    
 //    positionPointLight03.x = machineCenter.x;
 //    positionPointLight03.y = machineCenter.y + cos( .2 * ofGetElapsedTimef() ) * machineSize.x;
 //    positionPointLight03.z = machineCenter.z + sin( .2 * ofGetElapsedTimef() ) * 2 * machineSize.x;
-    
-    pointLight01.setPosition( positionPointLight01 );
-    pointLight02.setPosition( positionPointLight02 );
+//    
+//    pointLight01.setPosition( positionPointLight01 );
+//    pointLight02.setPosition( positionPointLight02 );
 //    pointLight03.setPosition( positionPointLight03 );
     
     videoPlaneHorizontal.setWidth( machineVideoSize.x + 20 );

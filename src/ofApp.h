@@ -36,17 +36,18 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
-    bool loadTextForEffect( string fileName );
+    //bool loadTextForEffect( string fileName );
     
     //updating modes
     void setAppState( appStates theState  );
     bool updateHardware();
-    void updateTextEffect();
+    //void updateTextEffect();
     void setCurrentVideoState( int theIndexVideoSelected , float theStatrtPositionPercent , float theCurrentPositionPercent );
     void updateAleatorio();
     void updateRandom();
     void updateEnergys();
     void updateClosedMachine();
+    void jumpToOtherClosedMachine();
     
     //timing
     long getcurrentVideoDurationMilli();
@@ -105,22 +106,23 @@ public:
     float           delataEnd;
     
     ofTrueTypeFont  font;
+    ofTrueTypeFont  fontNameClosedMachine;
     
-    //text effect
-    ofTrueTypeFont  fontTextEffect;
-    ifstream* fileIn;
-    string textForEffect;
-    string textDrawingEffect;
-    long textEfectUpdateRefresh;
-    long textEfectUpdateRefreshMin;
-    long lasttextEfectUpdateRefresh;
-    int numLetersInTextEffect;
-    int numLetersInTextEffectMin;
-    int firstEffectCharacter;
-    int textEffectDirection;
-    int textEffectSize;
-    ofVec3f textEffectPosition;
-    ofVec3f textEffectRotation;
+//    //text effect
+//    ofTrueTypeFont  fontTextEffect;
+//    ifstream* fileIn;
+//    string textForEffect;
+//    string textDrawingEffect;
+//    long textEfectUpdateRefresh;
+//    long textEfectUpdateRefreshMin;
+//    long lasttextEfectUpdateRefresh;
+//    int numLetersInTextEffect;
+//    int numLetersInTextEffectMin;
+//    int firstEffectCharacter;
+//    int textEffectDirection;
+//    int textEffectSize;
+//    ofVec3f textEffectPosition;
+//    ofVec3f textEffectRotation;
     
     //camera
     ofEasyCam* camera;
@@ -147,10 +149,21 @@ public:
     long harwareUpdateRefresh;
     long lastHardwareUpdateRefresh;
     
+    //lights
+    ofVec3f positionPointLight01;
+    ofVec3f positionPointLight02;
+    ofVec3f positionPointLight03;
+    
+    ofLight pointLight01;
+    ofLight pointLight02;
+    ofLight pointLight03;
+    
     //parameters
     float           currentVideoBrightness;
     float           currentVideoZoom;
-    float           currentVideoText;
+    //float           currentVideoText;
+    float           currentMachineRotation;
+    float           currentMachineTranslation;
     float           currentEnergy01;
     float           currentEnergy02;
     float           currentEnergy03;
@@ -159,8 +172,13 @@ public:
     float           currentVideoBrightnessMin;
     float           currentVideoZoomMax;
     float           currentVideoZoomMin;
-    float           currentVideoTextMax;
-    float           currentVideoTextMin;
+    //float           currentVideoTextMax;
+    //float           currentVideoTextMin;
+    float           currentVideoMachineRotationMax;
+    float           currentVideoMachineRotationMin;
+    float           currentMachineTranslationMax;
+    float           currentMachineTranslationMin;
+    
     float           currentEnergy01Max;
     float           currentEnergy01Min;
     float           currentEnergy02Max;

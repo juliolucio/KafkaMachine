@@ -11,6 +11,8 @@ KafkaEdit::KafkaEdit(){
 }
 //--------------------------------------------------------------
 KafkaEdit::~KafkaEdit(){
+    delete machine;
+    delete machineController;
 }
 //--------------------------------------------------------------
 void KafkaEdit::setup( string machineName , string machineFileName  , int theNumVideos ){
@@ -26,30 +28,4 @@ void KafkaEdit::update(){
 void KafkaEdit::draw(){
     machineController->drawView();
 }
-//--------------------------------------------------------------
-void KafkaEdit::keyPressed  (int key){
-}
-//--------------------------------------------------------------
-void KafkaEdit::keyReleased(int key){
-}
-//--------------------------------------------------------------
-void KafkaEdit::mouseMoved(int x, int y ){
-}
-//--------------------------------------------------------------
-void KafkaEdit::mouseDragged(int x, int y, int button){
-}
-//--------------------------------------------------------------
-void KafkaEdit::mousePressed(int x, int y, int button){
-}
-//--------------------------------------------------------------
-void KafkaEdit::mouseReleased(int x, int y, int button){
-}
-//--------------------------------------------------------------
-void KafkaEdit::windowResized(int w, int h){
-}
-//--------------------------------------------------------------
-void KafkaEdit::gotMessage(ofMessage msg){
-}
-//--------------------------------------------------------------
-void KafkaEdit::dragEvent(ofDragInfo dragInfo){
-}
+

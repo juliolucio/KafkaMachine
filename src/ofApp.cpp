@@ -9,7 +9,7 @@ void ofApp::setup(){
     ofSetVerticalSync(true);
     
     font.load( "Contl___.ttf" , 12 );
-    
+    fontNameClosedMachine.load( "Contl___.ttf" , 80 );
     
     cutLenghtMilli = 0;
     
@@ -34,7 +34,7 @@ void ofApp::setup(){
     if( bed_fight.load("movies/Scene1_Bedfight_Edit-1.mov") )
         videos.push_back( bed_fight );
     
-    if( karl_suitcase.load("movies/Scene2_Karl_Suitcase.mov" ) )
+    if( karl_suitcase.load("movies/Scene2_Karl_Suitcase.mp4" ) )
         videos.push_back( karl_suitcase );
     
     if( access.load("movies/Scene3_All_Access.mov") )
@@ -69,25 +69,26 @@ void ofApp::setup(){
         //videos[ v] .setVolume(0);
     }
     
-    //text effect
-    textEffectSize = 120;
-    fontTextEffect.load( "Contl___.ttf" , textEffectSize );
-    
-    textEfectUpdateRefreshMin = 40;
-    numLetersInTextEffectMin = 3;
-    
-    if( !loadTextForEffect(("text/Text01.txt")) )
-        cout << "\nCouldnt fint test efect file :( ";
-    
-    for( int c = firstEffectCharacter ; c < firstEffectCharacter + numLetersInTextEffect ; c ++ )
-        textDrawingEffect.push_back( textForEffect[ c ] );
-    firstEffectCharacter++;
-    textEffectDirection = 1;
-    textEffectPosition = ofVec3f( 100 , 900 , 0 );
-    textEffectRotation = ofVec3f( 0 , 0 , 0 );
-    
-    firstEffectCharacter = 0;
-    lasttextEfectUpdateRefresh = 0;
+//    //text effect
+//    textEffectSize = 120;
+//    fontTextEffect.load( "Contl___.ttf" , textEffectSize );
+//    
+//    textEfectUpdateRefreshMin = 40;
+//    numLetersInTextEffectMin = 3;
+//    
+//    if( !loadTextForEffect(("text/Text01.txt")) )
+//        cout << "\nCouldnt fint test efect file :( ";
+//    
+//    for( int c = firstEffectCharacter ; c < firstEffectCharacter + numLetersInTextEffect ; c ++ )
+//        textDrawingEffect.push_back( textForEffect[ c ] );
+//    firstEffectCharacter++;
+//    textEffectDirection = 1;
+//    textEffectPosition = ofVec3f( 100 , 900 , 0 );
+//    textEffectRotation = ofVec3f( 0 , 0 , 0 );
+//    
+//    firstEffectCharacter = 0;
+//    lasttextEfectUpdateRefresh = 0;
+
     
     //flags
     isFirstTime = true;
@@ -102,13 +103,13 @@ void ofApp::setup(){
     KafkaClosedMachine* closedMachineTest03 = new KafkaClosedMachine();
     closedMachineTest03->setup( "MACHINE_B" , "machines/machinesTest/MachineB.tsv" , videos.size() );
     
-    KafkaClosedMachine* closedMachineTest04 = new KafkaClosedMachine();
-    closedMachineTest04->setup( "MACHINE_C" , "machines/machinesTest/MaquinaC.tsv" , videos.size() );
-    
+//    KafkaClosedMachine* closedMachineTest04 = new KafkaClosedMachine();
+//    closedMachineTest04->setup( "MACHINE_C" , "machines/machinesTest/MaquinaC.tsv" , videos.size() );
+//    
     machinesClosed.push_back( closedMachineTest01 );
     machinesClosed.push_back( closedMachineTest02 );
     machinesClosed.push_back( closedMachineTest03 );
-    machinesClosed.push_back( closedMachineTest04 );
+//      machinesClosed.push_back( closedMachineTest04 );
     currentClosedMacineIndex = 0;
     currentClosedMacine = machinesClosed[ currentClosedMacineIndex ];
     
@@ -135,30 +136,55 @@ void ofApp::setup(){
     //zoom effect
     textureVideo.allocate( currentVideo->getWidth() , currentVideo->getHeight() ,GL_RGB );
     
+    
+    //lights
+    ofSetSmoothLighting(true);
+    pointLight01.setDiffuseColor( ofFloatColor( .8 , .5 , .7 ) );
+    pointLight01.setSpecularColor( ofFloatColor( .5 , .5 , .5 ) );
+    
+    pointLight02.setDiffuseColor( ofFloatColor( .6, .5, .8 ) );
+    pointLight02.setSpecularColor(ofFloatColor(.5 , .5 , .5 ) );
+    
+    pointLight03.setDiffuseColor( ofFloatColor( .8 , .8, .9 ) );
+    pointLight03.setSpecularColor( ofFloatColor( 1 , 1 , 1 ) );
+    
+    pointLight01.enable();
+    pointLight02.enable();
+    pointLight03.enable();
+
     //arduino hardware
     string portName = "/dev/cu.usbserial-A4001qyq";
     if( !hardware.setup( portName ) )
         cout << "couldnt find arduino at port : " << portName << "/n";
-    harwareUpdateRefresh = 200;
+    harwareUpdateRefresh = 50;
     lastHardwareUpdateRefresh = 0;
     cout << "\nWaiting for arduino ";
     
     //parametaers INITIAL MAX and MIN values to set up by teh artist
     currentVideoBrightness = 1;
     currentVideoZoom = 1;
-    currentVideoText = .5;
+    //currentVideoText = .5;
+    currentMachineRotation = 0;
+    currentMachineTranslation = 0;
+    
     currentEnergy01 = .5;
     currentEnergy02 = .5;
     currentEnergy03 = .5;
     
-    currentVideoBrightnessMax = 10;
-    currentVideoBrightnessMin = .5;
+    currentVideoBrightnessMax = 8;
+    currentVideoBrightnessMin = 1;
     
-    currentVideoZoomMax = 5;
+    currentVideoZoomMax = 10;
     currentVideoZoomMin = 1;
     
-    currentVideoTextMax = 10;
-    currentVideoTextMin = 1;
+    //currentVideoTextMax = 10;
+    //currentVideoTextMin = 1;
+    
+    currentVideoMachineRotationMax = 360;
+    currentVideoMachineRotationMin = -360;
+    
+    currentMachineTranslationMax = 1500;
+    currentMachineTranslationMin = -11000;
     
     currentEnergy01Max = 1;
     currentEnergy01Min = 0;
@@ -187,10 +213,7 @@ void ofApp::update(){
                 if( cutTimeMillis - lastClosedMachinesUpdateTime > closedMachinesUpdateRefresh ){
                     closedMachinesUpdateRefresh = ofRandom( closedMachinesUpdateRefreshMin , closedMachinesUpdateRefreshMax );
                     lastClosedMachinesUpdateTime = cutTimeMillis;
-                    int newMachineIndex = ofRandom( machinesClosed.size() );
-                    while( newMachineIndex == currentClosedMacineIndex )
-                        newMachineIndex = ofRandom( machinesClosed.size() );
-                    currentClosedMacine = machinesClosed[ newMachineIndex ];
+                    jumpToOtherClosedMachine();
                 }
                 updateClosedMachine();
             }
@@ -210,16 +233,15 @@ void ofApp::update(){
             break;
     }
     
-
-    
-    
-    
     //updating brightness effect
     currentVideo->update();
     pixelsVideo = currentVideo->getPixels();
     int numPixels = currentVideo->getWidth() * currentVideo->getHeight() * 3;
-    for( int p = 0 ; p < numPixels ; p ++ )
+    for( int p = 0 ; p < numPixels ; p +=3 ){
         pixelsVideo[p] *= currentVideoBrightness ;
+        if( pixelsVideo[p] >= 254 )
+            pixelsVideo[p] = 254;
+    }
     textureVideo.loadData( pixelsVideo );
     
     //timers for ending cuts
@@ -229,7 +251,25 @@ void ofApp::update(){
     if( !updateHardware() )
         cout << "couldnt update arduino \n";
     
-    updateTextEffect();
+    //updateTextEffect();
+    
+    //updateLights
+    positionPointLight01.x = 0 + cos( .5 * ofGetElapsedTimef() ) * ofGetWidth();
+    positionPointLight01.y = 0;
+    positionPointLight01.z = 0 + sin( .5 * ofGetElapsedTimef() ) * ofGetWidth();
+    
+    positionPointLight02.x = 0 + cos( PI + .5 * ofGetElapsedTimef() ) * ofGetWidth();
+    positionPointLight02.y = 0;
+    positionPointLight02.z = 0 + sin( PI + .5 * ofGetElapsedTimef() ) * ofGetWidth();
+    
+    positionPointLight03.x = 0;
+    positionPointLight03.y = 0 + cos( .2 * ofGetElapsedTimef() ) * ofGetWidth();
+    positionPointLight03.z = 0 + sin( .2 * ofGetElapsedTimef() ) * ofGetWidth();
+    
+    pointLight01.setPosition( positionPointLight01 );
+    pointLight02.setPosition( positionPointLight02 );
+    pointLight03.setPosition( positionPointLight03 );
+
 }
 //--------------------------------------------------------------
 bool ofApp::updateHardware(){
@@ -239,9 +279,12 @@ bool ofApp::updateHardware(){
         return false;
     
     if(  cutTimeMillis - lastHardwareUpdateRefresh > harwareUpdateRefresh ){
+        
         currentVideoBrightness = ofMap( hardware.getBrightness() , 1023 , 0 , currentVideoBrightnessMin , currentVideoBrightnessMax );
         currentVideoZoom = ofMap( hardware.getZoom() , 1023 , 0 , currentVideoZoomMin , currentVideoZoomMax );
-        currentVideoText = ofMap( hardware.getText() , 1023 , 0 , currentVideoTextMin, currentVideoTextMax );
+//        currentVideoText = ofMap( hardware.getText() , 1023 , 0 , currentVideoTextMin, currentVideoTextMax );
+        currentMachineRotation = ofMap( hardware.getText() , 1023 , 0 , currentVideoMachineRotationMin , currentVideoMachineRotationMax );
+        currentMachineTranslation = ofMap( hardware.getText() , 1023 , 0 , currentMachineTranslationMin , currentMachineTranslationMax );
         currentEnergy01 = ofMap( hardware.getEnergy01() , 1023 , 0 , currentEnergy01Min , currentEnergy01Max );
         currentEnergy02 = ofMap( hardware.getEnergy02() , 1023 , 0 , currentEnergy02Min , currentEnergy02Max );
         currentEnergy03 = ofMap( hardware.getEnergy03() , 1023 , 0 , currentEnergy03Min , currentEnergy03Max );
@@ -257,34 +300,48 @@ bool ofApp::updateHardware(){
         int newAppState =  hardware.getAppState();
         if( newAppState != appState )
             setAppState( appStates(newAppState) );
+        else if( hardware.justPresedButton() )
+            jumpToOtherClosedMachine();
+    
         lastHardwareUpdateRefresh = cutTimeMillis;
     }
     return true;
 }
 //--------------------------------------------------------------
-void ofApp::updateTextEffect(){
-    long cutTimeMillis = ofGetElapsedTimeMillis();
-    textEfectUpdateRefresh = textEfectUpdateRefreshMin * ( currentVideoTextMax - currentVideoText );
-    numLetersInTextEffect = numLetersInTextEffectMin * currentVideoText;
-    if(  cutTimeMillis - lasttextEfectUpdateRefresh > textEfectUpdateRefresh ){
-        textDrawingEffect.clear();
-        if( textEffectDirection == 1 ){
-            firstEffectCharacter++;
-            for( int c = firstEffectCharacter ; c < firstEffectCharacter + numLetersInTextEffect ; c ++ )
-                textDrawingEffect.push_back( textForEffect[ c ] );
-            if( firstEffectCharacter + numLetersInTextEffect >= textForEffect.size() )
-                textEffectDirection = -1;
-        }
-        else{
-            firstEffectCharacter--;
-            for( int c = firstEffectCharacter ; c < firstEffectCharacter + numLetersInTextEffect ; c ++ )
-                textDrawingEffect.push_back( textForEffect[ c ] );
-            if( firstEffectCharacter <= 0 )
-                textEffectDirection = 1;
-        }
-        lasttextEfectUpdateRefresh = cutTimeMillis;
-    }
+void ofApp::jumpToOtherClosedMachine(){
+    int newMachineIndex = ofRandom( machinesClosed.size() );
+    while( newMachineIndex == currentClosedMacineIndex )
+        newMachineIndex = ofRandom( machinesClosed.size() );
+    currentClosedMacineIndex = newMachineIndex;
+    currentClosedMacine = machinesClosed[ newMachineIndex ];
+    updateClosedMachine();
+
 }
+////--------------------------------------------------------------
+//void ofApp::updateTextEffect(){
+//    return;
+//    long cutTimeMillis = ofGetElapsedTimeMillis();
+//    textEfectUpdateRefresh = textEfectUpdateRefreshMin * ( currentVideoTextMax - currentVideoText );
+//    numLetersInTextEffect = numLetersInTextEffectMin * currentVideoText;
+//    if(  cutTimeMillis - lasttextEfectUpdateRefresh > textEfectUpdateRefresh ){
+//        textDrawingEffect.clear();
+//        if( textEffectDirection == 1 ){
+//            firstEffectCharacter++;
+//            for( int c = firstEffectCharacter ; c < firstEffectCharacter + numLetersInTextEffect ; c ++ )
+//                textDrawingEffect.push_back( textForEffect[ c ] );
+//            if( firstEffectCharacter + numLetersInTextEffect >= textForEffect.size() )
+//                textEffectDirection = -1;
+//        }
+//        else{
+//            firstEffectCharacter--;
+//            for( int c = firstEffectCharacter ; c < firstEffectCharacter + numLetersInTextEffect ; c ++ )
+//                textDrawingEffect.push_back( textForEffect[ c ] );
+//            if( firstEffectCharacter <= 0 )
+//                textEffectDirection = 1;
+//        }
+//        lasttextEfectUpdateRefresh = cutTimeMillis;
+//    }
+//}
 //--------------------------------------------------------------
 void ofApp::setAppState( appStates theState  ){
     appState = theState;
@@ -406,6 +463,10 @@ void ofApp::draw(){
     
     
     camera->begin();
+    ofPushMatrix();
+    ofTranslate( 0,0, currentMachineTranslation );
+    ofRotate( currentMachineRotation , 0, 1, 0);
+
     switch( appState ){
         case APP_STATE_RANDOM:
             machineRandom->draw();
@@ -413,12 +474,14 @@ void ofApp::draw(){
             
         case APP_STATE_CLOSED_MACHINES:
             currentClosedMacine->draw();
+            
             break;
             
         case APP_STATE_ENERGYS:
             machineEnergys->draw();
             break;
     }
+    ofPopMatrix();
     camera->end();
     
     ofSetColor(255);
@@ -426,12 +489,14 @@ void ofApp::draw(){
     //drawDebugTimeline( 10 , ofGetHeight() - ofGetHeight() / 20  , ofGetWidth() - 20 , ofGetHeight() / 25 );
     //drawDebugTimes( 20 , 420 );;
     
-    //text effect
-    ofPushMatrix();
-    ofTranslate( textEffectPosition );
-    fontTextEffect.drawString( textDrawingEffect , 0 , 0 );
-    ofPopMatrix();
+//    //text effect
+//    ofPushMatrix();
+//    ofTranslate( textEffectPosition );
+//    fontTextEffect.drawString( textDrawingEffect , 0 , 0 );
+//    ofPopMatrix();
     
+    if( appState  == APP_STATE_CLOSED_MACHINES )
+        fontNameClosedMachine.drawString( currentClosedMacine->machine->getName() , ofGetWidth() / 2 , ofGetHeight() - 100 );
     
     if( hardware.isRuning() )
         drawHardware( 20 , 50 );
@@ -537,7 +602,7 @@ void ofApp::drawHardware( int x , int y ){
 
         result += "\n\nBrigthness : " + ofToString( currentVideoBrightness , 2 );
         result += "\nZoom : " + ofToString( currentVideoZoom , 2 );
-        result += "\nText : " + ofToString( currentVideoText , 2 );
+        result += "\nTrans : " + ofToString( currentMachineTranslation , 2 );
         result += "\n\nEnergy01 : " + ofToString( currentEnergy01 , 2 );
         result += "\nEnergy02 : " + ofToString( currentEnergy02 , 2 );
         result += "\nEnergy03 : " + ofToString( currentEnergy03 , 2 );
@@ -656,32 +721,32 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){
 }
-//--------------------------------------------------------------
-bool ofApp::loadTextForEffect( string fileName ){
-    if( !fileIn )
-        fileIn = new ifstream();
-    
-    fileIn->open( ofToDataPath( fileName ).c_str() , std::ios_base::binary | std::ios_base::in );
-    if ( !fileIn->is_open() ){
-        cout << "Machine File not found: ";
-        cout << fileName << "\n";
-        fileIn->close();
-        return false;
-    }
-    
-    textForEffect = "";
-    string read;
-    string readPrev;
-    (*fileIn) >> read;
-    while( ( read != readPrev && read != " " ) ) {
-        readPrev = read;
-        (*fileIn) >> read;
-        textForEffect += read;
-        textForEffect += "  ";
-    }
-    fileIn->close();
-    return true;
-}
+////--------------------------------------------------------------
+//bool ofApp::loadTextForEffect( string fileName ){
+//    if( !fileIn )
+//        fileIn = new ifstream();
+//    
+//    fileIn->open( ofToDataPath( fileName ).c_str() , std::ios_base::binary | std::ios_base::in );
+//    if ( !fileIn->is_open() ){
+//        cout << "Machine File not found: ";
+//        cout << fileName << "\n";
+//        fileIn->close();
+//        return false;
+//    }
+//    
+//    textForEffect = "";
+//    string read;
+//    string readPrev;
+//    (*fileIn) >> read;
+//    while( ( read != readPrev && read != " " ) ) {
+//        readPrev = read;
+//        (*fileIn) >> read;
+//        textForEffect += read;
+//        textForEffect += "  ";
+//    }
+//    fileIn->close();
+//    return true;
+//}
 //--------------------------------------------------------------
 //GUI
 //--------------------------------------------------------------
@@ -708,7 +773,9 @@ void ofApp::setupGUI(){
     //globals
     guiGlobal.add( sliderBrightness.setup("bright", currentVideoBrightness , currentVideoBrightnessMin , currentVideoBrightnessMax  ));
     guiGlobal.add( sliderZoom.setup("zoom", currentVideoZoom , currentVideoZoomMin , currentVideoZoomMax  ));
-    guiGlobal.add( sliderText.setup("text", currentVideoText , currentVideoTextMin , currentVideoTextMax  ));
+ //   guiGlobal.add( sliderText.setup("rot", currentVideoText , currentVideoTextMin , currentVideoTextMax  ));
+    
+    guiGlobal.add( sliderText.setup("rot", currentMachineRotation , currentVideoMachineRotationMin , currentVideoMachineRotationMax  ));
     
     //enery
     guiEnergys.add( sliderEnergy01.setup("energy01", currentEnergy01 , currentEnergy01Min , currentEnergy01Max ));
@@ -717,7 +784,8 @@ void ofApp::setupGUI(){
     
     currentVideoBrightness = sliderBrightness;;
     currentVideoZoom = sliderZoom;
-    currentVideoText = sliderText;
+    //currentVideoText = sliderText;
+    currentMachineRotation = sliderText;
     currentEnergy01 = sliderEnergy01;
     currentEnergy02 = sliderEnergy02;
     currentEnergy03 = sliderEnergy03;
@@ -738,7 +806,7 @@ void ofApp::sliderZoomChanged(float &sliderZoom ){
 }
 //--------------------------------------------------------------
 void ofApp::sliderTextChanged(float &slidetText ){
-    currentVideoText = slidetText;
+    currentMachineRotation = slidetText;
 }
 //--------------------------------------------------------------
 //GUI Energy
