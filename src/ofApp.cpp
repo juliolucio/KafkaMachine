@@ -34,7 +34,7 @@ void ofApp::setup(){
     if( bed_fight.load("movies/Scene1_Bedfight_Edit-1.mov") )
         videos.push_back( bed_fight );
     
-    if( karl_suitcase.load("movies/Scene2_Karl_Suitcase.mp4" ) )
+    if( karl_suitcase.load("movies/Scene2_Karl_Suitcase.mov" ) )
         videos.push_back( karl_suitcase );
     
     if( access.load("movies/Scene3_All_Access.mov") )
