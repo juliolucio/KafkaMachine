@@ -34,17 +34,17 @@ bool KafkaMachineArduinoHardware::setup( std::string portName ){
 	font.load("Contl___.ttf" , 20);
     smallFont.load("Contl___.ttf" , 14);
 
-    pinButtonRandom = 3;
-    pinButtonClosedMachines = 4;
-    pinButtonEnergys = 5;
+    pinButtonRandom = 2;
+    pinButtonClosedMachines = 3;
+    pinButtonEnergys = 4;
     
-    pinKnobBrightness = 0;
-    pinKnobZoom = 1;
-    pinKnobText = 2;
+    pinKnobBrightness = 3;
+    pinKnobZoom = 4;
+    pinKnobText = 5;
     
-    pinKnobEnergy01 = 3;
-    pinKnobEnergy02 = 4;
-    pinKnobEnergy03 = 5;
+    pinKnobEnergy01 = 0;
+    pinKnobEnergy02 = 1;
+    pinKnobEnergy03 = 2;
     
     pinLedRandom = 11;
     pinLedClosedMachines = 12;
@@ -146,7 +146,7 @@ void KafkaMachineArduinoHardware::updateArduino(){
 }
 //--------------------------------------------------------------
 void KafkaMachineArduinoHardware::digitalPinChanged(const int & pinNum) {
-    if( arduinoBoard.getDigital( pinButtonRandom ) ){
+    if( !arduinoBoard.getDigital( pinButtonRandom ) ){
         isRandom = true;
         isClosedMachines = false;
         isEnergys = false;
@@ -160,7 +160,7 @@ void KafkaMachineArduinoHardware::digitalPinChanged(const int & pinNum) {
         presedNow = true;
     }
     
-    else if( arduinoBoard.getDigital( pinButtonEnergys ) ){
+    else if( !arduinoBoard.getDigital( pinButtonEnergys ) ){
         isRandom = false;
         isClosedMachines = false;
         isEnergys = true;
