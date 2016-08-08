@@ -4,6 +4,7 @@
 #include "ofxGui.h"
 
 #include "KafkaFullPopulatedMachine.h"
+#include "KafkaSemiPopulatedMachine.h"
 #include "KafkaClosedMachine.h"
 #include "KafkaMachineArduinoHardware.h"
 
@@ -135,8 +136,9 @@ public:
     long closedMachinesUpdateRefreshMin;
     long closedMachinesUpdateRefreshMax;
     long lastClosedMachinesUpdateTime;
-    KafkaFullPopulatedMachine* machineRandom;
+    //KafkaFullPopulatedMachine* machineRandom;
     KafkaFullPopulatedMachine* machineEnergys;
+    KafkaSemiPopulatedMachine* machineRandomNew;
     
     //energuy state
     vector<float> currentEnergys;

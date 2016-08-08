@@ -547,6 +547,77 @@ bool KafkaStatesMachine::addStatesFormFile( string fileName , int videoIndex ){
     return true;
 }
 //-----------------------------------------------------------
+bool KafkaStatesMachine::addStatesFormSingleFile( string fileName ){
+    if( !fileIn )
+        fileIn = new ifstream();
+    
+    fileIn->open( ofToDataPath( fileName ).c_str() , std::ios_base::binary | std::ios_base::in );
+    if ( !fileIn->is_open() ){
+        cout << "Machine File not found: ";
+        cout << fileName << "\n";
+        fileIn->close();
+        return false;
+    }
+    
+    std::string junk;
+    int numStates;
+    
+    (*fileIn) >> junk;
+    if( junk != "NumCuts" ){
+        cout << "* KafkaStatesMachine  add states: Bad tag NumCuts\n";
+        fileIn->close();
+        return false;
+    }
+    (*fileIn) >> numStates;
+    
+    //crap tags
+    (*fileIn) >> junk;
+    if( junk != "VideoIndex" ){
+        cout << "* KafkaStatesMachine  add states: Bad tag VideoIndex\n";
+        fileIn->close();
+        return false;
+    }
+    
+    
+    (*fileIn) >> junk;
+    if( junk != "CutInit" ){
+        cout << "* KafkaStatesMachine  add states: Bad tag CutInit\n";
+        fileIn->close();
+        return false;
+    }
+    
+    
+    (*fileIn) >> junk;
+    if( junk != "CutEnd" ){
+        cout << "* KafkaStatesMachine  add states: Bad tag CutEnd\n";
+        fileIn->close();
+        return false;
+    }
+
+    int maxVideoIndex = 0;
+    
+    for( int s = 0 ; s < numStates ; s ++ ){
+        float videoIndex;
+        float framesTotal;
+        float frameInit;
+        float frameEnd;
+        
+        (*fileIn) >> videoIndex;
+        (*fileIn) >> framesTotal;
+        (*fileIn) >> frameInit;
+        (*fileIn) >> frameEnd;
+        
+        string stateName = "STATE_VIDEO_" + ofToString( videoIndex ) + "_CUT_" + ofToString( states.size() );
+        
+        KafkaStatesMachineState* newState = new KafkaStatesMachineState( stateName , videoIndex , framesTotal , frameInit + 1 , frameEnd - 2);
+        states.push_back(newState);
+        if( !currentState )
+            currentState = states[0];
+    }
+    fileIn->close();
+    return true;
+}
+//-----------------------------------------------------------
 //void KafkaStatesMachine::fullPopulateTransitions(){
 //    float equalTransitionProbability = 1.0f / float(states.size());
 //    for( int sx = 0 ; sx < states.size() ; sx ++ )
@@ -557,39 +628,6 @@ bool KafkaStatesMachine::addStatesFormFile( string fileName , int videoIndex ){
 //}
 //-----------------------------------------------------------
 bool KafkaStatesMachine::save( string fileName ){
-    if( !fileOut )
-        fileOut = new ofstream();
-    fileOut->open( ofToDataPath( fileName ).c_str() , std::ios_base::binary | std::ios_base::out );
-    if ( !fileOut->is_open() ){
-        cout << "Couldt create Machien file: ";
-        cout << fileName << "\n";
-        fileOut->close();
-        return false;
-    }
-    (*fileOut) << "numStates= ";
-    (*fileOut) << states.size();
-    (*fileOut) << "\n";
-    
-    (*fileOut) << "numTransitions= ";
-    (*fileOut) << transitions.size();
-    (*fileOut) << "\n";
-    
-    for( int s = 0 ; s < states.size() ; s ++ ){
-        if( !states[s]->save(fileOut) ){
-            cout << "* KafkaStatesMachine  save: couldnt save state\n";
-            fileOut->close();
-            return false;
-        }
-    }
-    
-    for( int t = 0 ; t < transitions.size() ; t ++ ){
-        if( !transitions[t]->save(fileOut) ){
-            cout << "* KafkaStatesMachine  save transition: couldnt save transition" << t << "\n";
-            fileOut->close();
-            return false;
-        }
-    }
-    fileOut->close();
     return  true;
 }
 //-----------------------------------------------------------

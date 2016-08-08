@@ -37,6 +37,7 @@ public:
     bool load( string fileName );
     bool loadFromTSV( string fileName );
     bool addStatesFormFile( string fileName , int videoIndex );
+    bool addStatesFormSingleFile( string fileName );
     //void fullPopulateTransitions();
     bool save( string fileName );
     void updateStates( float theEnergy);

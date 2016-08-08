@@ -16,6 +16,7 @@
 		856AA354D08AB4B323081444 /* ofxBaseGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9604B925D32EE39065747725 /* ofxBaseGui.cpp */; };
 		85915637E5BD1D3A1C9314C3 /* KafkaFullPopulatedMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CDE1FD8A748B2720C32E519 /* KafkaFullPopulatedMachine.cpp */; };
 		89248A261CEE490E009791EA /* KafkaMachineArduinoHardware.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89248A241CEE490E009791EA /* KafkaMachineArduinoHardware.cpp */; };
+		89937BC21D58B52C00564A37 /* KafkaSemiPopulatedMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89937BC01D58B52C00564A37 /* KafkaSemiPopulatedMachine.cpp */; };
 		89F0364D1CECF61600AFFE20 /* KafkaClosedMachine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89F0364B1CECF61600AFFE20 /* KafkaClosedMachine.cpp */; };
 		944B3A00CF63312D4BE280C2 /* KafkaStatesMachineController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FCEB31B6445212429B56C173 /* KafkaStatesMachineController.cpp */; };
 		B266578FC55D23BFEBC042E7 /* ofxGuiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ECF8674C7975F1063C5E30CA /* ofxGuiGroup.cpp */; };
@@ -72,6 +73,9 @@
 		89248A241CEE490E009791EA /* KafkaMachineArduinoHardware.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KafkaMachineArduinoHardware.cpp; sourceTree = "<group>"; };
 		89248A251CEE490E009791EA /* KafkaMachineArduinoHardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KafkaMachineArduinoHardware.h; sourceTree = "<group>"; };
 		89449E3044D456F7DE7BEA14 /* ofxPanel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxPanel.h; path = ../../../addons/ofxGui/src/ofxPanel.h; sourceTree = SOURCE_ROOT; };
+		89937BBF1D58B0AE00564A37 /* AllScenes.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllScenes.tsv; sourceTree = "<group>"; };
+		89937BC01D58B52C00564A37 /* KafkaSemiPopulatedMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KafkaSemiPopulatedMachine.cpp; sourceTree = "<group>"; };
+		89937BC11D58B52C00564A37 /* KafkaSemiPopulatedMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KafkaSemiPopulatedMachine.h; sourceTree = "<group>"; };
 		89E8779D1CF4F608009116BD /* Machine_Scene_14_Boat_01.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Machine_Scene_14_Boat_01.tsv; sourceTree = "<group>"; };
 		89E8779F1CF4F608009116BD /* Machine_Scene_14_Boat_01.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Machine_Scene_14_Boat_01.tsv; sourceTree = "<group>"; };
 		89E877A01CF4F608009116BD /* MachineA.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = MachineA.tsv; sourceTree = "<group>"; };
@@ -187,6 +191,7 @@
 		89E877A31CF4F613009116BD /* scenes */ = {
 			isa = PBXGroup;
 			children = (
+				89937BBF1D58B0AE00564A37 /* AllScenes.tsv */,
 				89E877A41CF4F613009116BD /* Scene10_America_Edit-4.tsv */,
 				89E877A51CF4F613009116BD /* Scene14_Boat_Edit-2.tsv */,
 				89E877A71CF4F613009116BD /* Scene1_Bedfight_Edit-1.tsv */,
@@ -278,6 +283,8 @@
 				89F0364C1CECF61600AFFE20 /* KafkaClosedMachine.h */,
 				4CDE1FD8A748B2720C32E519 /* KafkaFullPopulatedMachine.cpp */,
 				2BC433B2DE0A8C5B95C40FBB /* KafkaFullPopulatedMachine.h */,
+				89937BC01D58B52C00564A37 /* KafkaSemiPopulatedMachine.cpp */,
+				89937BC11D58B52C00564A37 /* KafkaSemiPopulatedMachine.h */,
 				BC2E0DB298310C17EF899F69 /* KafkaStatesMachine.cpp */,
 				A6A100F3C71F30C208F9DC5E /* KafkaStatesMachine.h */,
 				FCEB31B6445212429B56C173 /* KafkaStatesMachineController.cpp */,
@@ -390,6 +397,7 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
+				89937BC21D58B52C00564A37 /* KafkaSemiPopulatedMachine.cpp in Sources */,
 				89F0364D1CECF61600AFFE20 /* KafkaClosedMachine.cpp in Sources */,
 				89248A261CEE490E009791EA /* KafkaMachineArduinoHardware.cpp in Sources */,
 				85915637E5BD1D3A1C9314C3 /* KafkaFullPopulatedMachine.cpp in Sources */,

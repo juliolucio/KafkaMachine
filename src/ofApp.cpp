@@ -121,17 +121,24 @@ void ofApp::setup(){
     closedMachinesUpdateRefresh = ofRandom( closedMachinesUpdateRefreshMin , closedMachinesUpdateRefreshMax );
     
     //machine Random
-    machineRandom = new KafkaFullPopulatedMachine();
-    machineRandom->setup( "RANDOM + ENERGY" , videos.size() );
+    
+    //machine Random
+    machineRandomNew = new KafkaSemiPopulatedMachine();
+    machineRandomNew->setup( "RANDOM" , videos.size() );
+    
+    //machineRandom = new KafkaFullPopulatedMachine();
+    //machineRandom->setup( "RANDOM + ENERGY" , videos.size() );
     
     //machine Energy
-    machineEnergys = machineRandom;
+    machineEnergys = new KafkaFullPopulatedMachine();
+    machineEnergys->setup( "ENERGY" , videos.size() );
+
     
     //Camera
     camera = new ofEasyCam();
     camera->setDistance(1500);
     
-    setAppState( APP_STATE_ENERGYS );
+    setAppState( APP_STATE_RANDOM );
     
     //zoom effect
     textureVideo.allocate( currentVideo->getWidth() , currentVideo->getHeight() ,GL_RGB );
@@ -205,7 +212,8 @@ void ofApp::update(){
             else
                 if( currentVideoPositionMilli >= cutEndPositionMilli )
                     hasFinishedPlaying = true;
-            machineRandom->update();
+            //machineRandom->update();
+            machineRandomNew->update();
             break;
             
         case APP_STATE_CLOSED_MACHINES:
@@ -386,20 +394,26 @@ void ofApp::updateRandom(){
     if( appState != APP_STATE_RANDOM )
         return;
     
-    machineRandom->machine->stepRandom();
+    //machineRandom->machine->stepRandom();
+    machineRandomNew->machine->stepRandom();
     
     //chose a random next video
-    int indexVideo = machineRandom->machine->getCurrentStateVideoIndex();
-    float startPercent = machineRandom->machine->getCurrentStateStart();
-    float endPercent = machineRandom->machine->getCurrentStateEnd();
+    //int indexVideo = machineRandom->machine->getCurrentStateVideoIndex();
+    //float startPercent = machineRandom->machine->getCurrentStateStart();
+    //float endPercent = machineRandom->machine->getCurrentStateEnd();
+    int indexVideo = machineRandomNew->machine->getCurrentStateVideoIndex();
+    float startPercent = machineRandomNew->machine->getCurrentStateStart();
+    float endPercent = machineRandomNew->machine->getCurrentStateEnd();
     startPercent = machineEnergys->machine->getCurrentStateStart();
     if( isFirstTime ){
         startPercent = 0;
         isFirstTime = false;
     }
     setCurrentVideoState( indexVideo , startPercent , endPercent );
-    machineRandom->machineController->updateViewDataVideo( videoSelected , currentVideo );
-    machineRandom->machineController->update();
+    //machineRandom->machineController->updateViewDataVideo( videoSelected , currentVideo );
+    //machineRandom->machineController->update();
+    machineRandomNew->machineController->updateViewDataVideo( videoSelected , currentVideo );
+    machineRandomNew->machineController->update();
 }
 //--------------------------------------------------------------
 void ofApp::updateClosedMachine(){
@@ -469,7 +483,8 @@ void ofApp::draw(){
 
     switch( appState ){
         case APP_STATE_RANDOM:
-            machineRandom->draw();
+            //machineRandom->draw();
+            machineRandomNew->draw();
             break;
             
         case APP_STATE_CLOSED_MACHINES:
