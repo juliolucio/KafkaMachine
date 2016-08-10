@@ -77,7 +77,7 @@ KafkaStatesMachineView::~KafkaStatesMachineView(){
     delete fileIn;
 }
 //-------------------------------------------------------------
-bool KafkaStatesMachineView::addState( string theName , int theVideoIndex , float theEnergy , float thePercentageStart , float thePercentageEnd  ){
+bool KafkaStatesMachineView::addState( string theName , int theVideoIndex ,  float thePercentageStart , float thePercentageEnd  ){
     float percentLength = thePercentageEnd - thePercentageStart;
     float statePrimitiveHeight = percentLength *  machineVideoSize.y;
     
@@ -86,7 +86,6 @@ bool KafkaStatesMachineView::addState( string theName , int theVideoIndex , floa
     ofVec3f positionObjectEnd = positionPrimitive + ofVec3f( 0 , ( percentLength / 2 ) *  machineVideoSize.y , 0);
     
     map<string,float> tempMap;
-    tempMap[ "energy" ] = theEnergy;
     
     statesNames             .push_back( theName );
     statesQuantizations     .push_back( tempMap );
@@ -409,7 +408,7 @@ void KafkaStatesMachineView::draw(){
 //----------------------------------------------------------------------------------
 bool KafkaStatesMachineView::loadFromMachine( KafkaStatesMachine* machineRefernece ){
     for( int s = 0 ; s < machineRefernece->getNumStates() ; s ++ )
-        addState( machineRefernece->getState( s )->getName() , machineRefernece->getState( s )->getVideoIndex(), machineRefernece->getState( s )->getEnergy01(), machineRefernece->getState( s )->getStart(), machineRefernece->getState( s )->getEnd() );
+        addState( machineRefernece->getState( s )->getName() , machineRefernece->getState( s )->getVideoIndex(),  machineRefernece->getState( s )->getStart(), machineRefernece->getState( s )->getEnd() );
     
     for( int t = 0 ; t < machineRefernece->getNumTransition() ; t ++ )
         addTransition(  machineRefernece->getTransition( t )->getNameStateInitial() , machineRefernece->getTransition( t )->getNameStateFinal() , machineRefernece->getTransition( t )->getProbability() );
@@ -494,7 +493,7 @@ bool KafkaStatesMachineView::load( string fileName ){
         }
         (*fileIn) >> percentageEndCurrent;
         
-        addState( name , videoIndexCurrent , energyCurrent , percentageStartCurrent , percentageEndCurrent );
+        addState( name , videoIndexCurrent , percentageStartCurrent , percentageEndCurrent );
     }
     
     for( int t = 0 ; t < numTransitions ; t ++ ){
@@ -550,7 +549,7 @@ bool KafkaStatesMachineView::loadFromTSV( string fileName ){
     std::string junk;
     int numStates;
     int numTransitions;
-    long numFramesTotal;
+    
     
     
     (*fileIn) >> junk;
@@ -560,14 +559,6 @@ bool KafkaStatesMachineView::loadFromTSV( string fileName ){
         return false;
     }
     (*fileIn) >> numStates;
-    
-    (*fileIn) >> junk;
-    if( junk != "Frames" ){
-        cout << "* KafkaStatesMachineView  load: Bad tag States\n";
-        fileIn->close();
-        return false;
-    }
-    (*fileIn) >> numFramesTotal;
     
     //crap tags
     (*fileIn) >> junk;
@@ -603,7 +594,7 @@ bool KafkaStatesMachineView::loadFromTSV( string fileName ){
     
     
     (*fileIn) >> junk;
-    if( junk != "Energy" ){
+    if( junk != "TotalFrames" ){
         cout << "* KafkaStatesMachine  load: Bad tag Energy\n";
         fileIn->close();
         return false;
@@ -612,7 +603,7 @@ bool KafkaStatesMachineView::loadFromTSV( string fileName ){
     for( int s = 0 ; s < numStates ; s ++ ){
         std::string junk;
         int videoIndexCurrent;
-        float energyCurrent;
+        long numFramesTotal;
         float percentageStartCurrent;
         float percentageEndCurrent;
         long frameStartCurrent;
@@ -622,12 +613,12 @@ bool KafkaStatesMachineView::loadFromTSV( string fileName ){
         (*fileIn) >> videoIndexCurrent;
         (*fileIn) >> frameStartCurrent;
         (*fileIn) >> frameEndCurrent;
-        (*fileIn) >> energyCurrent;
+        (*fileIn) >> numFramesTotal;
         
         percentageStartCurrent = float(frameStartCurrent) / float(numFramesTotal);
         percentageEndCurrent = float(frameEndCurrent) / float(numFramesTotal);
         
-        addState( name , videoIndexCurrent , energyCurrent , percentageStartCurrent , percentageEndCurrent );
+        addState( name , videoIndexCurrent , percentageStartCurrent , percentageEndCurrent );
     }
     
     (*fileIn) >> junk;

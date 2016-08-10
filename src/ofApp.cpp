@@ -95,20 +95,20 @@ void ofApp::setup(){
     
     //machines closed loops
     KafkaClosedMachine* closedMachineTest01 = new KafkaClosedMachine();
-    closedMachineTest01->setup( "MACHINE_BOAT" , "machines/machinesTest/Machine_Scene_14_Boat_01.tsv" , videos.size() );
+    closedMachineTest01->setup( "MACHINE_BOAT" , "machines/machinesTest/MachineA.tsv" , videos.size() );
     
-    KafkaClosedMachine* closedMachineTest02 = new KafkaClosedMachine();
-    closedMachineTest02->setup( "MACHINE_A" , "machines/machinesTest/MachineA.tsv" , videos.size() );
+    //KafkaClosedMachine* closedMachineTest02 = new KafkaClosedMachine();
+    //closedMachineTest02->setup( "MACHINE_A" , "machines/machinesTest/MachineA.tsv" , videos.size() );
 
-    KafkaClosedMachine* closedMachineTest03 = new KafkaClosedMachine();
-    closedMachineTest03->setup( "MACHINE_B" , "machines/machinesTest/MachineB.tsv" , videos.size() );
+    //KafkaClosedMachine* closedMachineTest03 = new KafkaClosedMachine();
+    //closedMachineTest03->setup( "MACHINE_B" , "machines/machinesTest/MachineB.tsv" , videos.size() );
     
 //    KafkaClosedMachine* closedMachineTest04 = new KafkaClosedMachine();
 //    closedMachineTest04->setup( "MACHINE_C" , "machines/machinesTest/MaquinaC.tsv" , videos.size() );
 //    
     machinesClosed.push_back( closedMachineTest01 );
-    machinesClosed.push_back( closedMachineTest02 );
-    machinesClosed.push_back( closedMachineTest03 );
+    //machinesClosed.push_back( closedMachineTest02 );
+    //machinesClosed.push_back( closedMachineTest03 );
 //      machinesClosed.push_back( closedMachineTest04 );
     currentClosedMacineIndex = 0;
     currentClosedMacine = machinesClosed[ currentClosedMacineIndex ];

@@ -329,14 +329,6 @@ bool KafkaStatesMachine::loadFromTSV( string fileName ){
     }
     (*fileIn) >> numStates;
     
-    (*fileIn) >> junk;
-    if( junk != "Frames" ){
-        cout << "* KafkaStatesMachine  load: Bad tag States\n";
-        fileIn->close();
-        return false;
-    }
-    (*fileIn) >> numFrames;
-    
     //crap tags
     (*fileIn) >> junk;
     if( junk != "Name" ){
@@ -371,8 +363,8 @@ bool KafkaStatesMachine::loadFromTSV( string fileName ){
 
     
     (*fileIn) >> junk;
-    if( junk != "Energy" ){
-        cout << "* KafkaStatesMachine  load: Bad tag Energy\n";
+    if( junk != "TotalFrames" ){
+        cout << "* KafkaStatesMachine  load: Bad tag TotalFrames\n";
         fileIn->close();
         return false;
     }
@@ -380,8 +372,8 @@ bool KafkaStatesMachine::loadFromTSV( string fileName ){
     
     for( int s = 0 ; s < numStates ; s ++ ){
         KafkaStatesMachineState* newState = new KafkaStatesMachineState();
-        if( !newState->loadFromTSV( fileIn , numFrames ) ){
-            cout << "* KafkaStatesMachine  load: Bad tag numTransitions\n";
+        if( !newState->loadFromTSV( fileIn ) ){
+            cout << "* KafkaStatesMachine  load: Bad State loaded \n";
             fileIn->close();
             return false;
         }
@@ -578,6 +570,12 @@ bool KafkaStatesMachine::addStatesFormSingleFile( string fileName ){
         return false;
     }
     
+    (*fileIn) >> junk;
+    if( junk != "TotalFrames" ){
+        cout << "* KafkaStatesMachine  add states: Bad tag TotalFrames\n";
+        fileIn->close();
+        return false;
+    }
     
     (*fileIn) >> junk;
     if( junk != "CutInit" ){

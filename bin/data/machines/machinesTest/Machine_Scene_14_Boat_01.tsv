@@ -1,39 +1,37 @@
-States	12
-Frames	16912			
-Name	Video	Start	End	Energy
-A	10	0	2091	0.5
-B	10	2092	2537	0.5
-C	10	2538	3225	0.5
-D	10	3226	4836	0.5
-E	10	4837	5508	0.5
-F	10	5509	5662	0.5
-G	10	5663	6693	0.5
-H	10	6694	7738	0.5
-I	10	7739	9530	0.5
-J	10	9531	15345	0.5
-K	10	15346	16912	0.5
-NOV	4	100	1000 	0.5
+States	11
+Name	Video	Start	End	TotalFrames
+A	0	0	2091	3989
+B	1	2092	2537	12325
+C	2	2538	3225	6174
+D	3	3226	4836	18307
+E	4	4837	5508	7199
+F	5	5509	5662	10345
+G	6	5663	6693	14277
+H	7	6694	7738	9168
+I	8	7739	9530	12224
+J	9	9531	15345	17750
+K	9	15346	16912	19750
 Transitions	22
-StateName01	StateName02	Probability		
+StateName01	StateName02	Probability
 A	G	0.3
-A	NOV	0.7
-NOV	A	1
+A	C	0.5
+A	A	0.1
 A	B	0.1
-B	C	1		
-C	D	1		
-D	D	0.2		
-D	A	0.5		
-D	E	0.3		
-E	F	1		
-F	G	0.3		
-F	A	0.3		
-F	H	0.4		
-G	K	1		
-H	C	0.2		
-H	I	0.8		
-I	J	1		
-J	I	0.5		
-J	K	0.5		
-K	A	0.6		
-K	K	0.3		
-K	G	0.1		
+B	C	1
+C	D	1
+D	D	0.2
+D	A	0.5
+D	E	0.3
+E	F	1
+F	G	0.3
+F	A	0.3
+F	H	0.4
+G	K	1
+H	C	0.2
+H	I	0.8
+I	J	1
+J	I	0.5
+J	K	0.5
+K	A	0.6
+K	K	0.3
+K	G	0.1

@@ -39,7 +39,7 @@ public:
     float getFrameStart();
     float getFrameEnd();
     bool load( std::ifstream* fileIn );
-    bool loadFromTSV( std::ifstream* fileIn , long frames );
+    bool loadFromTSV( std::ifstream* fileIn );
     bool save( std::ofstream* fileIn );
     
 };

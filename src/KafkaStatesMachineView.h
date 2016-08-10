@@ -112,7 +112,7 @@ private:
 public:
     KafkaStatesMachineView( string theName , int numVideos );
     ~KafkaStatesMachineView();
-    bool addState( string theName , int videoIndex , float theEnergy , float thePercentageStart , float thePercentageEnd  );
+    bool addState( string theName , int videoIndex  , float thePercentageStart , float thePercentageEnd  );
     bool addTransition( string nameState01 , string nameState02 , float theProbability );
     void update();
     void draw();
