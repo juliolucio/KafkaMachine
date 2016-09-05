@@ -9,7 +9,7 @@ void ofApp::setup(){
     ofSetVerticalSync(true);
     
     font.load( "Contl___.ttf" , 12 );
-    fontNameClosedMachine.load( "Contl___.ttf" , 80 );
+    fontNameClosedMachine.load( "Contl___.ttf" , 50 );
     
     cutLenghtMilli = 0;
     
@@ -61,7 +61,20 @@ void ofApp::setup(){
     if( america.load("movies/Scene10_America_Edit-4.mov") )
         videos.push_back( america );
     
+    //if( interviews_ed.load("movies/Scene11_Interviews_Edit.mov") )
+    if( interviews_ed.load("movies/Scene5_Stoker_Lanzarote.mov") )
+        videos.push_back( interviews_ed );
+    
+    //if( interviews_all.load("movies/Scene12_Interviews_All.mov")
+    if( interviews_all.load("movies/Scene5_Stoker_Lanzarote.mov") )
+        videos.push_back( interviews_all );
+    
+    //if( boat_entrance.load("movies/Scene13_Boat_Entrance.mov") )
+    if( boat_entrance.load("movies/Scene5_Stoker_Lanzarote.mov") )
+        videos.push_back( boat_entrance );
+    
     if( boat.load("movies/Scene14_Boat_Edit-2.mov") )
+
         videos.push_back( boat );
     
     for( int v = 0 ; v < videos.size() ; v ++ ){
@@ -94,22 +107,15 @@ void ofApp::setup(){
     isFirstTime = true;
     
     //machines closed loops
-    KafkaClosedMachine* closedMachineTest01 = new KafkaClosedMachine();
-    closedMachineTest01->setup( "MACHINE_BOAT" , "machines/machinesTest/MachineA.tsv" , videos.size() );
+    KafkaClosedMachine* closedMachine01 = new KafkaClosedMachine();
+    closedMachine01->setup( "PERCURSO FECHADO I" , "machines/Percurso Fechado I.tsv" , videos.size() );
     
-    //KafkaClosedMachine* closedMachineTest02 = new KafkaClosedMachine();
-    //closedMachineTest02->setup( "MACHINE_A" , "machines/machinesTest/MachineA.tsv" , videos.size() );
+    KafkaClosedMachine* closedMachine02 = new KafkaClosedMachine();
+    closedMachine02->setup( "PERCURSO FECHADO II" , "machines/Percurso Fechado II.tsv" , videos.size() );
+    
+    machinesClosed.push_back( closedMachine01 );
+    machinesClosed.push_back( closedMachine02 );
 
-    //KafkaClosedMachine* closedMachineTest03 = new KafkaClosedMachine();
-    //closedMachineTest03->setup( "MACHINE_B" , "machines/machinesTest/MachineB.tsv" , videos.size() );
-    
-//    KafkaClosedMachine* closedMachineTest04 = new KafkaClosedMachine();
-//    closedMachineTest04->setup( "MACHINE_C" , "machines/machinesTest/MaquinaC.tsv" , videos.size() );
-//    
-    machinesClosed.push_back( closedMachineTest01 );
-    //machinesClosed.push_back( closedMachineTest02 );
-    //machinesClosed.push_back( closedMachineTest03 );
-//      machinesClosed.push_back( closedMachineTest04 );
     currentClosedMacineIndex = 0;
     currentClosedMacine = machinesClosed[ currentClosedMacineIndex ];
     
@@ -123,16 +129,15 @@ void ofApp::setup(){
     //machine Random
     
     //machine Random
-    machineRandomNew = new KafkaSemiPopulatedMachine();
-    machineRandomNew->setup( "RANDOM" , videos.size() );
-    
     //machineRandom = new KafkaFullPopulatedMachine();
     //machineRandom->setup( "RANDOM + ENERGY" , videos.size() );
+    
+    machineRandomSemipoulated = new KafkaSemiPopulatedMachine();
+    machineRandomSemipoulated->setup( "RANDOM" , videos.size() );
     
     //machine Energy
     machineEnergys = new KafkaFullPopulatedMachine();
     machineEnergys->setup( "ENERGY" , videos.size() );
-
     
     //Camera
     camera = new ofEasyCam();
@@ -142,7 +147,6 @@ void ofApp::setup(){
     
     //zoom effect
     textureVideo.allocate( currentVideo->getWidth() , currentVideo->getHeight() ,GL_RGB );
-    
     
     //lights
     ofSetSmoothLighting(true);
@@ -160,12 +164,7 @@ void ofApp::setup(){
     pointLight03.enable();
 
     //arduino hardware
-    string portName = "/dev/cu.usbserial-A4001qyq";
-    if( !hardware.setup( portName ) )
-        cout << "couldnt find arduino at port : " << portName << "/n";
-    harwareUpdateRefresh = 50;
-    lastHardwareUpdateRefresh = 0;
-    cout << "\nWaiting for arduino ";
+    setupHardware();
     
     //parametaers INITIAL MAX and MIN values to set up by teh artist
     currentVideoBrightness = 1;
@@ -203,6 +202,21 @@ void ofApp::setup(){
     currentEnergy03Min = 0;
 }
 //--------------------------------------------------------------
+bool ofApp::setupHardware(){
+    isArduinoHardwarePresent = false;
+    string portName = "/dev/cu.usbserial-A4001qyq";
+    if( !hardware.setup( portName ) ){
+        cout << "Couldnt find arduino at port : " << portName << "/n";
+        return isArduinoHardwarePresent;
+    }
+    
+    isArduinoHardwarePresent = true;
+    harwareUpdateRefresh = 50;
+    lastHardwareUpdateRefresh = 0;
+    cout << "\nWaiting for arduino ";
+    return isArduinoHardwarePresent;
+}
+//--------------------------------------------------------------
 void ofApp::update(){
     long cutTimeMillis = ofGetElapsedTimeMillis();
     switch( appState ){
@@ -213,7 +227,7 @@ void ofApp::update(){
                 if( currentVideoPositionMilli >= cutEndPositionMilli )
                     hasFinishedPlaying = true;
             //machineRandom->update();
-            machineRandomNew->update();
+            machineRandomSemipoulated->update();
             break;
             
         case APP_STATE_CLOSED_MACHINES:
@@ -221,7 +235,7 @@ void ofApp::update(){
                 if( cutTimeMillis - lastClosedMachinesUpdateTime > closedMachinesUpdateRefresh ){
                     closedMachinesUpdateRefresh = ofRandom( closedMachinesUpdateRefreshMin , closedMachinesUpdateRefreshMax );
                     lastClosedMachinesUpdateTime = cutTimeMillis;
-                    jumpToOtherClosedMachine();
+                    //jumpToOtherClosedMachine();
                 }
                 updateClosedMachine();
             }
@@ -256,8 +270,9 @@ void ofApp::update(){
     currentVideoPositionNormalized = currentVideo->getPosition();
     currentVideoPositionMilli = currentVideoPositionNormalized * currentVideoDurationMilli;
     
+    //updating arduino hardware either GUI
     if( !updateHardware() )
-        cout << "couldnt update arduino \n";
+        updateGUI();
     
     //updateTextEffect();
     
@@ -281,29 +296,28 @@ void ofApp::update(){
 }
 //--------------------------------------------------------------
 bool ofApp::updateHardware(){
+    if( !isArduinoHardwarePresent ){
+        //cout << "Arduino couldn't Initialize\n";
+        return false;
+    }
+    
     long cutTimeMillis = ofGetElapsedTimeMillis();
     hardware.update();
-    if( !hardware.isRuning() )
+    if( !hardware.isRuning() ){
+        cout << "Arduino couldnt Run this time\n";
         return false;
+    }
     
-    if(  cutTimeMillis - lastHardwareUpdateRefresh > harwareUpdateRefresh ){
+    if( cutTimeMillis - lastHardwareUpdateRefresh > harwareUpdateRefresh ){
         
         currentVideoBrightness = ofMap( hardware.getBrightness() , 1023 , 0 , currentVideoBrightnessMin , currentVideoBrightnessMax );
         currentVideoZoom = ofMap( hardware.getZoom() , 1023 , 0 , currentVideoZoomMin , currentVideoZoomMax );
-//        currentVideoText = ofMap( hardware.getText() , 1023 , 0 , currentVideoTextMin, currentVideoTextMax );
         currentMachineRotation = ofMap( hardware.getText() , 1023 , 0 , currentVideoMachineRotationMin , currentVideoMachineRotationMax );
         currentMachineTranslation = ofMap( hardware.getText() , 1023 , 0 , currentMachineTranslationMin , currentMachineTranslationMax );
         currentEnergy01 = ofMap( hardware.getEnergy01() , 1023 , 0 , currentEnergy01Min , currentEnergy01Max );
         currentEnergy02 = ofMap( hardware.getEnergy02() , 1023 , 0 , currentEnergy02Min , currentEnergy02Max );
         currentEnergy03 = ofMap( hardware.getEnergy03() , 1023 , 0 , currentEnergy03Min , currentEnergy03Max );
-        
-        //sliderBrightness.valueChanged( currentVideoBrightness );
-        //sliderZoom.valueChanged( currentVideoZoom );
-        //sliderText.valueChanged( currentVideoText );
-        
-        //sliderEnergy01.valueChanged( currentEnergy01 );
-        //sliderEnergy02.valueChanged( currentEnergy02 );
-        //sliderEnergy03.valueChanged( currentEnergy03 );
+        //currentVideoText = ofMap( hardware.getText() , 1023 , 0 , currentVideoTextMin, currentVideoTextMax );
         
         int newAppState =  hardware.getAppState();
         if( newAppState != appState )
@@ -314,6 +328,17 @@ bool ofApp::updateHardware(){
         lastHardwareUpdateRefresh = cutTimeMillis;
     }
     return true;
+}
+//--------------------------------------------------------------
+void ofApp::updateGUI(){
+    sliderBrightness.valueChanged( currentVideoBrightness );
+    sliderZoom.valueChanged( currentVideoZoom );
+    sliderText.valueChanged( currentMachineRotation );
+    
+    sliderEnergy01.valueChanged( currentEnergy01 );
+    sliderEnergy02.valueChanged( currentEnergy02 );
+    sliderEnergy03.valueChanged( currentEnergy03 );
+
 }
 //--------------------------------------------------------------
 void ofApp::jumpToOtherClosedMachine(){
@@ -395,16 +420,16 @@ void ofApp::updateRandom(){
         return;
     
     //machineRandom->machine->stepRandom();
-    machineRandomNew->machine->stepRandom();
+    machineRandomSemipoulated->machine->stepRandom();
     
     //chose a random next video
     //int indexVideo = machineRandom->machine->getCurrentStateVideoIndex();
     //float startPercent = machineRandom->machine->getCurrentStateStart();
     //float endPercent = machineRandom->machine->getCurrentStateEnd();
-    int indexVideo = machineRandomNew->machine->getCurrentStateVideoIndex();
-    float startPercent = machineRandomNew->machine->getCurrentStateStart();
-    float endPercent = machineRandomNew->machine->getCurrentStateEnd();
-    startPercent = machineEnergys->machine->getCurrentStateStart();
+    int indexVideo = machineRandomSemipoulated->machine->getCurrentStateVideoIndex();
+    float startPercent = machineRandomSemipoulated->machine->getCurrentStateStart();
+    float endPercent = machineRandomSemipoulated->machine->getCurrentStateEnd();
+    //startPercent = machineEnergys->machine->getCurrentStateStart();
     if( isFirstTime ){
         startPercent = 0;
         isFirstTime = false;
@@ -412,8 +437,8 @@ void ofApp::updateRandom(){
     setCurrentVideoState( indexVideo , startPercent , endPercent );
     //machineRandom->machineController->updateViewDataVideo( videoSelected , currentVideo );
     //machineRandom->machineController->update();
-    machineRandomNew->machineController->updateViewDataVideo( videoSelected , currentVideo );
-    machineRandomNew->machineController->update();
+    machineRandomSemipoulated->machineController->updateViewDataVideo( videoSelected , currentVideo );
+    machineRandomSemipoulated->machineController->update();
 }
 //--------------------------------------------------------------
 void ofApp::updateClosedMachine(){
@@ -484,7 +509,7 @@ void ofApp::draw(){
     switch( appState ){
         case APP_STATE_RANDOM:
             //machineRandom->draw();
-            machineRandomNew->draw();
+            machineRandomSemipoulated->draw();
             break;
             
         case APP_STATE_CLOSED_MACHINES:
@@ -511,7 +536,7 @@ void ofApp::draw(){
 //    ofPopMatrix();
     
     if( appState  == APP_STATE_CLOSED_MACHINES )
-        fontNameClosedMachine.drawString( currentClosedMacine->machine->getName() , ofGetWidth() / 2 , ofGetHeight() - 100 );
+        fontNameClosedMachine.drawString( currentClosedMacine->machine->getName() , ofGetWidth() + 100 , ofGetHeight() - 100 );
     
     if( hardware.isRuning() )
         drawHardware( 20 , 50 );
@@ -705,6 +730,9 @@ void ofApp::keyPressed  (int key){
     if(key == '3'){
         setAppState( APP_STATE_ENERGYS );
     }
+    
+    if( key = 'j' )
+        jumpToOtherClosedMachine();
 }
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){

@@ -21,8 +21,8 @@ KafkaStatesMachineView::KafkaStatesMachineView( string theName , int theNumVideo
     fileIn = 0;
     fileOut = 0;
     isItActive = true;
-    primitivesSpacign = 4;
-    machineGap = 120;
+    primitivesSpacign = 10;
+    machineGap = 20;
     
     machineSize         = ofVec3f( ofGetWidth() - 2 * machineGap , ofGetHeight() - 2 * machineGap ,  ofGetHeight() - 2 * machineGap );
     machineOrigen       = ofVec3f( machineGap , machineGap , 0 );

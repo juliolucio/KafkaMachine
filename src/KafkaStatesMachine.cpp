@@ -89,12 +89,14 @@ bool KafkaStatesMachine::step(){
         for( t = 0 ; t < posibleTransitionsProbabilities.size() ;t ++ ){
             valuerReached += posibleTransitionsProbabilities[ t ];
             if( valuerReached >= dice ){
+                cout << "\nSTEP : " << currentState->getName() << " --->> " << posibleTransitions[ t ]->getStateFinal()->getName();
                 setCurrentState( posibleTransitions[ t ]->getStateFinal() );
                 return true;
             }
         }
         if( posibleTransitions.size() ){
             t--;
+            cout << "/nSTEP LAST: " << currentState->getName() << " --->> " << posibleTransitions[ t ]->getStateFinal()->getName();
             setCurrentState( posibleTransitions[ t ]->getStateFinal());
             return true;
         }
@@ -103,7 +105,9 @@ bool KafkaStatesMachine::step(){
 //-------------------------------------------------------------
 bool KafkaStatesMachine::stepRandom(){
     float dice = ofRandom( 0 , states.size() );
-    setCurrentState( states[ dice] );
+    cout << "\nSTEP RANDOM: " << currentState->getName();
+    setCurrentState( states[ dice ] );
+    cout <<  " --->> " << states[ dice ]->getName();
     return true;
 }
 //-------------------------------------------------------------
@@ -133,10 +137,14 @@ bool KafkaStatesMachine::stepEnergys(vector<float> theEnergys){
         valuerReached += nextStatesProbabilities[ s ];
         if( valuerReached >= dice ){
             setCurrentState( states[ s ] );
+            cout << "\nSTEP ENERGIES : " << currentState->getName() << " --->> " << states[ s ]->getName();
+
             return true;
         }
     }
     setCurrentState( states[ s-1 ] );
+    cout << "/nSTEP ENERGIES 2 : " << currentState->getName() << " --->> " << states[ s ]->getName();
+
     return true;
 }
 //-------------------------------------------------------------
@@ -605,9 +613,19 @@ bool KafkaStatesMachine::addStatesFormSingleFile( string fileName ){
         (*fileIn) >> frameInit;
         (*fileIn) >> frameEnd;
         
+        std::vector< float > parameters;
+        
+        
+        parameters.push_back( framesTotal );
+        parameters.push_back( frameInit + 1 );
+        parameters.push_back( frameEnd - 2 );//what the hack???
+        parameters.push_back( 0 );
+        parameters.push_back( 0 );
+        parameters.push_back( 0 );
+        
         string stateName = "STATE_VIDEO_" + ofToString( videoIndex ) + "_CUT_" + ofToString( states.size() );
         
-        KafkaStatesMachineState* newState = new KafkaStatesMachineState( stateName , videoIndex , framesTotal , frameInit + 1 , frameEnd - 2);
+        KafkaStatesMachineState* newState = new KafkaStatesMachineState( stateName , videoIndex , parameters );
         states.push_back(newState);
         if( !currentState )
             currentState = states[0];
@@ -691,8 +709,8 @@ KafkaStatesMachineTransition* KafkaStatesMachine::getTransition( int transitionI
 }
 //-----------------------------------------------------------
 void KafkaStatesMachine::setCurrentState( KafkaStatesMachineState* newState ){
-    cout << "Machine : " << name << "  form " << currentState->getName();
+    //cout << "Machine : " << name << "  form " << currentState->getName();
     currentState = newState;
-    cout << " to " << currentState->getName() << "\n";
+    //cout << " to " << currentState->getName() << "\n";
     hasJustChangedState = true;
 }

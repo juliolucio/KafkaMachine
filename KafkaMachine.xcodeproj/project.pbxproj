@@ -76,6 +76,11 @@
 		89937BBF1D58B0AE00564A37 /* AllScenes.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = AllScenes.tsv; sourceTree = "<group>"; };
 		89937BC01D58B52C00564A37 /* KafkaSemiPopulatedMachine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KafkaSemiPopulatedMachine.cpp; sourceTree = "<group>"; };
 		89937BC11D58B52C00564A37 /* KafkaSemiPopulatedMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KafkaSemiPopulatedMachine.h; sourceTree = "<group>"; };
+		89A74F4F1D7981BA009396BB /* Percurso Fechado I.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Percurso Fechado I.tsv"; sourceTree = "<group>"; };
+		89A74F501D7981BA009396BB /* Percurso Fechado II.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Percurso Fechado II.tsv"; sourceTree = "<group>"; };
+		89E5948C1D79D52200ED9094 /* Scene11_Interviews_Edit.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Scene11_Interviews_Edit.tsv; sourceTree = "<group>"; };
+		89E5948D1D79D52200ED9094 /* Scene12_Interviews_All.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Scene12_Interviews_All.tsv; sourceTree = "<group>"; };
+		89E5948E1D79D52200ED9094 /* Scene13_Boat_Entrance.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Scene13_Boat_Entrance.tsv; sourceTree = "<group>"; };
 		89E8779D1CF4F608009116BD /* Machine_Scene_14_Boat_01.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Machine_Scene_14_Boat_01.tsv; sourceTree = "<group>"; };
 		89E8779F1CF4F608009116BD /* Machine_Scene_14_Boat_01.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = Machine_Scene_14_Boat_01.tsv; sourceTree = "<group>"; };
 		89E877A01CF4F608009116BD /* MachineA.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = MachineA.tsv; sourceTree = "<group>"; };
@@ -162,6 +167,8 @@
 		89E8779B1CF4F608009116BD /* machines */ = {
 			isa = PBXGroup;
 			children = (
+				89A74F4F1D7981BA009396BB /* Percurso Fechado I.tsv */,
+				89A74F501D7981BA009396BB /* Percurso Fechado II.tsv */,
 				89E8779C1CF4F608009116BD /* machinesClosedPaths */,
 				89E8779E1CF4F608009116BD /* machinesTest */,
 			);
@@ -192,8 +199,6 @@
 			isa = PBXGroup;
 			children = (
 				89937BBF1D58B0AE00564A37 /* AllScenes.tsv */,
-				89E877A41CF4F613009116BD /* Scene10_America_Edit-4.tsv */,
-				89E877A51CF4F613009116BD /* Scene14_Boat_Edit-2.tsv */,
 				89E877A71CF4F613009116BD /* Scene1_Bedfight_Edit-1.tsv */,
 				89E877A91CF4F613009116BD /* Scene2_Karl_Suitcase.tsv */,
 				89E877AB1CF4F613009116BD /* Scene3_All_Access.tsv */,
@@ -203,6 +208,11 @@
 				89E877AF1CF4F613009116BD /* Scene7_Ramses_Edit-5.tsv */,
 				89E877B01CF4F613009116BD /* Scene8_Liftboy_Edit-1.tsv */,
 				89E877B11CF4F613009116BD /* Scene9 Lisbon_Protest.tsv */,
+				89E877A41CF4F613009116BD /* Scene10_America_Edit-4.tsv */,
+				89E5948C1D79D52200ED9094 /* Scene11_Interviews_Edit.tsv */,
+				89E5948D1D79D52200ED9094 /* Scene12_Interviews_All.tsv */,
+				89E5948E1D79D52200ED9094 /* Scene13_Boat_Entrance.tsv */,
+				89E877A51CF4F613009116BD /* Scene14_Boat_Edit-2.tsv */,
 			);
 			name = scenes;
 			path = bin/data/scenes;

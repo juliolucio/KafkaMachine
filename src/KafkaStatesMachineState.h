@@ -27,7 +27,7 @@ private:
 public:
     KafkaStatesMachineState( );
     KafkaStatesMachineState( string theName ,int theVideoIndex, vector< float > params );
-    KafkaStatesMachineState( string theName ,int theVideoIndex , int theNumFrames, int  theFrameInit , int theFrameEnd );
+    //KafkaStatesMachineState( string theName ,int theVideoIndex , int theNumFrames, int  theFrameInit , int theFrameEnd );
 
     string getName();
     float getEnergy01();

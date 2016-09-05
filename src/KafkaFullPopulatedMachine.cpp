@@ -26,9 +26,11 @@ void KafkaFullPopulatedMachine::setup( string machineName , int theNumVideos ){
     machine->addStatesFormFile( "scenes/Scene8_Liftboy_Edit-1.tsv" , 7);
     machine->addStatesFormFile( "scenes/Scene9 Lisbon_Protest.tsv" , 8);
     machine->addStatesFormFile( "scenes/Scene10_America_Edit-4.tsv" , 9);
-    machine->addStatesFormFile( "scenes/Scene14_Boat_Edit-2.tsv" , 10);
+    machine->addStatesFormFile( "scenes/Scene11_Interviews_Edit.tsv" , 10);
+    machine->addStatesFormFile( "scenes/Scene12_Interviews_All.tsv" , 11);
+    machine->addStatesFormFile( "scenes/Scene13_Boat_Entrance.tsv" , 12);
+    machine->addStatesFormFile( "scenes/Scene14_Boat_Edit-2.tsv" , 13);
     //machine->fullPopulateTransitions();
-    
     machineController = new KafkaStatesMachineController( machine  , theNumVideos );
 }
 //--------------------------------------------------------------

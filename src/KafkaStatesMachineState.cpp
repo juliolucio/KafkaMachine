@@ -26,7 +26,7 @@ KafkaStatesMachineState::KafkaStatesMachineState(  string theName ,int theVideoI
     }
 }
 //----------------------------------------------------------------------------------
-KafkaStatesMachineState::KafkaStatesMachineState(  string theName , int theVideoIndex , int theNumFrames, int  theFrameInit , int theFrameEnd ){
+/*KafkaStatesMachineState::KafkaStatesMachineState(  string theName , int theVideoIndex , int theNumFrames, int  theFrameInit , int theFrameEnd ){
     name = theName;
     videoIndex = theVideoIndex;
     float frames = theNumFrames;
@@ -37,7 +37,7 @@ KafkaStatesMachineState::KafkaStatesMachineState(  string theName , int theVideo
     energy03 = 0;
     percentStart = float(frameStart + 1) / float(frames);
     percentEnd = float(frameEnd) / float(frames);
-}
+}*/
 //----------------------------------------------------------------------------------
 string KafkaStatesMachineState::getName(){
     return name;

@@ -39,9 +39,12 @@ public:
     
     //bool loadTextForEffect( string fileName );
     
+    bool setupHardware();
+    
     //updating modes
-    void setAppState( appStates theState  );
     bool updateHardware();
+    void updateGUI();
+    void setAppState( appStates theState  );
     //void updateTextEffect();
     void setCurrentVideoState( int theIndexVideoSelected , float theStatrtPositionPercent , float theCurrentPositionPercent );
     void updateAleatorio();
@@ -75,7 +78,11 @@ public:
     ofVideoPlayer   lift_boy;
     ofVideoPlayer   lisbon_protest;
     ofVideoPlayer   america;
+    ofVideoPlayer   interviews_ed;
+    ofVideoPlayer   interviews_all;
+    ofVideoPlayer   boat_entrance;
     ofVideoPlayer   boat;
+    
     
     ofVideoPlayer*   currentVideo;
     ofVideoPlayer*   previousVideo;
@@ -89,6 +96,7 @@ public:
     bool            hasFinishedPlaying;
     bool            isFirstTime;
     bool            isFirstTimeUpdateAleatorio;
+    bool            isArduinoHardwarePresent;
     
     //timing
     long            cutLenghtMilli;
@@ -138,7 +146,7 @@ public:
     long lastClosedMachinesUpdateTime;
     //KafkaFullPopulatedMachine* machineRandom;
     KafkaFullPopulatedMachine* machineEnergys;
-    KafkaSemiPopulatedMachine* machineRandomNew;
+    KafkaSemiPopulatedMachine* machineRandomSemipoulated;
     
     //energuy state
     vector<float> currentEnergys;
