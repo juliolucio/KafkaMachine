@@ -21,8 +21,8 @@ KafkaStatesMachineView::KafkaStatesMachineView( string theName , int theNumVideo
     fileIn = 0;
     fileOut = 0;
     isItActive = true;
-    primitivesSpacign = 10;
-    machineGap = 20;
+    primitivesSpacign = 1;
+    machineGap = 10;
     
     machineSize         = ofVec3f( ofGetWidth() - 2 * machineGap , ofGetHeight() - 2 * machineGap ,  ofGetHeight() - 2 * machineGap );
     machineOrigen       = ofVec3f( machineGap , machineGap , 0 );
@@ -42,7 +42,7 @@ KafkaStatesMachineView::KafkaStatesMachineView( string theName , int theNumVideo
         tempBox->setResolution( 1, 1, 1);
         videosBoxesPrimitives[ videoIndex ] = tempBox;
         machineVideosPositions.push_back( thisVideoPosition );
-        videosColors.push_back( ofColor( ofRandom( 10 , 70 ) , 10, ofRandom( 100 , 200 ) ) );
+        videosColors.push_back( ofColor( ofRandom( 10 , 200 ) , 10, ofRandom( 100 , 200 ) ) );
     }
     
     type = MACHINE_VIEW_TYPE_SPHERES;
@@ -127,14 +127,14 @@ bool KafkaStatesMachineView::addState( string theName , int theVideoIndex ,  flo
             ofIcoSpherePrimitive* sphere = new ofIcoSpherePrimitive();
             sphere->setRadius(  ( machineVideoSize.x - primitivesSpacign ) / 2  );
             sphere->setPosition( positionPrimitive - primitivesSpacign );
-            sphere->setResolution( 1 );
+            sphere->setResolution( 2 );
             sphere->setMode( OF_PRIMITIVE_TRIANGLES );
             sphere->setScale( 1 , scale , 1 );
             
             ofIcoSpherePrimitive* sphere2 = new ofIcoSpherePrimitive();
             sphere2->setRadius( ( machineVideoSize.x - primitivesSpacign ) / 2 );
             sphere2->setPosition( positionPrimitive - primitivesSpacign );
-            sphere2->setResolution( 1 );
+            sphere2->setResolution( 2 );
             sphere2->setScale( 1 , scale , 1 );
             primitive01 = sphere;
             primitive02 = sphere2;
@@ -285,7 +285,7 @@ void KafkaStatesMachineView::draw(){
         if( stateIndex == stateCurrent ){
             vector<ofMeshFace> triangles = (*ittr).second;;
             float angle = ofGetElapsedTimef() * 5;
-            float strength = (sin( angle+.25 )) * 20 ;
+            float strength = (sin( angle+.25 )) * 5 ;
             ofVec3f faceNormal;
             for( int i = 0; i < triangles.size(); i++ ) {
                 faceNormal = triangles[i].getFaceNormal();
@@ -391,10 +391,10 @@ void KafkaStatesMachineView::draw(){
     }
     
     for( int videoIndex = 0 ; videoIndex < numVideos ; videoIndex ++ ){
-        ofSetColor(videosColors[ videoIndex]);
+        ofSetColor(videosColors[ videoIndex ]);
         //videosBoxesPrimitives[videoIndex]->drawWireframe();
         ofPoint textPosition = machineVideosPositions[videoIndex];
-        string textState = "video = " + ofToString( videoIndex );
+        string textState = "v" + ofToString( videoIndex );
         textPosition.x -= machineVideoSize.x / 2;
         textPosition.y -= machineVideoSize.x / 2;
         ofDrawBitmapString( textState , textPosition );

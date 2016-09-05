@@ -536,7 +536,7 @@ void ofApp::draw(){
 //    ofPopMatrix();
     
     if( appState  == APP_STATE_CLOSED_MACHINES )
-        fontNameClosedMachine.drawString( currentClosedMacine->machine->getName() , ofGetWidth() + 100 , ofGetHeight() - 100 );
+        fontNameClosedMachine.drawString( currentClosedMacine->machine->getName() ,  100  , ofGetHeight() - 200 );
     
     if( hardware.isRuning() )
         drawHardware( 20 , 50 );
