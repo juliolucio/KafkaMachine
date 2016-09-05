@@ -731,7 +731,7 @@ void ofApp::keyPressed  (int key){
         setAppState( APP_STATE_ENERGYS );
     }
     
-    if( key = 'j' )
+    if( key == 'j' )
         jumpToOtherClosedMachine();
 }
 //--------------------------------------------------------------
