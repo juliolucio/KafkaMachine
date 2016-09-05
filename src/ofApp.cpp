@@ -535,8 +535,26 @@ void ofApp::draw(){
 //    fontTextEffect.drawString( textDrawingEffect , 0 , 0 );
 //    ofPopMatrix();
     
-    if( appState  == APP_STATE_CLOSED_MACHINES )
-        fontNameClosedMachine.drawString( currentClosedMacine->machine->getName() ,  100  , ofGetHeight() - 200 );
+    std::string text;
+    switch( appState ){
+        case APP_STATE_RANDOM:
+            //machineRandom->draw();
+            text = "RANDOM MACHINE";
+            fontNameClosedMachine.drawString( text ,  250  , 200 );
+            break;
+            
+        case APP_STATE_CLOSED_MACHINES:
+            text = "CLOSED MACHINE : ";
+            text += currentClosedMacine->machine->getName() ;
+            fontNameClosedMachine.drawString( text ,  250  , 200 );
+            break;
+            
+        case APP_STATE_ENERGYS:
+            text = "PROBABILISTIC MACHINE";
+            fontNameClosedMachine.drawString( text ,  250  , 200 );
+            break;
+    }
+
     
     if( hardware.isRuning() )
         drawHardware( 20 , 50 );
