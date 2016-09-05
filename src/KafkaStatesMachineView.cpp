@@ -21,8 +21,8 @@ KafkaStatesMachineView::KafkaStatesMachineView( string theName , int theNumVideo
     fileIn = 0;
     fileOut = 0;
     isItActive = true;
-    primitivesSpacign = 1;
-    machineGap = 10;
+    primitivesSpacign = 5;
+    machineGap = 5;
     
     machineSize         = ofVec3f( ofGetWidth() - 2 * machineGap , ofGetHeight() - 2 * machineGap ,  ofGetHeight() - 2 * machineGap );
     machineOrigen       = ofVec3f( machineGap , machineGap , 0 );
@@ -42,7 +42,7 @@ KafkaStatesMachineView::KafkaStatesMachineView( string theName , int theNumVideo
         tempBox->setResolution( 1, 1, 1);
         videosBoxesPrimitives[ videoIndex ] = tempBox;
         machineVideosPositions.push_back( thisVideoPosition );
-        videosColors.push_back( ofColor( ofRandom( 10 , 200 ) , 10, ofRandom( 100 , 200 ) ) );
+        videosColors.push_back( ofColor( ofRandom( 10 , 200 ) , ofRandom( 10 , 200 ), ofRandom( 100 , 200 ) ) );
     }
     
     type = MACHINE_VIEW_TYPE_SPHERES;
@@ -394,7 +394,7 @@ void KafkaStatesMachineView::draw(){
         ofSetColor(videosColors[ videoIndex ]);
         //videosBoxesPrimitives[videoIndex]->drawWireframe();
         ofPoint textPosition = machineVideosPositions[videoIndex];
-        string textState = "v" + ofToString( videoIndex );
+        string textState = " video #" + ofToString( videoIndex );
         textPosition.x -= machineVideoSize.x / 2;
         textPosition.y -= machineVideoSize.x / 2;
         ofDrawBitmapString( textState , textPosition );

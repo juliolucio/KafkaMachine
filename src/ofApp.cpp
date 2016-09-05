@@ -9,7 +9,7 @@ void ofApp::setup(){
     ofSetVerticalSync(true);
     
     font.load( "Contl___.ttf" , 12 );
-    fontNameClosedMachine.load( "Contl___.ttf" , 50 );
+    fontNameClosedMachine.load( "Contl___.ttf" , 25 );
     
     cutLenghtMilli = 0;
     
@@ -503,7 +503,7 @@ void ofApp::draw(){
     
     camera->begin();
     ofPushMatrix();
-    ofTranslate( 0,0, currentMachineTranslation );
+    ofTranslate( 250,100, currentMachineTranslation );
     ofRotate( currentMachineRotation , 0, 1, 0);
 
     switch( appState ){

@@ -599,8 +599,6 @@ bool KafkaStatesMachine::addStatesFormSingleFile( string fileName ){
         fileIn->close();
         return false;
     }
-
-    int maxVideoIndex = 0;
     
     for( int s = 0 ; s < numStates ; s ++ ){
         float videoIndex;
@@ -624,6 +622,7 @@ bool KafkaStatesMachine::addStatesFormSingleFile( string fileName ){
         parameters.push_back( 0 );
         
         string stateName = "STATE_VIDEO_" + ofToString( videoIndex ) + "_CUT_" + ofToString( states.size() );
+        cout << "\nAdding State = " << stateName;
         
         KafkaStatesMachineState* newState = new KafkaStatesMachineState( stateName , videoIndex , parameters );
         states.push_back(newState);
