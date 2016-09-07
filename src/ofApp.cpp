@@ -3,6 +3,16 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
   
+    ofSetWindowTitle("Kafka Machine App");
+    
+    ofBackground(140,140,160);
+    ofSetVerticalSync(true);
+    
+    font.load( "Contl___.ttf" , 12 );
+    fontNameClosedMachine.load( "Contl___.ttf" , 25 );
+    
+    ofSeedRandom();
+
     
     cutLenghtMilli = 0;
     
@@ -59,15 +69,6 @@ void ofApp::setup(){
     
     currentVideoBrightness = sliderBrightness;
 
-    ofSetWindowTitle("Kafka Machine App");
-    
-    ofBackground(140,140,160);
-    ofSetVerticalSync(true);
-    
-    font.load( "Contl___.ttf" , 12 );
-    fontNameClosedMachine.load( "Contl___.ttf" , 25 );
-    
-    ofSeedRandom();
     
     if( bed_fight.load("movies/Scene1_Bedfight_Edit-1.mov") )
         videos.push_back( bed_fight );
@@ -183,7 +184,7 @@ void ofApp::setup(){
 
     //arduino hardware
     setupHardware();
-    }
+}
 //--------------------------------------------------------------
 bool ofApp::setupHardware(){
     isArduinoHardwarePresent = false;
@@ -194,7 +195,7 @@ bool ofApp::setupHardware(){
     }
     
     isArduinoHardwarePresent = true;
-    harwareUpdateRefresh = 50;
+    harwareUpdateRefresh = 70;
     lastHardwareUpdateRefresh = 0;
     cout << "\nWaiting for arduino ";
     return isArduinoHardwarePresent;
@@ -455,9 +456,7 @@ void ofApp::updateEnergys(){
 }
 //--------------------------------------------------------------
 void ofApp::draw(){
-    //currentVideo->draw( 0 , 0 , ofGetWidth() , ofGetHeight() );
-    
-    ofSetColor(255);
+     ofSetColor(255);
     
     if( currentVideoZoom != 1 ){
         ofPushMatrix();
@@ -519,7 +518,7 @@ void ofApp::draw(){
             break;
     }
 
-    
+    ofSetColor(255);
     if( hardware.isRuning() )
         drawHardware( 20 , 50 );
     else
@@ -814,7 +813,7 @@ void ofApp::drawGUI(){
 //GUI Global
 void ofApp::sliderBrightnessChanged(float &sliderBright ){
     currentVideoBrightness =  sliderBrightness ;
-    cout << "\nbright = " << currentVideoBrightness;
+    //cout << "\nbright = " << currentVideoBrightness;
  }
 //--------------------------------------------------------------
 void ofApp::sliderZoomChanged(float &sliderZoom ){
