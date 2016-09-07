@@ -63,7 +63,7 @@ public:
     bool isClosedMachines;
     bool isEnergys;
     
-    int deltaToCjangeValue;
+    int deltaToChangeValue;
     
 private:
     

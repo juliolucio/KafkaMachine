@@ -50,7 +50,7 @@ bool KafkaMachineArduinoHardware::setup( std::string portName ){
     pinLedClosedMachines = 12;
     pinLedEnergys = 13;
     
-    deltaToCjangeValue = 5;
+    deltaToChangeValue = 10;
     
     presedNow = false;
     
@@ -176,29 +176,40 @@ void KafkaMachineArduinoHardware::analogPinChanged(const int & pinNum ) {
     int newValue = arduinoBoard.getAnalog(pinNum);
     
     if( pinNumber == pinKnobBrightness )
-        if( abs( newValue - brightness ) > deltaToCjangeValue  )
+        if( abs( newValue - brightness ) > deltaToChangeValue  ){
+            cout << "\nbrightness = " << brightness;
             brightness = newValue;
+        }
     
     if( pinNumber == pinKnobZoom )
-        if( abs( newValue - zoom ) > deltaToCjangeValue  )
+        if( abs( newValue - zoom ) > deltaToChangeValue  ){
+            cout << "\nzoom = " << zoom;
             zoom = newValue;
+        }
     
     if( pinNumber == pinKnobRotation )
-        if( abs( newValue - rotation ) > deltaToCjangeValue  )
+        if( abs( newValue - rotation ) > deltaToChangeValue  ){
+            cout << "\nrotation = " << rotation;
             rotation = newValue;
+        }
     
     if( pinNumber == pinKnobEnergy01 )
-        if( abs( newValue - energy01 ) > deltaToCjangeValue  )
+        if( abs( newValue - energy01 ) > deltaToChangeValue  ){
+            //cout << "\nenergy01 = " << energy01;
             energy01 = newValue;
+        }
 
     if( pinNumber == pinKnobEnergy02 )
-        if( abs( newValue - energy02 ) > deltaToCjangeValue  )
+        if( abs( newValue - energy02 ) > deltaToChangeValue  ){
+            //cout << "\nenergy02 = " << energy02;
             energy02 = newValue;
+        }
 
     if( pinNumber == pinKnobEnergy03 )
-        if( abs( newValue - energy03 ) > deltaToCjangeValue  )
+        if( abs( newValue - energy03 ) > deltaToChangeValue  ){
+            //cout << "\nenergy03 = " << energy03;
             energy03 = newValue;
-
+        }
 }
 //--------------------------------------------------------------
 void KafkaMachineArduinoHardware::draw( int x , int y ){
