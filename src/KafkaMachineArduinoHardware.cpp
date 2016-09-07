@@ -89,7 +89,7 @@ float KafkaMachineArduinoHardware::getZoom(){
 }
 //--------------------------------------------------------------
 float KafkaMachineArduinoHardware::getRotation(){
-    return text;
+    return rotation;
 }
 //--------------------------------------------------------------
 float KafkaMachineArduinoHardware::getEnergy01(){
@@ -184,8 +184,8 @@ void KafkaMachineArduinoHardware::analogPinChanged(const int & pinNum ) {
             zoom = newValue;
     
     if( pinNumber == pinKnobText )
-        if( abs( newValue - text ) > deltaToCjangeValue  )
-            text = newValue;
+        if( abs( newValue - rotation ) > deltaToCjangeValue  )
+            rotation = newValue;
     
     if( pinNumber == pinKnobEnergy01 )
         if( abs( newValue - energy01 ) > deltaToCjangeValue  )
@@ -218,7 +218,7 @@ void KafkaMachineArduinoHardware::draw( int x , int y ){
         string result;
         result += "Brigthness : " + ofToString( brightness );
         result += "\nZoom : " + ofToString( zoom );
-        result += "\nText : " + ofToString( text );
+        result += "\nRotation : " + ofToString( rotation );
         result += "\n\nEnergy01 : " + ofToString( energy01 );
         result += "\nEnergy02 : " + ofToString( energy02 );
         result += "\nEnergy03 : " + ofToString( energy03 );

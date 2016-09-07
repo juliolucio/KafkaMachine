@@ -809,7 +809,6 @@ void ofApp::drawGUI(){
 //GUI Global
 void ofApp::sliderBrightnessChanged(float &sliderBright ){
     currentVideoBrightness =  sliderBrightness ;
-    //cout << "\nbright = " << currentVideoBrightness;
  }
 //--------------------------------------------------------------
 void ofApp::sliderZoomChanged(float &sliderZoom ){

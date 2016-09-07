@@ -23,7 +23,6 @@ public:
     
     bool justPresedButton();
 
-
 	ofImage				imageKonb;
     ofImage				imageButon;
     ofImage				imageLedOn;
@@ -58,7 +57,7 @@ public:
     
     float brightness;
     float zoom;
-    float text;
+    float rotation;
     
     bool isRandom;
     bool isClosedMachines;
