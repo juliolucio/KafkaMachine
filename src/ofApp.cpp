@@ -285,10 +285,12 @@ bool ofApp::updateHardware(){
     }
     
     if( cutTimeMillis - lastHardwareUpdateRefresh > harwareUpdateRefresh ){
+        
         currentVideoBrightness = ofMap( hardware.getBrightness() , 1023 , 0 , currentVideoBrightnessMin , currentVideoBrightnessMax );
         currentVideoZoom = ofMap( hardware.getZoom() , 1023 , 0 , currentVideoZoomMin , currentVideoZoomMax );
         currentMachineRotation = ofMap( hardware.getRotation() , 1023 , 0 , currentVideoMachineRotationMin , currentVideoMachineRotationMax );
         currentMachineTranslation = ofMap( hardware.getRotation() , 1023 , 0 , currentMachineTranslationMin , currentMachineTranslationMax );
+        
         currentEnergy01 = ofMap( hardware.getEnergy01() , 1023 , 0 , currentEnergy01Min , currentEnergy01Max );
         currentEnergy02 = ofMap( hardware.getEnergy02() , 1023 , 0 , currentEnergy02Min , currentEnergy02Max );
         currentEnergy03 = ofMap( hardware.getEnergy03() , 1023 , 0 , currentEnergy03Min , currentEnergy03Max );

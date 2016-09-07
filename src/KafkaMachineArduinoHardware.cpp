@@ -40,7 +40,7 @@ bool KafkaMachineArduinoHardware::setup( std::string portName ){
     
     pinKnobBrightness = 3;
     pinKnobZoom = 4;
-    pinKnobText = 5;
+    pinKnobRotation = 5;
     
     pinKnobEnergy01 = 0;
     pinKnobEnergy02 = 1;
@@ -129,7 +129,7 @@ void KafkaMachineArduinoHardware::setupArduino(const int & version) {
  
     arduinoBoard.sendAnalogPinReporting( pinKnobBrightness , ARD_ANALOG );
     arduinoBoard.sendAnalogPinReporting( pinKnobZoom , ARD_ANALOG );
-    arduinoBoard.sendAnalogPinReporting( pinKnobText , ARD_ANALOG );
+    arduinoBoard.sendAnalogPinReporting( pinKnobRotation , ARD_ANALOG );
     arduinoBoard.sendAnalogPinReporting( pinKnobEnergy01 , ARD_ANALOG );
     arduinoBoard.sendAnalogPinReporting( pinKnobEnergy02 , ARD_ANALOG );
     arduinoBoard.sendAnalogPinReporting( pinKnobEnergy03 , ARD_ANALOG );
@@ -183,7 +183,7 @@ void KafkaMachineArduinoHardware::analogPinChanged(const int & pinNum ) {
         if( abs( newValue - zoom ) > deltaToCjangeValue  )
             zoom = newValue;
     
-    if( pinNumber == pinKnobText )
+    if( pinNumber == pinKnobRotation )
         if( abs( newValue - rotation ) > deltaToCjangeValue  )
             rotation = newValue;
     

@@ -41,7 +41,7 @@ public:
     
     int pinKnobBrightness;
     int pinKnobZoom;
-    int pinKnobText;
+    int pinKnobRotation;
     
     int pinKnobEnergy01;
     int pinKnobEnergy02;
