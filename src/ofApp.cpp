@@ -100,20 +100,16 @@ void ofApp::setup(){
     if( america.load("movies/Scene10_America_Edit-4.mov") )
         videos.push_back( america );
     
-    //if( interviews_ed.load("movies/Scene11_Interviews_Edit.mov") )
-    if( interviews_ed.load("movies/Scene5_Stoker_Lanzarote.mov") )
-        videos.push_back( interviews_ed );
+    if( interviews_ed.load("movies/Scene11_Interviews_Edit.mov") )
+         videos.push_back( interviews_ed );
     
-    //if( interviews_all.load("movies/Scene12_Interviews_All.mov")
-    if( interviews_all.load("movies/Scene5_Stoker_Lanzarote.mov") )
+    if( interviews_all.load("movies/Scene12_Interviews_All.mov") )
         videos.push_back( interviews_all );
     
-    //if( boat_entrance.load("movies/Scene13_Boat_Entrance.mov") )
-    if( boat_entrance.load("movies/Scene5_Stoker_Lanzarote.mov") )
+    if( boat_entrance.load("movies/Scene13_Boat_Entrance.mov") )
         videos.push_back( boat_entrance );
     
     if( boat.load("movies/Scene14_Boat_Edit-2.mov") )
-
         videos.push_back( boat );
     
     for( int v = 0 ; v < videos.size() ; v ++ ){
