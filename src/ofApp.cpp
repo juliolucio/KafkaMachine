@@ -70,46 +70,46 @@ void ofApp::setup(){
     currentVideoBrightness = sliderBrightness;
 
     
-    if( bed_fight.load("movies/Scene1_Bedfight_Edit-1.mov") )
+    if( bed_fight.load("movies/Scene1_Bedfight_Edit-1.mp4") )
         videos.push_back( bed_fight );
     
-    if( karl_suitcase.load("movies/Scene2_Karl_Suitcase.mov" ) )
+    if( karl_suitcase.load("movies/Scene2_Karl_Suitcase.mp4" ) )
         videos.push_back( karl_suitcase );
     
-    if( access.load("movies/Scene3_All_Access.mov") )
+    if( access.load("movies/Scene3_All_Access.mp4") )
         videos.push_back( access );
     
-    if(  stoker_cabin.load("movies/Scene4_Stoker_Cabin_Edit-3.mov") )
+    if(  stoker_cabin.load("movies/Scene4_Stoker_Cabin_Edit-3.mp4") )
         videos.push_back( stoker_cabin );
     
-    if( stoker_lanzarote.load("movies/Scene5_Stoker_Lanzarote.mov") )
+    if( stoker_lanzarote.load("movies/Scene5_Stoker_Lanzarote.mp4") )
         videos.push_back( stoker_lanzarote );
     
-    if( klaus_lost_suicase.load("movies/Scene6_Klaus_Lost_Suitcase.mov") )
+    if( klaus_lost_suicase.load("movies/Scene6_Klaus_Lost_Suitcase.mp4") )
         videos.push_back( klaus_lost_suicase );
     
-    if( ramses.load("movies/Scene7_Ramses_Edit-5.mov") )
+    if( ramses.load("movies/Scene7_Ramses_Edit-5.mp4") )
         videos.push_back( ramses );
     
-    if( lift_boy.load("movies/Scene8_Liftboy_Edit-1.mov") )
+    if( lift_boy.load("movies/Scene8_Liftboy_Edit-1.mp4") )
         videos.push_back( lift_boy );
     
-    if( lisbon_protest.load("movies/Scene9 Lisbon_Protest.mov") )
+    if( lisbon_protest.load("movies/Scene9 Lisbon_Protest.mp4") )
         videos.push_back( lisbon_protest );
     
-    if( america.load("movies/Scene10_America_Edit-4.mov") )
+    if( america.load("movies/Scene10_America_Edit-4.mp4") )
         videos.push_back( america );
     
-    if( interviews_ed.load("movies/Scene11_Interviews_Edit.mov") )
+    if( interviews_ed.load("movies/Scene11_Interviews_Edit.mp4") )
          videos.push_back( interviews_ed );
     
-    if( interviews_all.load("movies/Scene12_Interviews_All.mov") )
+    if( interviews_all.load("movies/Scene12_Interviews_All.mp4") )
         videos.push_back( interviews_all );
     
-    if( boat_entrance.load("movies/Scene13_Boat_Entrance.mov") )
+    if( boat_entrance.load("movies/Scene13_Boat_Entrance.mp4") )
         videos.push_back( boat_entrance );
     
-    if( boat.load("movies/Scene14_Boat_Edit-2.mov") )
+    if( boat.load("movies/Scene14_Boat_Edit-2.mp4") )
         videos.push_back( boat );
     
     for( int v = 0 ; v < videos.size() ; v ++ ){
