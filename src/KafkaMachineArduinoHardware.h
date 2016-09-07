@@ -16,7 +16,7 @@ public:
     int getAppState();
     float getBrightness();
     float getZoom();
-    float getText();
+    float getRotation();
     float getEnergy01();
     float getEnergy02();
     float getEnergy03();

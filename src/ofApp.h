@@ -43,7 +43,6 @@ public:
     
     //updating modes
     bool updateHardware();
-    void updateGUI();
     void setAppState( appStates theState  );
     //void updateTextEffect();
     void setCurrentVideoState( int theIndexVideoSelected , float theStatrtPositionPercent , float theCurrentPositionPercent );
@@ -205,11 +204,11 @@ public:
     
     ofxFloatSlider sliderBrightness;
     ofxFloatSlider sliderZoom;
-    ofxFloatSlider sliderText;
+    ofxFloatSlider sliderRotation;
     
     void sliderBrightnessChanged(float &sliderBright );
     void sliderZoomChanged(float &sliderZoom );
-    void sliderTextChanged(float &slidetText );
+    void sliderRotationChanged(float &slidetRotation );
     
     //GUI Energys
     ofxPanel guiEnergys;

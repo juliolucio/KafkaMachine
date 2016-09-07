@@ -88,7 +88,7 @@ float KafkaMachineArduinoHardware::getZoom(){
     return zoom;
 }
 //--------------------------------------------------------------
-float KafkaMachineArduinoHardware::getText(){
+float KafkaMachineArduinoHardware::getRotation(){
     return text;
 }
 //--------------------------------------------------------------
