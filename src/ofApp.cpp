@@ -315,7 +315,7 @@ void ofApp::jumpToOtherClosedMachine(){
     currentClosedMacineIndex = newMachineIndex;
     currentClosedMacine = machinesClosed[ newMachineIndex ];
     resetClosedMachine();
-    updateClosedMachine();
+    //updateClosedMachine();
 
 }
 ////--------------------------------------------------------------
@@ -432,6 +432,17 @@ void ofApp::updateClosedMachine(){
 //--------------------------------------------------------------
 void ofApp::resetClosedMachine(){
     currentClosedMacine->machine->reset();
+    //chose a random next video
+    int indexVideo = currentClosedMacine->machine->getCurrentStateVideoIndex();
+    float startPercent = currentClosedMacine->machine->getCurrentStateStart();
+    float endPercent = currentClosedMacine->machine->getCurrentStateEnd();
+    if( isFirstTime ){
+        startPercent = 0;
+        isFirstTime = false;
+    }
+    setCurrentVideoState( indexVideo , startPercent , endPercent );
+    currentClosedMacine->machineController->updateViewDataVideo( videoSelected , currentVideo );
+    currentClosedMacine->machineController->update();
 }
 //--------------------------------------------------------------
 void ofApp::updateEnergys(){
