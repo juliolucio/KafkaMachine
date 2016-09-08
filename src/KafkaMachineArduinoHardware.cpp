@@ -177,19 +177,19 @@ void KafkaMachineArduinoHardware::analogPinChanged(const int & pinNum ) {
     
     if( pinNumber == pinKnobBrightness )
         if( abs( newValue - brightness ) > deltaToChangeValue  ){
-            cout << "\nbrightness = " << brightness;
+            //cout << "\nbrightness = " << brightness;
             brightness = newValue;
         }
     
     if( pinNumber == pinKnobZoom )
         if( abs( newValue - zoom ) > deltaToChangeValue  ){
-            cout << "\nzoom = " << zoom;
+            //cout << "\nzoom = " << zoom;
             zoom = newValue;
         }
     
     if( pinNumber == pinKnobRotation )
         if( abs( newValue - rotation ) > deltaToChangeValue  ){
-            cout << "\nrotation = " << rotation;
+            //cout << "\nrotation = " << rotation;
             rotation = newValue;
         }
     

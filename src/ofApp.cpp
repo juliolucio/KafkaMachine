@@ -191,7 +191,7 @@ bool ofApp::setupHardware(){
     }
     
     isArduinoHardwarePresent = true;
-    harwareUpdateRefresh = 70;
+    harwareUpdateRefresh = 50;
     lastHardwareUpdateRefresh = 0;
     cout << "\nWaiting for arduino ";
     return isArduinoHardwarePresent;
@@ -301,7 +301,7 @@ bool ofApp::updateHardware(){
         else if( hardware.justPresedButton() ){
             if( appState == APP_STATE_CLOSED_MACHINES )
                 jumpToOtherClosedMachine();
-            hasFinishedPlaying = true;
+            //hasFinishedPlaying = true;
         }
         lastHardwareUpdateRefresh = cutTimeMillis;
     }
@@ -315,7 +315,7 @@ void ofApp::jumpToOtherClosedMachine(){
     currentClosedMacineIndex = newMachineIndex;
     currentClosedMacine = machinesClosed[ newMachineIndex ];
     resetClosedMachine();
-    //updateClosedMachine();
+    cout << "\nJumped to machine : " << ofToString( newMachineIndex );
 
 }
 ////--------------------------------------------------------------
