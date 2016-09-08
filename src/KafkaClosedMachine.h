@@ -20,6 +20,7 @@ public:
     void setup( string machineName , string machineFileName , int theNumVideos );
     void update( );
     void draw();
+    void reset();
     
     //machines
     KafkaStatesMachine* machine;

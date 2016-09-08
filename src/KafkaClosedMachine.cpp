@@ -28,4 +28,7 @@ void KafkaClosedMachine::update(){
 void KafkaClosedMachine::draw(){
     machineController->drawView();
 }
-
+//--------------------------------------------------------------
+void KafkaClosedMachine::reset(){
+    machine->reset();
+}

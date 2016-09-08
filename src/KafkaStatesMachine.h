@@ -61,7 +61,7 @@ public:
     bool justChangedState();
     void setCurrentState( KafkaStatesMachineState* newState );
     
-    
+    void reset();
 
 };
 

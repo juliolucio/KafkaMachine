@@ -314,6 +314,7 @@ void ofApp::jumpToOtherClosedMachine(){
         newMachineIndex = ofRandom( machinesClosed.size() );
     currentClosedMacineIndex = newMachineIndex;
     currentClosedMacine = machinesClosed[ newMachineIndex ];
+    resetClosedMachine();
     updateClosedMachine();
 
 }
@@ -427,6 +428,10 @@ void ofApp::updateClosedMachine(){
     currentClosedMacine->machineController->updateViewDataVideo( videoSelected , currentVideo );
     currentClosedMacine->machineController->update();
     
+}
+//--------------------------------------------------------------
+void ofApp::resetClosedMachine(){
+    currentClosedMacine->machine->reset();
 }
 //--------------------------------------------------------------
 void ofApp::updateEnergys(){
@@ -703,6 +708,7 @@ void ofApp::keyPressed  (int key){
     
     if(key == '2'){
         setAppState( APP_STATE_CLOSED_MACHINES );
+        jumpToOtherClosedMachine();
     }
     
     if(key == '3'){

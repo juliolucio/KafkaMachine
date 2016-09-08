@@ -50,6 +50,7 @@ public:
     void updateRandom();
     void updateEnergys();
     void updateClosedMachine();
+    void resetClosedMachine();
     void jumpToOtherClosedMachine();
     
     //timing

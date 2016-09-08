@@ -713,3 +713,8 @@ void KafkaStatesMachine::setCurrentState( KafkaStatesMachineState* newState ){
     //cout << " to " << currentState->getName() << "\n";
     hasJustChangedState = true;
 }
+//-----------------------------------------------------------
+void KafkaStatesMachine::reset(  ){
+    currentState = states[0];
+    hasJustChangedState = true;
+}
