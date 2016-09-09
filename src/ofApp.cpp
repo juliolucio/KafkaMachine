@@ -123,10 +123,10 @@ void ofApp::setup(){
     
     //machines closed loops
     KafkaClosedMachine* closedMachine01 = new KafkaClosedMachine();
-    closedMachine01->setup( "PERCURSO FECHADO I" , "machines/Percurso Fechado I.tsv" , videos.size() );
+    closedMachine01->setup( "Route I" , "machines/Percurso Fechado I.tsv" , videos.size() );
     
     KafkaClosedMachine* closedMachine02 = new KafkaClosedMachine();
-    closedMachine02->setup( "PERCURSO FECHADO II" , "machines/Percurso Fechado II.tsv" , videos.size() );
+    closedMachine02->setup( "Route II" , "machines/Percurso Fechado II.tsv" , videos.size() );
     
     machinesClosed.push_back( closedMachine01 );
     machinesClosed.push_back( closedMachine02 );
@@ -148,11 +148,11 @@ void ofApp::setup(){
     //machineRandom->setup( "RANDOM + ENERGY" , videos.size() );
     
     machineRandomSemipoulated = new KafkaSemiPopulatedMachine();
-    machineRandomSemipoulated->setup( "RANDOM" , videos.size() );
+    machineRandomSemipoulated->setup( "ARBITRARY" , videos.size() );
     
     //machine Energy
     machineEnergys = new KafkaFullPopulatedMachine();
-    machineEnergys->setup( "ENERGY" , videos.size() );
+    machineEnergys->setup( "PROBABLE" , videos.size() );
     
     //Camera
     camera = new ofEasyCam();
@@ -512,25 +512,25 @@ void ofApp::draw(){
     //drawDebugTimes( 20 , 420 );;
     
     
-    std::string text;
-    switch( appState ){
-        case APP_STATE_RANDOM:
-            //machineRandom->draw();
-            text = "RANDOM MACHINE";
-            fontNameClosedMachine.drawString( text ,  250  , 200 );
-            break;
-            
-        case APP_STATE_CLOSED_MACHINES:
-            text = "CLOSED MACHINE : ";
-            text += currentClosedMacine->machine->getName() ;
-            fontNameClosedMachine.drawString( text ,  250  , 200 );
-            break;
-            
-        case APP_STATE_ENERGYS:
-            text = "PROBABILISTIC MACHINE";
-            fontNameClosedMachine.drawString( text ,  250  , 200 );
-            break;
-    }
+//    std::string text;
+//    switch( appState ){
+//        case APP_STATE_RANDOM:
+//            //machineRandom->draw();
+//            text = "ARBITRARY MACHINE";
+//            fontNameClosedMachine.drawString( text ,  250  , 200 );
+//            break;
+//            
+//        case APP_STATE_CLOSED_MACHINES:
+//            text = "POSSIBLES MACHINE : ";
+//            text += currentClosedMacine->machine->getName() ;
+//            fontNameClosedMachine.drawString( text ,  250  , 200 );
+//            break;
+//            
+//        case APP_STATE_ENERGYS:
+//            text = "INTENSITIES MACHINE";
+//            fontNameClosedMachine.drawString( text ,  250  , 200 );
+//            break;
+//    }
 
     ofSetColor(255);
     if( hardware.isRuning() )
@@ -609,12 +609,12 @@ void ofApp::drawDebugTimeline( int x , int y , int w , int h ){
 void ofApp::drawHardware( int x , int y ){
     ofFill();
     ofEnableAlphaBlending();
-    ofSetColor( 20 , 200 , 0 , 100 );
-    ofDrawRectangle( x - 10 , y - 20 , 160 , 180 );
+    ofSetColor( 150,150,150 , 100 );
+    ofDrawRectangle( x - 10 , y - 20 , 210 , 240 );
     ofDisableAlphaBlending();
     ofNoFill();
     
-    ofSetColor( 255,255,255  );
+    ofSetColor( 200,255,255  );
     
     if( !hardware.isRuning() ){
         font.drawString("Arduino not connected...\n", x, y);
@@ -622,24 +622,28 @@ void ofApp::drawHardware( int x , int y ){
         string result;
         switch( appState ){
             case APP_STATE_RANDOM:
-                result += "RANDOM MACHINE";
+                result += "ARBITRARY MACHINE\n";
                 break;
                 
             case APP_STATE_CLOSED_MACHINES:
-                result += "CLOSED MACHINES";
+                result += "POSSIBLE MACHINE : \n";
+                result += currentClosedMacine->machine->getName() ;
                 break;
                 
             case APP_STATE_ENERGYS:
-                result += "ENERGY MACHINE";
+                result += "INTENSITIES MACHINE\n";
                 break;
         }
 
-        result += "\n\nBrigthness : " + ofToString( currentVideoBrightness , 2 );
+        result += "\n\nTitulo 01:";
+        result += "\nBrigthness : " + ofToString( currentVideoBrightness , 2 );
         result += "\nZoom : " + ofToString( currentVideoZoom , 2 );
         result += "\nTrans : " + ofToString( currentMachineTranslation , 2 );
-        result += "\n\nEnergy01 : " + ofToString( currentEnergy01 , 2 );
-        result += "\nEnergy02 : " + ofToString( currentEnergy02 , 2 );
-        result += "\nEnergy03 : " + ofToString( currentEnergy03 , 2 );
+        
+        result += "\n\nTitulo 02:";
+        result += "\nExhaustion/Bliss 01: " + ofToString( currentEnergy01 , 2 );
+        result += "\nUncertain/Trust 02: " + ofToString( currentEnergy02 , 2 );
+        result += "\nWork/Patience 03: " + ofToString( currentEnergy03 , 2 );
         
         font.drawString( result , x , y );
     }
