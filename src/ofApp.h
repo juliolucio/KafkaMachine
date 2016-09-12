@@ -43,7 +43,7 @@ public:
     
     //updating modes
     bool updateHardware();
-    void setAppState( appStates theState  );
+    void setAppState( int theState  );
     //void updateTextEffect();
     void setCurrentVideoState( int theIndexVideoSelected , float theStatrtPositionPercent , float theCurrentPositionPercent );
     void updateAleatorio();

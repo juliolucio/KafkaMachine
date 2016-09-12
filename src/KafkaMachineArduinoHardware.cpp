@@ -70,16 +70,6 @@ void KafkaMachineArduinoHardware::update(){
     updateArduino();
 }
 //--------------------------------------------------------------
-int KafkaMachineArduinoHardware::getAppState(){
-    if( isRandom )
-        return 0;
-    else if( isClosedMachines )
-        return 1;
-    else if( isEnergys )
-        return 2;
-    else return -999999;//hack no!!!!
-}
-//--------------------------------------------------------------
 float KafkaMachineArduinoHardware::getBrightness(){
     return brightness;
 }
@@ -105,12 +95,8 @@ float KafkaMachineArduinoHardware::getEnergy03(){
 }
 
 //--------------------------------------------------------------
-bool KafkaMachineArduinoHardware::justPresedButton(){
-    if( presedNow ){
-        presedNow = false;
-        return true;
-    }
-    return false;
+int KafkaMachineArduinoHardware::hasJustPresedButton(){
+    return (int)state;
 }
 //--------------------------------------------------------------
 void KafkaMachineArduinoHardware::setupArduino(const int & version) {
@@ -146,29 +132,22 @@ void KafkaMachineArduinoHardware::updateArduino(){
 }
 //--------------------------------------------------------------
 void KafkaMachineArduinoHardware::digitalPinChanged(const int & pinNum) {
-    if( !arduinoBoard.getDigital( pinButtonRandom ) ){
-        isRandom = true;
-        isClosedMachines = false;
-        isEnergys = false;
+    state = NO_PRESED;
+    if( arduinoBoard.getDigital( pinButtonRandom ) ){
+        state = PRESED_RANDOM;
         presedNow = true;
     }
     
     else if( arduinoBoard.getDigital( pinButtonClosedMachines ) ){
-        isRandom = false;
-        isClosedMachines = true;
-        isEnergys = false;
+        state = PRESED_CLOSED;
         presedNow = true;
     }
     
-    else if( !arduinoBoard.getDigital( pinButtonEnergys ) ){
-        isRandom = false;
-        isClosedMachines = false;
-        isEnergys = true;
+    else if( arduinoBoard.getDigital( pinButtonEnergys ) ){
+        state = PRESED_ENERGIES;
         presedNow = true;
     }
-    arduinoBoard.sendDigital( pinLedRandom , isRandom );
-    arduinoBoard.sendDigital( pinLedClosedMachines , isClosedMachines );
-    arduinoBoard.sendDigital( pinLedEnergys , isEnergys );
+    return state;
 }
 //--------------------------------------------------------------
 void KafkaMachineArduinoHardware::analogPinChanged(const int & pinNum ) {
@@ -233,9 +212,9 @@ void KafkaMachineArduinoHardware::draw( int x , int y ){
         result += "\n\nEnergy01 : " + ofToString( energy01 );
         result += "\nEnergy02 : " + ofToString( energy02 );
         result += "\nEnergy03 : " + ofToString( energy03 );
-        result += "\n\nRANDOM : " + ofToString( isRandom );
-        result += "\nCLOSED : " + ofToString( isClosedMachines );
-        result += "\nENERGYS : " + ofToString( isEnergys );
+        result += "\n\nRANDOM : " + ofToString( isRandomMachinesButton );
+        result += "\nCLOSED : " + ofToString( isClosedMachinesButton );
+        result += "\nENERGYS : " + ofToString( isEnergysMachineButton );
         
 		smallFont.drawString( result , x , y );
 	}

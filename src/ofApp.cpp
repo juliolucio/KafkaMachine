@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-  
+    
     ofSetWindowTitle("Kafka Machine App");
     
     ofBackground(140,140,160);
@@ -12,7 +12,7 @@ void ofApp::setup(){
     fontNameClosedMachine.load( "Contl___.ttf" , 25 );
     
     ofSeedRandom();
-
+    
     
     cutLenghtMilli = 0;
     
@@ -31,15 +31,7 @@ void ofApp::setup(){
     delataEnd = 0.9;
     
     //parametaers INITIAL MAX and MIN values to set up by teh artist
-    currentVideoBrightness = 1;
-    currentVideoZoom = 1;
-    //currentVideoText = .5;
-    currentMachineRotation = 0;
-    currentMachineTranslation = 0;
-    
-    currentEnergy01 = .5;
-    currentEnergy02 = .5;
-    currentEnergy03 = .5;
+
     
     currentVideoBrightnessMax = 8;
     currentVideoBrightnessMin = 1;
@@ -64,11 +56,20 @@ void ofApp::setup(){
     
     currentEnergy03Max = 1;
     currentEnergy03Min = 0;
-
+    
+    currentVideoBrightness = currentVideoBrightnessMin;
+    currentVideoZoom = currentVideoZoomMin;
+    currentMachineRotation = currentVideoMachineRotationMin;
+    currentMachineTranslation = currentMachineTranslationMin;
+    
+    currentEnergy01 = .5;
+    currentEnergy02 = .5;
+    currentEnergy03 = .5;
+    
     setupGUI();
     
     currentVideoBrightness = sliderBrightness;
-
+    
     
     if( bed_fight.load("movies/Scene1_Bedfight_Edit-1.mp4") )
         videos.push_back( bed_fight );
@@ -101,7 +102,7 @@ void ofApp::setup(){
         videos.push_back( america );
     
     if( interviews_ed.load("movies/Scene11_Interviews_Edit.mp4") )
-         videos.push_back( interviews_ed );
+        videos.push_back( interviews_ed );
     
     if( interviews_all.load("movies/Scene12_Interviews_All.mp4") )
         videos.push_back( interviews_all );
@@ -130,7 +131,7 @@ void ofApp::setup(){
     
     machinesClosed.push_back( closedMachine01 );
     machinesClosed.push_back( closedMachine02 );
-
+    
     currentClosedMacineIndex = 0;
     currentClosedMacine = machinesClosed[ currentClosedMacineIndex ];
     
@@ -177,21 +178,22 @@ void ofApp::setup(){
     pointLight01.enable();
     pointLight02.enable();
     pointLight03.enable();
-
+    
     //arduino hardware
     setupHardware();
 }
 //--------------------------------------------------------------
 bool ofApp::setupHardware(){
     isArduinoHardwarePresent = false;
-    string portName = "/dev/cu.usbserial-A4001qyq";
+    //string portName = "/dev/cu.usbserial-A4001qyq";
+    string portName = "/dev/cu.usbmodem1411";
     if( !hardware.setup( portName ) ){
         cout << "Couldnt find arduino at port : " << portName << "/n";
         return isArduinoHardwarePresent;
     }
     
     isArduinoHardwarePresent = true;
-    harwareUpdateRefresh = 50;
+    harwareUpdateRefresh = 100;
     lastHardwareUpdateRefresh = 0;
     cout << "\nWaiting for arduino ";
     return isArduinoHardwarePresent;
@@ -268,7 +270,7 @@ void ofApp::update(){
     pointLight01.setPosition( positionPointLight01 );
     pointLight02.setPosition( positionPointLight02 );
     pointLight03.setPosition( positionPointLight03 );
-
+    
 }
 //--------------------------------------------------------------
 bool ofApp::updateHardware(){
@@ -295,17 +297,40 @@ bool ofApp::updateHardware(){
         currentEnergy02 = ofMap( hardware.getEnergy02() , 1023 , 0 , currentEnergy02Min , currentEnergy02Max );
         currentEnergy03 = ofMap( hardware.getEnergy03() , 1023 , 0 , currentEnergy03Min , currentEnergy03Max );
         
-        int newAppState =  hardware.getAppState();
-        if( newAppState != appState )
-            setAppState( appStates(newAppState) );
-        else if( hardware.justPresedButton() ){
-            if( appState == APP_STATE_CLOSED_MACHINES )
-                jumpToOtherClosedMachine();
-            //hasFinishedPlaying = true;
+        int butonState = hardware.hasJustPresedButton();
+        
+        if( butonState != 3 ){
+            if( butonState != (int)appState ){
+                setAppState( (int)butonState );
+                if( butonState == APP_STATE_RANDOM || butonState == APP_STATE_ENERGYS )
+                    hasFinishedPlaying = true;
+            }
+            
+            else{
+                switch( butonState ){
+                    case APP_STATE_RANDOM:
+                        machineRandomSemipoulated->machine->stepRandom();
+                        hasFinishedPlaying = true;
+                        break;
+                        
+                    case APP_STATE_CLOSED_MACHINES:
+                        jumpToOtherClosedMachine();
+                        break;
+                        
+                    case APP_STATE_ENERGYS:
+                        std::vector< float > energyes;
+                        energyes.push_back( currentEnergy01 );
+                        energyes.push_back( currentEnergy02 );
+                        energyes.push_back( currentEnergy03 );
+                        machineEnergys->machine->stepEnergys( energyes );
+                        hasFinishedPlaying = true;
+                        break;
+                }
+            }
+            lastHardwareUpdateRefresh = cutTimeMillis;
         }
-        lastHardwareUpdateRefresh = cutTimeMillis;
+        return true;
     }
-    return true;
 }
 //--------------------------------------------------------------
 void ofApp::jumpToOtherClosedMachine(){
@@ -316,7 +341,7 @@ void ofApp::jumpToOtherClosedMachine(){
     currentClosedMacine = machinesClosed[ newMachineIndex ];
     resetClosedMachine();
     cout << "\nJumped to machine : " << ofToString( newMachineIndex );
-
+    
 }
 ////--------------------------------------------------------------
 //void ofApp::updateTextEffect(){
@@ -344,8 +369,8 @@ void ofApp::jumpToOtherClosedMachine(){
 //    }
 //}
 //--------------------------------------------------------------
-void ofApp::setAppState( appStates theState  ){
-    appState = theState;
+void ofApp::setAppState( int theState  ){
+    appState = (appStates)theState;
     switch( appState ){
         case APP_STATE_RANDOM:
             updateRandom();
@@ -470,7 +495,7 @@ void ofApp::updateEnergys(){
 }
 //--------------------------------------------------------------
 void ofApp::draw(){
-     ofSetColor(255);
+    ofSetColor(255);
     
     if( currentVideoZoom != 1 ){
         ofPushMatrix();
@@ -487,7 +512,7 @@ void ofApp::draw(){
     ofPushMatrix();
     ofTranslate( 250,100, currentMachineTranslation );
     ofRotate( currentMachineRotation , 0, 1, 0);
-
+    
     switch( appState ){
         case APP_STATE_RANDOM:
             //machineRandom->draw();
@@ -531,7 +556,7 @@ void ofApp::draw(){
             fontNameClosedMachine.drawString( text ,  250  , 200 );
             break;
     }
-
+    
     ofSetColor(255);
     if( hardware.isRuning() )
         drawHardware( 20 , 50 );
@@ -633,10 +658,11 @@ void ofApp::drawHardware( int x , int y ){
                 result += "ENERGY MACHINE";
                 break;
         }
-
-        result += "\n\nBrigthness : " + ofToString( currentVideoBrightness , 2 );
-        result += "\nZoom : " + ofToString( currentVideoZoom , 2 );
-        result += "\nTrans : " + ofToString( currentMachineTranslation , 2 );
+        
+        result += "\n\nBrigthness : "   + ofToString(  ofMap( currentVideoBrightness , currentVideoBrightnessMin , currentVideoBrightnessMax , 0 , 255) , 2 );
+        result += "\nZoom : "           + ofToString(  ofMap( currentVideoZoom , currentVideoZoomMin , currentVideoZoomMax , 0 , 255) , 2 );
+        result += "\nPosition : "       + ofToString(  ofMap( currentMachineTranslation , currentMachineTranslationMin , currentMachineTranslationMax , 0 , 255) , 2 );
+        
         result += "\n\nEnergy01 : " + ofToString( currentEnergy01 , 2 );
         result += "\nEnergy02 : " + ofToString( currentEnergy02 , 2 );
         result += "\nEnergy03 : " + ofToString( currentEnergy03 , 2 );
@@ -763,7 +789,7 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 //bool ofApp::loadTextForEffect( string fileName ){
 //    if( !fileIn )
 //        fileIn = new ifstream();
-//    
+//
 //    fileIn->open( ofToDataPath( fileName ).c_str() , std::ios_base::binary | std::ios_base::in );
 //    if ( !fileIn->is_open() ){
 //        cout << "Machine File not found: ";
@@ -771,7 +797,7 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 //        fileIn->close();
 //        return false;
 //    }
-//    
+//
 //    textForEffect = "";
 //    string read;
 //    string readPrev;
@@ -828,7 +854,7 @@ void ofApp::drawGUI(){
 //GUI Global
 void ofApp::sliderBrightnessChanged(float &sliderBright ){
     currentVideoBrightness =  sliderBrightness ;
- }
+}
 //--------------------------------------------------------------
 void ofApp::sliderZoomChanged(float &sliderZoom ){
     currentVideoZoom = sliderZoom;

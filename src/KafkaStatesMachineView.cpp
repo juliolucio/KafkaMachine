@@ -285,7 +285,7 @@ void KafkaStatesMachineView::draw(){
         if( stateIndex == stateCurrent ){
             vector<ofMeshFace> triangles = (*ittr).second;;
             float angle = ofGetElapsedTimef() * 5;
-            float strength = (sin( angle+.25 )) * 5 ;
+            float strength = (sin( angle+.25 )) * 7 ;
             ofVec3f faceNormal;
             for( int i = 0; i < triangles.size(); i++ ) {
                 faceNormal = triangles[i].getFaceNormal();

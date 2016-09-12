@@ -7,13 +7,21 @@
 class KafkaMachineArduinoHardware{
 
 public:
+    
+    typedef enum {
+        PRESED_RANDOM,
+        PRESED_CLOSED,
+        PRESED_ENERGIES,
+        NO_PRESED,
+    }presedStates;
+    
+    presedStates state;
 
 	bool setup( std::string portName );
 	void update();
 	void draw( int x , int y );
     bool isRuning();
     
-    int getAppState();
     float getBrightness();
     float getZoom();
     float getRotation();
@@ -21,7 +29,7 @@ public:
     float getEnergy02();
     float getEnergy03();
     
-    bool justPresedButton();
+    int hasJustPresedButton();
 
 	ofImage				imageKonb;
     ofImage				imageButon;
@@ -59,9 +67,9 @@ public:
     float zoom;
     float rotation;
     
-    bool isRandom;
-    bool isClosedMachines;
-    bool isEnergys;
+    bool isRandomMachinesButton;
+    bool isClosedMachinesButton;
+    bool isEnergysMachineButton;
     
     int deltaToChangeValue;
     
