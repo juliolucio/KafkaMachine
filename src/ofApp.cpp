@@ -33,7 +33,7 @@ void ofApp::setup(){
     //parametaers INITIAL MAX and MIN values to set up by teh artist
 
     
-    currentVideoBrightnessMax = 8;
+    currentVideoBrightnessMax = 15;
     currentVideoBrightnessMin = 1;
     
     currentVideoZoomMax = 10;
@@ -509,9 +509,9 @@ void ofApp::draw(){
     
     
     camera->begin();
-    ofPushMatrix();
-    ofTranslate( 250,100, currentMachineTranslation );
-    ofRotate( currentMachineRotation , 0, 1, 0);
+    //ofPushMatrix();
+    //ofTranslate( 250,100, currentMachineTranslation );
+    //ofRotate( currentMachineRotation , 0, 1, 0);
     
     switch( appState ){
         case APP_STATE_RANDOM:
@@ -528,7 +528,7 @@ void ofApp::draw(){
             machineEnergys->draw();
             break;
     }
-    ofPopMatrix();
+    //ofPopMatrix();
     camera->end();
     
     ofSetColor(255);
