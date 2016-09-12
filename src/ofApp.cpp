@@ -123,10 +123,10 @@ void ofApp::setup(){
     
     //machines closed loops
     KafkaClosedMachine* closedMachine01 = new KafkaClosedMachine();
-    closedMachine01->setup( "Route I" , "machines/Percurso Fechado I.tsv" , videos.size() );
+    closedMachine01->setup( "Possible Route I" , "machines/Percurso Fechado I.tsv" , videos.size() );
     
     KafkaClosedMachine* closedMachine02 = new KafkaClosedMachine();
-    closedMachine02->setup( "Route II" , "machines/Percurso Fechado II.tsv" , videos.size() );
+    closedMachine02->setup( "Possible Route II" , "machines/Percurso Fechado II.tsv" , videos.size() );
     
     machinesClosed.push_back( closedMachine01 );
     machinesClosed.push_back( closedMachine02 );
@@ -610,7 +610,7 @@ void ofApp::drawHardware( int x , int y ){
     ofFill();
     ofEnableAlphaBlending();
     ofSetColor( 150,150,150 , 100 );
-    ofDrawRectangle( x - 10 , y - 20 , 210 , 240 );
+    ofDrawRectangle( x - 10 , y - 20 , 210 , 250 );
     ofDisableAlphaBlending();
     ofNoFill();
     
@@ -622,28 +622,28 @@ void ofApp::drawHardware( int x , int y ){
         string result;
         switch( appState ){
             case APP_STATE_RANDOM:
-                result += "ARBITRARY MACHINE\n";
+                result += "ARBITRARY MACHINE ";
                 break;
                 
             case APP_STATE_CLOSED_MACHINES:
-                result += "POSSIBLE MACHINE : \n";
+                result += "POSSIBLES MACHINE : \n";
                 result += currentClosedMacine->machine->getName() ;
                 break;
                 
             case APP_STATE_ENERGYS:
-                result += "INTENSITIES MACHINE\n";
+                result += "INTENSITIES MACHINE";
                 break;
         }
 
-        result += "\n\nTitulo 01:";
-        result += "\nBrigthness : " + ofToString( currentVideoBrightness , 2 );
-        result += "\nZoom : " + ofToString( currentVideoZoom , 2 );
-        result += "\nTrans : " + ofToString( currentMachineTranslation , 2 );
+        result += "\n\nQualities:";
+        result += "\nChromaticity : " + ofToString( currentVideoBrightness , 2 );
+        result += "\nProximity : " + ofToString( currentVideoZoom , 2 );
+        result += "\nAlgorithmy : " + ofToString( currentMachineTranslation , 2 );
         
-        result += "\n\nTitulo 02:";
-        result += "\nExhaustion/Bliss 01: " + ofToString( currentEnergy01 , 2 );
-        result += "\nUncertain/Trust 02: " + ofToString( currentEnergy02 , 2 );
-        result += "\nWork/Patience 03: " + ofToString( currentEnergy03 , 2 );
+        result += "\n\nIntensities:";
+        result += "\nBliss/Exhaustion 01: " + ofToString( currentEnergy01 , 2 );
+        result += "\nPatience/Work 02: " + ofToString( currentEnergy02 , 2 );
+        result += "\nTrust/Uncertainity" + ofToString( currentEnergy03 , 2 );
         
         font.drawString( result , x , y );
     }
