@@ -185,8 +185,8 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 bool ofApp::setupHardware(){
     isArduinoHardwarePresent = false;
-    //string portName = "/dev/cu.usbserial-A4001qyq";
-    string portName = "/dev/cu.usbmodem1411";
+    string portName = "/dev/cu.usbserial-A4001qyq";
+    //string portName = "/dev/cu.usbmodem1411";
     if( !hardware.setup( portName ) ){
         cout << "Couldnt find arduino at port : " << portName << "/n";
         return isArduinoHardwarePresent;
@@ -662,14 +662,14 @@ void ofApp::drawHardware( int x , int y ){
         
         result += "\n\nQualities:";
         result += "\nChromaticity : "   + ofToString(  ofMap( currentVideoBrightness , currentVideoBrightnessMin , currentVideoBrightnessMax , 0 , 255) , 2 );
-        result += "\nProximity : "           + ofToString(  ofMap( currentVideoZoom , currentVideoZoomMin , currentVideoZoomMax , 0 , 255) , 2 );
-        result += "\nAlgorithmy : "       + ofToString(  ofMap( currentMachineTranslation , currentMachineTranslationMin , currentMachineTranslationMax , 0 , 255) , 2 );
+        result += "\nProximity     : "           + ofToString(  ofMap( currentVideoZoom , currentVideoZoomMin , currentVideoZoomMax , 0 , 255) , 2 );
+        result += "\nAlgorithmy   : "       + ofToString(  ofMap( currentMachineTranslation , currentMachineTranslationMin , currentMachineTranslationMax , 0 , 255) , 2 );
 
         
         result += "\n\nIntensities:";
-        result += "\nBliss/Exhaustion 01: " + ofToString( currentEnergy01 , 2 );
-        result += "\nPatience/Work 02: " + ofToString( currentEnergy02 , 2 );
-        result += "\nTrust/Uncertainity" + ofToString( currentEnergy03 , 2 );
+        result += "\nBliss/Exhaustion   : " + ofToString( currentEnergy01 , 2 );
+        result += "\nPatience/Work      : " + ofToString( currentEnergy02 , 2 );
+        result += "\nTrust/Uncertainity  : " + ofToString( currentEnergy03 , 2 );
         
         font.drawString( result , x , y );
     }
