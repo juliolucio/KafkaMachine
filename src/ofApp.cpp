@@ -537,26 +537,26 @@ void ofApp::draw(){
     //drawDebugTimes( 20 , 420 );;
     
     
-    std::string text;
-    switch( appState ){
-        case APP_STATE_RANDOM:
-            //machineRandom->draw();
-            text = "RANDOM MACHINE";
-            fontNameClosedMachine.drawString( text ,  250  , 200 );
-            break;
-            
-        case APP_STATE_CLOSED_MACHINES:
-            text = "CLOSED MACHINE : ";
-            text += currentClosedMacine->machine->getName() ;
-            fontNameClosedMachine.drawString( text ,  250  , 200 );
-            break;
-            
-        case APP_STATE_ENERGYS:
-            text = "PROBABILISTIC MACHINE";
-            fontNameClosedMachine.drawString( text ,  250  , 200 );
-            break;
-    }
-    
+//    std::string text;
+//    switch( appState ){
+//        case APP_STATE_RANDOM:
+//            //machineRandom->draw();
+//            text = "ARBITRARY MACHINE";
+//            fontNameClosedMachine.drawString( text ,  250  , 200 );
+//            break;
+//            
+//        case APP_STATE_CLOSED_MACHINES:
+//            text = "POSSIBLES MACHINE : ";
+//            text += currentClosedMacine->machine->getName() ;
+//            fontNameClosedMachine.drawString( text ,  250  , 200 );
+//            break;
+//            
+//        case APP_STATE_ENERGYS:
+//            text = "INTENSITIES MACHINE";
+//            fontNameClosedMachine.drawString( text ,  250  , 200 );
+//            break;
+//    }
+
     ofSetColor(255);
     if( hardware.isRuning() )
         drawHardware( 20 , 50 );
@@ -660,13 +660,16 @@ void ofApp::drawHardware( int x , int y ){
                 break;
         }
         
-        result += "\n\nBrigthness : "   + ofToString(  ofMap( currentVideoBrightness , currentVideoBrightnessMin , currentVideoBrightnessMax , 0 , 255) , 2 );
-        result += "\nZoom : "           + ofToString(  ofMap( currentVideoZoom , currentVideoZoomMin , currentVideoZoomMax , 0 , 255) , 2 );
-        result += "\nPosition : "       + ofToString(  ofMap( currentMachineTranslation , currentMachineTranslationMin , currentMachineTranslationMax , 0 , 255) , 2 );
+        result += "\n\nQualities:";
+        result += "\nChromaticity : "   + ofToString(  ofMap( currentVideoBrightness , currentVideoBrightnessMin , currentVideoBrightnessMax , 0 , 255) , 2 );
+        result += "\nProximity : "           + ofToString(  ofMap( currentVideoZoom , currentVideoZoomMin , currentVideoZoomMax , 0 , 255) , 2 );
+        result += "\nAlgorithmy : "       + ofToString(  ofMap( currentMachineTranslation , currentMachineTranslationMin , currentMachineTranslationMax , 0 , 255) , 2 );
+
         
-        result += "\n\nEnergy01 : " + ofToString( currentEnergy01 , 2 );
-        result += "\nEnergy02 : " + ofToString( currentEnergy02 , 2 );
-        result += "\nEnergy03 : " + ofToString( currentEnergy03 , 2 );
+        result += "\n\nIntensities:";
+        result += "\nBliss/Exhaustion 01: " + ofToString( currentEnergy01 , 2 );
+        result += "\nPatience/Work 02: " + ofToString( currentEnergy02 , 2 );
+        result += "\nTrust/Uncertainity" + ofToString( currentEnergy03 , 2 );
         
         font.drawString( result , x , y );
     }
