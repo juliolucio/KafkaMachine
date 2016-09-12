@@ -124,10 +124,10 @@ void ofApp::setup(){
     
     //machines closed loops
     KafkaClosedMachine* closedMachine01 = new KafkaClosedMachine();
-    closedMachine01->setup( "PERCURSO FECHADO I" , "machines/Percurso Fechado I.tsv" , videos.size() );
+    closedMachine01->setup( "Possible Route I" , "machines/Percurso Fechado I.tsv" , videos.size() );
     
     KafkaClosedMachine* closedMachine02 = new KafkaClosedMachine();
-    closedMachine02->setup( "PERCURSO FECHADO II" , "machines/Percurso Fechado II.tsv" , videos.size() );
+    closedMachine02->setup( "Possible Route II" , "machines/Percurso Fechado II.tsv" , videos.size() );
     
     machinesClosed.push_back( closedMachine01 );
     machinesClosed.push_back( closedMachine02 );
@@ -149,11 +149,11 @@ void ofApp::setup(){
     //machineRandom->setup( "RANDOM + ENERGY" , videos.size() );
     
     machineRandomSemipoulated = new KafkaSemiPopulatedMachine();
-    machineRandomSemipoulated->setup( "RANDOM" , videos.size() );
+    machineRandomSemipoulated->setup( "ARBITRARY" , videos.size() );
     
     //machine Energy
     machineEnergys = new KafkaFullPopulatedMachine();
-    machineEnergys->setup( "ENERGY" , videos.size() );
+    machineEnergys->setup( "PROBABLE" , videos.size() );
     
     //Camera
     camera = new ofEasyCam();
@@ -634,12 +634,12 @@ void ofApp::drawDebugTimeline( int x , int y , int w , int h ){
 void ofApp::drawHardware( int x , int y ){
     ofFill();
     ofEnableAlphaBlending();
-    ofSetColor( 20 , 200 , 0 , 100 );
-    ofDrawRectangle( x - 10 , y - 20 , 160 , 180 );
+    ofSetColor( 150,150,150 , 100 );
+    ofDrawRectangle( x - 10 , y - 20 , 210 , 250 );
     ofDisableAlphaBlending();
     ofNoFill();
     
-    ofSetColor( 255,255,255  );
+    ofSetColor( 200,255,255  );
     
     if( !hardware.isRuning() ){
         font.drawString("Arduino not connected...\n", x, y);
@@ -647,15 +647,16 @@ void ofApp::drawHardware( int x , int y ){
         string result;
         switch( appState ){
             case APP_STATE_RANDOM:
-                result += "RANDOM MACHINE";
+                result += "ARBITRARY MACHINE ";
                 break;
                 
             case APP_STATE_CLOSED_MACHINES:
-                result += "CLOSED MACHINES";
+                result += "POSSIBLES MACHINE : \n";
+                result += currentClosedMacine->machine->getName() ;
                 break;
                 
             case APP_STATE_ENERGYS:
-                result += "ENERGY MACHINE";
+                result += "INTENSITIES MACHINE";
                 break;
         }
         
