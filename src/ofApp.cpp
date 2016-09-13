@@ -33,7 +33,7 @@ void ofApp::setup(){
     //parametaers INITIAL MAX and MIN values to set up by teh artist
 
     
-    currentVideoBrightnessMax = 15;
+    currentVideoBrightnessMax = 10;
     currentVideoBrightnessMin = 1;
     
     currentVideoZoomMax = 10;
@@ -45,8 +45,8 @@ void ofApp::setup(){
     currentVideoMachineRotationMax = 360;
     currentVideoMachineRotationMin = -360;
     
-    currentMachineTranslationMax = 1500;
-    currentMachineTranslationMin = -11000;
+    currentMachineTranslationMax = 700;
+    currentMachineTranslationMin = -5000;
     
     currentEnergy01Max = 1;
     currentEnergy01Min = 0;
@@ -241,9 +241,15 @@ void ofApp::update(){
     pixelsVideo = currentVideo->getPixels();
     int numPixels = currentVideo->getWidth() * currentVideo->getHeight() * 3;
     for( int p = 0 ; p < numPixels ; p +=3 ){
-        pixelsVideo[p] *= currentVideoBrightness ;
+        pixelsVideo[ p ] *= currentVideoBrightness ;
+        pixelsVideo[ p + 1 ] *= currentVideoBrightness ;
+        pixelsVideo[ p + 2 ] *= currentVideoBrightness ;
         if( pixelsVideo[p] >= 254 )
             pixelsVideo[p] = 254;
+        if( pixelsVideo[p + 1] >= 254 )
+            pixelsVideo[p + 1] = 254;
+        if( pixelsVideo[p + 2] >= 254 )
+            pixelsVideo[p + 2] = 254;
     }
     textureVideo.loadData( pixelsVideo );
     
@@ -289,6 +295,8 @@ bool ofApp::updateHardware(){
     if( cutTimeMillis - lastHardwareUpdateRefresh > harwareUpdateRefresh ){
         
         currentVideoBrightness = ofMap( hardware.getBrightness() , 1023 , 0 , currentVideoBrightnessMin , currentVideoBrightnessMax );
+        if( currentVideoBrightness < 1.1 )
+            currentVideoBrightness = 1;
         currentVideoZoom = ofMap( hardware.getZoom() , 1023 , 0 , currentVideoZoomMin , currentVideoZoomMax );
         currentMachineRotation = ofMap( hardware.getRotation() , 1023 , 0 , currentVideoMachineRotationMin , currentVideoMachineRotationMax );
         currentMachineTranslation = ofMap( hardware.getRotation() , 1023 , 0 , currentMachineTranslationMin , currentMachineTranslationMax );
@@ -509,9 +517,9 @@ void ofApp::draw(){
     
     
     camera->begin();
-    //ofPushMatrix();
-    //ofTranslate( 250,100, currentMachineTranslation );
-    //ofRotate( currentMachineRotation , 0, 1, 0);
+    ofPushMatrix();
+    ofTranslate( 250,100, currentMachineTranslation );
+    ofRotate( currentMachineRotation , 0, 1, 0);
     
     switch( appState ){
         case APP_STATE_RANDOM:
@@ -528,7 +536,7 @@ void ofApp::draw(){
             machineEnergys->draw();
             break;
     }
-    //ofPopMatrix();
+    ofPopMatrix();
     camera->end();
     
     ofSetColor(255);

@@ -136,35 +136,27 @@ void KafkaMachineArduinoHardware::updateArduino(){
 void KafkaMachineArduinoHardware::digitalPinChanged(const int & pinNum) {
     state = NO_PRESED;
     if( !arduinoBoard.getDigital( pinButtonRandom ) ){
+    //if( arduinoBoard.getDigital( pinButtonRandom ) ){
         state = PRESED_RANDOM;
         presedNow = true;
         cout << "\nBotao 1 Pressed ";
     }
-//    else if( arduinoBoard.getDigital( pinButtonRandom ) ){
-//        presedNow = false;
-//        cout << "\nBotao 1 NO Pressed ";
-//    }
+
     
     else if( arduinoBoard.getDigital( pinButtonClosedMachines ) ){
         state = PRESED_CLOSED;
         presedNow = true;
         cout << "\nBotao 2 Pressed ";
     }
-//    else if( !arduinoBoard.getDigital( pinButtonClosedMachines ) ){
-//        presedNow = false;
-//        cout << "\nBotao 2 NO Pressed ";
-//    }
-//    
-    else if( !arduinoBoard.getDigital( pinButtonEnergys ) ){ //is negated because the buttons are low activated
+
+    else if( !arduinoBoard.getDigital( pinButtonEnergys ) ){
+    //else if( arduinoBoard.getDigital( pinButtonEnergys ) ){
+            //is negated because the buttonsbuttons are low activated
         state = PRESED_ENERGIES;
         presedNow = true;
         cout << "\nBotao 3 Pressed ";
     }
-    
-//    else if( arduinoBoard.getDigital( pinButtonEnergys ) ){ //is negated because the buttons are low activated
-//        presedNow = false;
-//        cout << "\nBotao 3 NO Pressed ";
-//    }
+
     return state;
 }
 //--------------------------------------------------------------
