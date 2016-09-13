@@ -46,7 +46,7 @@ void ofApp::setup(){
     currentVideoMachineRotationMin = -360;
     
     currentMachineTranslationMax = 100;
-    currentMachineTranslationMin = -5000;
+    currentMachineTranslationMin = -9000;
     
     currentEnergy01Max = 1;
     currentEnergy01Min = 0;
